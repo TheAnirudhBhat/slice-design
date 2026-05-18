@@ -1,0 +1,34 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+.npm
+
+# Build / output
+dist/
+build/
+.cache/
+
+# Local-only artefacts that should NOT live in the suite repo
+# (the calibration proto + the user's calibration history)
+dls-calibration/
+data/log.jsonl
+data/parking_lot.jsonl
+data/attachments/
+
+# Env / secrets
+.env
+.env.*
+*.pem
+*.key
