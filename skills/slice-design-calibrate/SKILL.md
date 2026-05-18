@@ -86,6 +86,8 @@ Group by `rule_key`. For each rule, compute:
   - **silent neither** — "neither" with no reason and no AP flag → drop the pair (it didn't read); don't re-pair.
   - **AP-confirmed** — anti-pattern flagged or implied by reason → promote to anti-pattern immediately, even on 1 pick.
   - **review-with-reference** — review-mode pick ("ship" / "issues" / "not_slice") with an attached production frame → extract every concrete rule the reference encodes (could be 5–15 rules from one frame). Don't apologise for "thin data".
+  - **tune-locked** — `mode: 'tune'` entry with `pick: 'lock'` → the user fine-tuned a single component via the knob panel. The `config` field is the canonical spec. Promote to the matching `reference_dls_<component>.md` as the **default config block**, overriding any prior baseline. The `diff` field shows exactly what changed from the seed config — surface it in the proposed diff.
+  - **tune-rejected** — `mode: 'tune'` entry with `pick: 'reject'` → the user couldn't tune this component into shape. The component spec itself is broken; flag for redesign rather than promotion.
 
 **Do NOT** require ≥3 picks for promotion. **Do NOT** create "quorum builder" pairs for already-promoted rules. **Do NOT** re-test rules in compound/screen contexts to "strengthen" them — once a rule is promoted, it's settled until contradicted.
 
@@ -142,6 +144,19 @@ For reference-driven screen recipes:
 + 3. Brand-purple caption below (not secondary)
 + 4. Dual CTA bottom: Tertiary outline "Transfer" + Primary "Add money"
 + Source: cal:2026-05-17 — review-1101 reference frame ✅
+```
+
+For tune-locked entries (single-component fine-tuning):
+
+```diff
+# references/reference_dls_avatar.md
++ ## Calibrated default config (2026-05-18)
++ ```json
++ { "size": 40, "emphasis": "subtle", "color": "valentino", "label": "A" }
++ ```
++ Source: cal:2026-05-18 tune session — diff from baseline: { "size": 32→40 }.
++ Reason (user, if attached): "M-40 is the default everywhere; S-32 is dense-row only".
++ This is the canonical spec the rest of slice inherits. Any deviation must justify itself.
 ```
 
 ### Step 4 — Cross-skill conflicts

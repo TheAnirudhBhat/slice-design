@@ -379,3 +379,25 @@ These recipes consolidate the per-screen patterns confirmed during R11 review wi
 3. White or slate-10 page bg both valid
 
 Source: cal:2026-05-17 — review-1100 / 1101 / 1102 / 1103 / 1104 / 1105 / 1106 / 1108 / 1109 / 1110 / 1111 / 1112 / 1113 reference frames ✅
+
+## Recipe refinements (2026-05-18 batch)
+
+### Activity L0 — App-bar-to-search-bar gap
+Tight 8px gap between App bar L0 bottom edge and the search bar. Calibrated: user noted "too much space above the search bar, and below the app bar" — pull them closer.
+
+Source: cal:2026-05-18 — review-1203 reason "too much space above the seach bar, and below the app bar".
+
+### Confirm success — tick stroke
+The textured grainy gradient tick (~120px green-blue) uses an **8px stroke** on the white check, not 6. The noisy gradient field eats thinner strokes; 8 keeps the symbol legible.
+
+Source: cal:2026-05-18 — review-1201 reason "tick stroke should be thicker".
+
+### Spark FD details — no today-delta chip
+Hero stays clean: caption + amount + bulleted subline. **Do not add** a small "+₹X today" green pill chip below the subline — it clutters the hero with information that belongs in the listing rows below.
+
+Source: cal:2026-05-18 — review-1207 pick A (the no-chip variant).
+
+### Bottom sheet — interior padding
+Sheet inner padding-top = **24px**. Goes directly into the H3 title (no handle, no top breathing space beyond 24).
+
+Source: cal:2026-05-18 — review-1206 reason "top margin should be 24 in the bottomsheet".

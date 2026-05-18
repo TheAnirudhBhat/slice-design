@@ -333,3 +333,18 @@ Source: review session batch-538 (post-polish, 13 reference SVGs attached). All 
 - 2026-05-17 · quick_action_icons_refined · refined in reference_calibrated_digest.md — V-500 for action tiles, slate for content-grid tiles inside Explore-style cards
 - 2026-05-17 · credit_prefix_anti_pattern · added to reference_calibrated_digest.md — no `+` on credit amounts, use Positive Green colour alone
 - 2026-05-17 · app_bar_variants_added · close-X, trailing utility icons, dynamic amount in title, slice currency pill trailing → reference_dls_appbar.md
+
+## 2026-05-18 · R12 + R13 batch-493 triage (11 entries)
+
+Source: session batch-493 (compare + tune mixed). 5 promotions, 2 flips, 8 new anti-patterns, 2 mockup-quality drops.
+
+- 2026-05-18 · tune_avatar · 1 lock · promoted canonical spec to reference_dls_avatar.md (sizes, colors, emphases, fontFamily=Rubik, fontWeight=500, glyphScale=size/2, defaults M-40/valentino/subtle). User: "font weight should be medium in these".
+- 2026-05-18 · tune_button · 1 lock · promoted spec to reference_dls_buttons.md with open question on Regular height (48 → 44?). User: "buttons look a little too big, idk" — queued A/B for next batch.
+- 2026-05-18 · tune_listItem · 1 reject · flipped reference_dls_dividers.md (no divider between same-type avatar-leading rows). User: "we don't do divider between avatar list items".
+- 2026-05-18 · action_centre_avatar_position · A pick · reconfirmed avatar TOP-RIGHT. Extracted 3 new APs: grey-bg cards, white-on-white without shadow, H3 card titles → reference_anti_patterns.md.
+- 2026-05-18 · bottom_sheet_handle_visible · A pick · reconfirmed no-handle. Extracted 2 new APs: no confirm-payment sheet pattern, no drag-handle → reference_anti_patterns.md. Refined sheet interior padding-top = 24 → reference_dls_screen_layouts.md.
+- 2026-05-18 · success_tick_grainy_vs_clean · B pick (single-green grainy) + stroke refine (6 → 8) → reference_dls_screen_layouts.md.
+- 2026-05-18 · activity_l0_filter_affordance · A pick (icon button) + spacing refine (App-bar-to-search gap = 8px) → reference_anti_patterns.md (pills-under-search anti-pattern) + reference_dls_screen_layouts.md.
+- 2026-05-18 · empty_state_cta_after_illustration · neither (mockup quality) · dropped pair. Extracted new rule: slice-currency pill = avatar inside pill, not separate badge → reference_dls_misc_patterns.md.
+- 2026-05-18 · quick_pay_avatar_style · neither (mockup quality, both sizes wrong) · dropped pair. Re-pair with calibrated avatar size on next batch.
+- 2026-05-18 · spark_fd_today_delta_chip · A pick (no chip) · promoted to reference_dls_screen_layouts.md (Spark FD hero clean).

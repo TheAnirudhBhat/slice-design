@@ -32,3 +32,17 @@ Slice uses **dashed full-bleed dividers** between rows in specific list contexts
 Solid hairlines still cover the avatar-list inset case (transactions, accounts) and most other contexts.
 
 Source: cal:2026-05-17 — review-1108 reference (Spark FD details) ✅
+
+## Avatar-leading list — NO divider between same-type rows (flipped 2026-05-18)
+
+Earlier rule (from R5/R10 calibration): "Avatar list → use Inset divider between items."
+
+**Flipped.** The user reviewed the List item tune showcase and rejected the spec partly because of the dividers. Slice does NOT use dividers between consecutive avatar-leading list items of the same type — the avatar itself plus the 12px gap between rows provides enough visual separation.
+
+Inset dividers remain valid in two cases:
+1. The list mixes leading types in one stack (avatar / icon / empty all present — uncommon; mixing types within one list is itself rare in slice).
+2. The list spans a meaningful semantic break (different category, different day group at L2/L3).
+
+Default: **avatar-leading lists → no divider between rows**.
+
+Source: cal:2026-05-18 — tune-1303 reject. Reason (user): "we don't do divider between avatar list items, different list items can rarely be used together very rare".

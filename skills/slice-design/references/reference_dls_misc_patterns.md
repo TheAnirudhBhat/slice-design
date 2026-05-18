@@ -165,3 +165,18 @@ Source: cal:2026-05-17 — pair 1015 A ✅
 ## Destructive modal copy — full reassurance
 Destructive confirmation modals: **title + 1-2 line body + Primary + Cancel** (full reassurance). Not title + Primary alone. The body explains consequence — critical before a destructive action.
 Source: cal:2026-05-17 — pair 1018 B ✅
+
+## slice-currency pill (Rewards L0 trailing slot)
+
+Anatomy: a single radius-100 pill that holds an Avatar leading + amount text in one unit.
+
+- Avatar **inside** the pill at the leading edge: 24×24, V-500 Bold, ₹-glyph in white
+- Amount value text right of the avatar: Rubik Medium 14, Text Primary
+- Pill bg: white | Border: 1px outline-subtle | Padding: 4px 12px 4px 4px (tighter on the leading edge to hug the avatar)
+- Radius: 100 (circle pill)
+- Touch target: 32 height
+- Lives in App bar L0 / Standard trailing slot for Rewards / Fires / Spark surfaces
+
+**Not** a separate floating badge sitting next to a value pill — the avatar is structurally inside the pill.
+
+Source: cal:2026-05-18 — review-1202 reason "the circle should be inside the pill".

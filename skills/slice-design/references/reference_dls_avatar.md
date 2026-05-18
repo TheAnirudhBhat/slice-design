@@ -64,3 +64,27 @@ When an Avatar carries a status (online, has-notifications), use a **small corne
 
 Ring overlays claim too much attention; the corner dot is the calm slice convention.
 Source: cal:2026-05-17 — pair 815 A ✅
+
+## Calibrated default config (tune lock 2026-05-18)
+
+The user reviewed the full Avatar variant matrix in tune mode and locked the following spec as the canonical default for the rest of slice to inherit:
+
+```json
+{
+  "sizes": [32, 40, 48, 64, 80, 128],
+  "colors": ["valentino", "blue", "green", "red", "orange", "slate"],
+  "emphases": ["subtle", "bold"],
+  "fontFamily": "Rubik",
+  "fontWeight": 500,
+  "glyphScale": "size / 2",
+  "defaults": { "size": 40, "color": "valentino", "emphasis": "subtle" }
+}
+```
+
+- Inner glyph weight = **Medium (500)**, not Regular. Calibrated explicitly.
+- Default sizing = **M-40** for general list rows; S-32 for dense settings rows; L/XL/XXL/XXXL for hero contexts only.
+- Default colour = **Valentino**; switch to category colour only when conveying meaning (blue = bank, green = positive, red = alert, orange = warning, slate = neutral / unknown).
+- Default emphasis = **Subtle** (V-50 bg + V-500 glyph). Bold is reserved for primary-action tiles and status-coded categories.
+- `glyphScale: "size / 2"` — for any new size, inner glyph = size/2 in Rubik Medium.
+
+Source: cal:2026-05-18 — tune-1300 lock. Reason (user): "the font weight should be medium in these".

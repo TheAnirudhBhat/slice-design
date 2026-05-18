@@ -234,3 +234,46 @@ Looks like: `↑ +12%` or `↓ −8%` — arrow glyph alongside a +/− sign on 
 Why slice doesn't: redundant — the arrow already encodes direction. Combining them creates visual noise.
 Do instead: pick one. **Arrow alone is preferred** (`↑ 12%`). If you must use sign without an arrow, then no arrow (`+12%` / `−8%`).
 Source: cal:2026-05-17 — pair 923 reason "arrow and Plus should not be used together, arrow is preferred over +/-" ✅
+
+## 2026-05-18 batch (R12 + R13 tune triage)
+
+### ❌ Grey-background card on a white page (Action centre / notifications)
+Looks like: card with `var(--slate-10)` fill on a white parent surface.
+Why slice doesn't: visually muddy on white; the card needs its own chrome (outline-subtle border for Action centre, shadow elevation elsewhere) to read as a contained surface.
+Do instead: white card + 1px outline-subtle border (Action centre cards) OR white card + shadow elevation token (everywhere else). Never grey-fill.
+Source: cal:2026-05-18 — review-1205 reason "we don't do grey backgrounds, white on white with shadow".
+
+### ❌ White card on white background without shadow chrome
+Looks like: white card on a white page with no border AND no shadow — the card has no edge against the page.
+Do instead: shadow elevation (default surface lift) OR outline-subtle border (Action centre quiet variant). Pick one — bare white never works.
+Source: cal:2026-05-18 — review-1205.
+
+### ❌ H3 title inside an Action centre / notification card
+Cards in the Action centre are LIST ITEMS in disguise — the page header is the H3 hero. Card title = **H4 (16/20 Medium)**, not H3. Reduces visual weight, lets the stack breathe, and matches list-row hierarchy.
+Source: cal:2026-05-18 — review-1205 reason "the card heading is too big".
+
+### ❌ Bottom sheet with a drag-handle / dragger / hairline pill at top
+Reconfirmed (R12-1206 + earlier rounds): slice has NO handle on bottom sheets. Sheet dismisses via scrim tap. No drag affordance.
+Source: cal:2026-05-18 — review-1206 reason "we don't keep a drgger".
+
+### ❌ "Confirm payment" bottom sheet as a pattern
+Slice has no confirm-payment bottom sheet. Payment confirmation lives on a full screen or inline review row. Bottom sheets carry transient single-action prompts (e.g. "Continue with Aadhaar?", "Switch account?"), not financial commitments — those are too important to be dismissable via a scrim tap.
+Source: cal:2026-05-18 — review-1206 reason "we never have a confirm payment bottomsheet".
+
+### ❌ Pills row directly under the search bar on Activity L0
+Filter pills below the search bar are NOT a slice pattern today. Activity L0 uses search bar + **circular filter icon button trailing** (slate-10 bg, V-500 line icon).
+"Pills could be a future pattern" but is not calibrated. Stick to icon button until calibrated.
+Source: cal:2026-05-18 — review-1203 reason "we don't have pills under search till now".
+
+### ❌ slice-currency pill with a separate Avatar badge alongside it
+The slice-currency pill (Rewards L0 trailing slot) has the Avatar / glyph **inside the pill at the leading edge** — not as a separate floating badge next to a value pill.
+Anatomy: `[V-500 Bold avatar 24×24 ₹-glyph] [amount value text]` — single radius-100 pill with outline-subtle border.
+Source: cal:2026-05-18 — review-1202 reason "the circle should be inside the pill".
+
+### ❌ Inset divider between consecutive avatar-leading list items of the same type
+Flipped 2026-05-18. Earlier rule said "avatar list → inset divider". Override: slice does **not** use a divider between consecutive same-type avatar-leading rows — the avatar itself + 12px row gap is enough visual separation. Inset divider IS valid when the list mixes leading types (avatar / icon / empty in one stack), but mixing types is itself uncommon. Default to no divider in same-type lists.
+Source: cal:2026-05-18 — tune-1303 reject reason "we don't do divider between avatar list items".
+
+### ❌ Confirmation tick stroke too thin
+The textured grainy gradient success tick (~120px) needs a **stroke thickness of 8px**, not 6. The check needs visual weight on the noisy gradient field to stay legible.
+Source: cal:2026-05-18 — review-1201 reason "tick stroke should be thicker".

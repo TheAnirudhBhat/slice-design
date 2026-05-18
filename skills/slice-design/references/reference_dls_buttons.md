@@ -50,3 +50,17 @@ Source: cal:2026-05-17 — pair 700 B ✅
 
 ### Destructive (no red fill)
 Destructive actions never use a red-fill Primary. Use the alert-dialog pattern with neutral Primary, or a Tertiary outlined button with red text label. See `reference_anti_patterns.md`.
+
+## Calibrated default config (tune lock 2026-05-18 — height under review)
+
+```json
+{
+  "types": ["primary", "secondary", "tertiary", "text"],
+  "sizes": { "normal": 48, "small": 36 },
+  "radius": "Circle (100px)",
+  "copy_rules": "verb-first · 1–2 words · sentence case · \"Pay ₹500\" not \"Submit\"",
+  "defaults": { "type": "primary", "size": "normal" }
+}
+```
+
+Source: cal:2026-05-18 — tune-1301 lock. **Open question** (user note: "buttons look a little too big, idk"): is Regular height 48 right? Queue A/B for next batch comparing Regular=48 vs Regular=44. Until that resolves, 48 stands as the calibrated default.
