@@ -44,15 +44,79 @@ The user types `/update-slice-design` once. Do all of the following in sequence,
    START_LINES=$(wc -l < ~/claude/slice/projects/dls-calibration/data/log.jsonl 2>/dev/null || echo 0)
    ```
    Remember this number for Step 2.
-4. Tell the user clearly:
 
-   > "Calibration page is up: **http://localhost:8766/**
-   >
-   > Walk through the pairs — pick A / B / Neither / Both fine (or ✓ Ship / ⚠ Issues / ✗ Not slice for review screens). Add a reason and/or attach a reference image where it helps.
-   >
-   > When you're done with the batch (or stopped where you wanted), say **'done'** or **'ready'** and I'll triage."
+### Step 0.5 — Ask the user what to seed (NEW)
 
-5. **STOP and wait** for the user's reply. Do not advance to step 1 until the user signals they're done.
+Before pointing them at the page, **ask** what kind of pairs to generate for this round. Show the menu:
+
+> "How many pairs to seed for this round? Pick a category (or say 'none' to just triage what's there, or describe a custom set):
+>
+> - **Motion** (8 pairs) — easings, page transitions, sheet enter/exit, micro-interactions
+> - **Empty / error states** (6 pairs) — Activity-empty, Notifications-empty, connection-lost, transaction-failed
+> - **Forms / inputs** (6 pairs) — multi-step form, OTP choreography, file upload, address, date picker
+> - **Settings / dense rows** (4 pairs) — S-32 list row anatomy, toggle row, danger row, group container
+> - **Pills / segmented filters** (3 pairs) — pill active state, scroll-behavior, position
+> - **Open questions** (1–3 pairs) — Button Regular 48 vs 44, etc.
+> - **None** — skip seeding, walk through whatever's queued
+> - **Custom** — describe what you want (e.g. 'tune Card', '5 pairs on Notification rows')
+>
+> Tell me the category (e.g. 'motion') or 'none' / 'custom: <description>'."
+
+**STOP and wait** for the user to choose. Don't seed without explicit instruction.
+
+When they answer:
+- **Named category**: build the pairs from the recipe in the relevant category below (`### Seed recipes`).
+- **Custom**: design 3–10 pairs against the user's description. Each pair needs a unique `rule_key`, `component`, `axis`, `description`, and either A/B render props OR a tune showcase OR a review screen.
+- **None**: skip the rest of Step 0.5 and go to Step 0.6.
+
+Generate pairs by running a `.cjs` script under `~/claude/slice/projects/dls-calibration/scripts/` that mutates `src/pairs.json`. Bump the version and description. Pattern:
+
+```js
+const fs = require('fs');
+const p = JSON.parse(fs.readFileSync('./src/pairs.json','utf8'));
+const newPairs = [
+  { id: 'r14-motion-1400', phase: 1, mode: 'compare',
+    component: 'Page transition', axis: 'which is more slice?',
+    rule_key: 'page_transition_duration',
+    a: { render: 'R14Variant', props: { kind: 'page-transition', side: 'A' }, description: '200ms push' },
+    b: { render: 'R14Variant', props: { kind: 'page-transition', side: 'B' }, description: '320ms push' },
+    description: 'Slow vs snappy push-left page transition. Both ease-out.' },
+  // ...
+];
+p.pairs.push(...newPairs);
+p.version = p.version + 1;
+fs.writeFileSync('./src/pairs.json', JSON.stringify(p, null, 2));
+console.log('added', newPairs.length, 'pairs · active:', p.pairs.filter(x => !x.calibrated).length);
+```
+
+If the category requires new component renders (e.g. motion demos, error-state screens), also add the React variants to `src/mockups/Round<N>Variants.jsx` and register them in `src/mockups/registry.jsx`. The runner auto-shuffles them in.
+
+After seeding, report briefly: "Seeded N pairs in category X. Refresh the page."
+
+### Step 0.6 — Tell the user to walk through
+
+Tell the user:
+
+> "Calibration page is up: **http://localhost:8766/**
+>
+> Walk through the pairs — pick A / B / Neither / Both fine (or ✓ Ship / ⚠ Issues / ✗ Not slice for review screens, or ✓ Lock / ✗ Reject for tune-mode). Add a reason and/or attach a reference image where it helps.
+>
+> When you're done, just say **'done'** — I'll auto-triage, update the skill, mark the pairs calibrated, and commit. You don't need to do anything else."
+
+**STOP and wait** for the user's "done". Do not advance to Step 1 until they signal.
+
+### Seed recipes (reference for Step 0.5)
+
+| Category | rule_keys (sample) | Notes |
+|---|---|---|
+| **Motion** | `page_transition_duration`, `page_transition_easing`, `sheet_enter_curve`, `sheet_exit_curve`, `tap_press_feedback`, `loading_skeleton_shimmer_speed`, `value_change_animation`, `error_shake_intensity` | Use compare mode with two video-loop-style demos in `R14Variant.jsx`. Each demo runs an inline CSS animation; user picks which feels slice. |
+| **Empty / error states** | `empty_activity_layout`, `empty_notifications_layout`, `empty_search_results`, `connection_lost_pattern`, `transaction_failed_pattern`, `validation_error_layout` | Compare mode; full-screen mockups using existing primitives + the calibrated illustration rule. |
+| **Forms / inputs** | `otp_entry_choreography`, `multi_step_form_progress`, `file_upload_button`, `address_input`, `date_picker`, `inline_error_position` | Mix of compare + tune mode. Use existing `Underlined input` primitive. |
+| **Settings / dense rows** | `dense_row_height`, `toggle_row_layout`, `danger_row_color`, `settings_group_container` | Tune mode for dense_row_height (showcase 56 vs 64); compare for the rest. |
+| **Pills / segmented filters** | `pill_active_state`, `pill_scroll_behavior`, `pill_position_relative_to_search` | Compare mode. |
+| **Open questions** | `button_regular_48_vs_44`, `quick_pay_avatar_size`, `empty_rewards_pill_anatomy` | Re-pair lingering R12/R13 unresolveds with corrected mockups. |
+
+When seeding a category, generate ~half the listed rule_keys (so user gets variety, not exhaustive coverage). The user can ask for more in a follow-up round.
 
 ### Step 1 — Parking lot first
 
@@ -106,7 +170,9 @@ Show the user a triage table BEFORE proposing any diffs. **Only list rules that 
 
 ### Step 3 — Propose diffs (high / high+AP / flip / AP-confirmed)
 
-For each rule needing a write, propose a specific diff and ask **approve / edit / reject** per rule. Show the diff inline:
+In auto-triage mode (user said "done"): **skip per-rule approval and just apply the diffs.** The user has already validated the picks on the page; they don't want to confirm each promotion. Show a short summary at the end (Step 7).
+
+In manual triage mode (user explicitly asked to "review before promoting"): propose diffs per rule and ask **approve / edit / reject**. Show the diff inline:
 
 ```diff
 # references/reference_dls_list_items.md

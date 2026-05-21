@@ -348,3 +348,7 @@ Source: session batch-493 (compare + tune mixed). 5 promotions, 2 flips, 8 new a
 - 2026-05-18 · empty_state_cta_after_illustration · neither (mockup quality) · dropped pair. Extracted new rule: slice-currency pill = avatar inside pill, not separate badge → reference_dls_misc_patterns.md.
 - 2026-05-18 · quick_pay_avatar_style · neither (mockup quality, both sizes wrong) · dropped pair. Re-pair with calibrated avatar size on next batch.
 - 2026-05-18 · spark_fd_today_delta_chip · A pick (no chip) · promoted to reference_dls_screen_layouts.md (Spark FD hero clean).
+
+## 2026-05-21 · batch-405 (2 entries)
+- 2026-05-21 · tune_chip · 1 lock · promoted canonical spec to reference_dls_chips.md. User: "look fine".
+- 2026-05-21 · pay_person_bg_solid_vs_gradient · neither (silent) · dropped pair, both variants need rework.

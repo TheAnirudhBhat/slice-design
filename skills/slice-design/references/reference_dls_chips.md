@@ -40,3 +40,16 @@ Variant suggestions for the same pattern:
 - Brand (e.g. "NEW") → Valentino 500 solid
 
 Source: cal:2026-05-17 — review-1104 reference ("₹0 FEE" blue solid pill on Explore card) ✅
+
+## Calibrated default config (tune lock 2026-05-21)
+
+```json
+{
+  "variants": ["info-subtle", "brand-subtle", "positive", "negative", "neutral"],
+  "radius": "S (8px)",
+  "typography": "Caption 12/16 medium",
+  "padding": "2px 8px"
+}
+```
+
+Source: cal:2026-05-21 — tune-1302 lock. Reason (user): "look fine". Default chip = `info-subtle`; switch variant by intent (brand-subtle for slice fire / Spark, positive/negative for status, neutral for default tag).
