@@ -360,3 +360,11 @@ Source: session batch-493 (compare + tune mixed). 5 promotions, 2 flips, 8 new a
 - 2026-05-21 · connection_lost_pattern · A + 2 refs · promoted recipe (full-screen takeover, NO retry CTA) + new AP "explicit Retry on connection-lost"
 - 2026-05-21 · transaction_failed_pattern · A + ref · promoted recipe (X close + solid red Avatar Bold + verb+amount+state copy + Retry/Cancel CTAs)
 - 2026-05-21 · validation_error_layout · A · promoted recipe (inline error only, no always-on helper) + new AP "always-on helper text"
+
+## 2026-05-21 · R15 iconography · batch-127 (6 picks · auto-triage)
+- 2026-05-21 · icon_color_standalone_appbar · A · promoted to reference_dls_iconography.md (trailing utility icons = Text Primary, not V-500)
+- 2026-05-21 · icon_color_in_primary_button · neither · new AP in reference_anti_patterns.md (Primary CTAs = verb+value text only, no leading icon)
+- 2026-05-21 · icon_glyph_size_in_s32_avatar · A · reconfirmed size/2 rule → reference_dls_avatar.md
+- 2026-05-21 · icon_color_on_brand_gradient · B · promoted to reference_dls_iconography.md (icons on gradient = V-50 subtle white, not pure #fff)
+- 2026-05-21 · icon_state_specific_variant · A · promoted to reference_dls_iconography.md (use state-specific variants when DLS provides them)
+- 2026-05-21 · icon_outline_vs_solid_default · both_fine · promoted to reference_dls_iconography.md (context-dependent: Outline for utility, Solid for active/primary)

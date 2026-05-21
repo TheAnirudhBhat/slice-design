@@ -293,3 +293,11 @@ Source: cal:2026-05-21 — r14-empty-1405.
 ### ❌ Capitalised pod titles
 Pod titles (Activity, Banking, Explore, Payments, Credit, Action centre, Rewards) follow the slice brand-voice rule and render in **lowercase**: "activity", "banking", "explore", "payments", "credit", "action centre", "rewards". Mirrors the lowercase-"slice" rule — slice's brand voice extends to pod names.
 Source: cal:2026-05-21 — r14-empty-1402 reference frame showing "activity" lowercase.
+
+### ❌ Leading icon on a Primary CTA
+Primary CTAs in slice are **verb + value** text only ("Pay ₹500", "Add money", "Continue"). Don't insert a leading icon (no tap-to-pay glyph, no card icon, no arrow). The verb-plus-value label is itself the affordance. Adding an icon creates visual noise that competes with the text and asks the user to parse two signals.
+Exceptions:
+- Icon-only FAB-style buttons (no label), where the icon IS the label
+- Tertiary "Share receipt" / "Download" etc. where a leading icon supports a secondary action
+Primary fill = label only.
+Source: cal:2026-05-21 — r15-icon-1502 pick neither (both white and V-500 leading-icon styles rejected → the leading icon itself is the issue).

@@ -113,3 +113,28 @@ When new icons are added to the Figma DLS file, re-run the icon export from the 
 3. Run the figma_execute loop (see the slice-design-calibrate skill's icon-batch recipe) — batches of ~40, base64-encoded, POST to `http://localhost:8766/api/icons`
 4. The `/api/icons` endpoint in `dls-calibration/vite.config.js` handles slugging + writing to `icons/<category>/<name>__<variant>.svg`
 5. Commit the new SVGs to the slice-design-suite repo
+
+## Usage rules (calibrated 2026-05-21 · R15)
+
+### Standalone utility icon color
+Trailing utility icons in App bar Standard / L0 (eye, pie chart, chat, card, etc.) render in **Text Primary `rgba(0,0,0,0.9)`**, not Brand V-500. The neutral color keeps the chrome from competing with the title and hero content. Brand purple is reserved for actions the user is meant to *take* — utility icons report state.
+Source: cal:2026-05-21 — r15-icon-1501 pick A.
+
+### Icon color on brand gradient
+Icons rendered on the slice brand gradient (Valentino → Blue, used on Payments L0 hero only) use a **subtle V-50 white** — `rgba(250, 226, 250, 0.85)`, not pure `#FFFFFF`. Pure white competes with the headline text on the gradient. The subtle white sits one layer back, letting the title lead.
+Source: cal:2026-05-21 — r15-icon-1504 pick B.
+
+### State-specific icon variants — use them
+When the DLS provides per-state variants of an icon (Phone/Type=Phone/Missed/Outgoing, Eye/Type=Open/Closed, Microphone/Type=Default/Mute, Tap-to-pay/Type=Enabled/Disabled, Privacy/Style=Lock/Unlock), **use the variant matching the row state**. Reusing the default icon and reading state from the row text only is wrong — the variant carries semantic weight (incoming-call arrow inward, missed-call arrow with cross, outgoing arrow outward) that text alone can't.
+Source: cal:2026-05-21 — r15-icon-1505 pick A.
+
+### Outline vs Solid (when both exist)
+Both are valid. Default mapping:
+- **Outline** for utility / secondary placement (App bar trailing, settings rows, content-grid tiles, anywhere the icon is a quiet label)
+- **Solid** for primary / active states (selected pill, active tab, current state on a state-toggle, hero CTA leading slot)
+Neither variant is the universal default. Context decides.
+Source: cal:2026-05-21 — r15-icon-1500 pick both_fine (interpreted as context-dependent, not undecided).
+
+### Glyph size in S-32 Avatar — confirmed 16pt
+Reconfirmed: the inner glyph in a S-32 Avatar = **16pt** (= size/2). Don't bump to 18 for "more presence" — 16 reads correctly at the dense-row distance the S-32 Avatar lives in.
+Source: cal:2026-05-21 — r15-icon-1503 pick A. Strengthens the original Avatar `glyphScale: size/2` rule (cal:2026-05-18 tune-1300).

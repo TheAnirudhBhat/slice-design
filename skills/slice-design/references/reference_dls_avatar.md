@@ -88,3 +88,15 @@ The user reviewed the full Avatar variant matrix in tune mode and locked the fol
 - `glyphScale: "size / 2"` — for any new size, inner glyph = size/2 in Rubik Medium.
 
 Source: cal:2026-05-18 — tune-1300 lock. Reason (user): "the font weight should be medium in these".
+
+## Glyph size rule reconfirmed (cal:2026-05-21)
+
+Reconfirmed via R15 iconography round: inner glyph scales as **size / 2** for every Avatar size.
+- S-32 → **16pt** glyph (don't push to 18 for "presence")
+- M-40 → 20pt
+- L-48 → 24pt
+- XL-64 → 32pt
+- XXL-80 → 40pt
+- XXXL-128 → 64pt
+
+Source: cal:2026-05-21 — r15-icon-1503 pick A. Original spec from cal:2026-05-18 tune-1300.
