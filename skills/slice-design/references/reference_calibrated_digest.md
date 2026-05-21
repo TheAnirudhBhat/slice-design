@@ -207,3 +207,8 @@ This digest is the canonical "what we know is slice" summary. When building a sl
 ---
 
 When building a slice screen: scan this digest first. Cite the source reference file when adding a new instance. When in doubt about a pattern not in this list, **check `reference_calibration_log.md`** for the audit history.
+
+- ❌ **Retry button on connection-lost takeover** — slice auto-retries silently, the takeover dismisses itself when connection returns. Adding an explicit Retry CTA is wrong (cal:2026-05-21).
+- ❌ **Bottom CTA on Action centre empty state** — read-only surface, no CTA. Empty = illustration + "All caught up". (cal:2026-05-21).
+- ❌ **Always-on helper text below form inputs** — helper only appears on error. Default state is clean (cal:2026-05-21).
+- ❌ **Capitalised pod titles** — "activity", "banking", "explore", "payments", "credit", "action centre", "rewards" all lowercase, mirroring lowercase-slice (cal:2026-05-21).

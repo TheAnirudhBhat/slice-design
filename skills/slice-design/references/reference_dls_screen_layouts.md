@@ -401,3 +401,53 @@ Source: cal:2026-05-18 — review-1207 pick A (the no-chip variant).
 Sheet inner padding-top = **24px**. Goes directly into the H3 title (no handle, no top breathing space beyond 24).
 
 Source: cal:2026-05-18 — review-1206 reason "top margin should be 24 in the bottomsheet".
+
+## Empty / error state recipes (calibrated 2026-05-21)
+
+### Empty Activity L0
+1. App bar L0 ("activity" — see brand-voice rule on lowercase pod titles)
+2. Centred stack: real branded illustration (~120px) + H2 title + 2-line body (secondary text)
+3. Bottom-anchored Primary CTA ("Add money") — Activity-empty DOES carry a CTA because the txn feed is empty by design (no transactions = no money in)
+
+Source: cal:2026-05-21 — r14-empty-1400 pick B. User contrasted Activity (txn feed, CTA OK) vs Action centre (notifications, no CTA).
+
+### Empty Action centre / Notifications
+1. App bar Standard chevron back + "Action centre" title (H3)
+2. Centred full-screen stack: illustration + H2 title ("All caught up") + 1–2 line body (secondary)
+3. **NO bottom CTA.** Action centre is read-only / status-only — no nudge needed. Anything that would be a CTA belongs on the surface the notification points to.
+
+Source: cal:2026-05-21 — r14-empty-1401 pick A + r14-empty-1400 reason "activity center is for notifications, doesn't have a CTA".
+
+### Empty Search Results (Activity search)
+1. App bar L0 ("activity") + photo Avatar trailing
+2. Search bar (search-state preserved: shows the failed query as a value, ✕ icon inline to clear) + filter icon button trailing — full pattern from the Activity L0 recipe stays
+3. Centred illustration below (small, ~100px) — real branded illustration (e.g. searching-mascot), not generic line-art
+4. No bottom CTA. The clear-search affordance is in the input itself.
+
+Source: cal:2026-05-21 — r14-empty-1402 pick A + reference frame.
+
+### Connection Lost
+1. **Full-screen takeover** — no app bar, no nav chrome
+2. Centred real branded illustration (sad mascot, large ~160px)
+3. H2 title ("Connection lost" or warmer slice copy)
+4. Body (secondary): 1 line on what's happening
+5. **NO retry button.** Slice auto-retries in the background; the user shouldn't have to act. When connection returns, the takeover dismisses automatically.
+
+Source: cal:2026-05-21 — r14-empty-1403 pick A + reason "we block the user and keep trying, no retry CTA".
+
+### Transaction Failed
+1. App bar Standard with **X close** top-left (no chevron, no title)
+2. Centred Avatar Bold red (~120px) with white X glyph inside — mirrors the success grainy-tick architecture but inverted (solid red, no grain, X instead of check)
+3. H2 title "Payment of ₹X,XX,XXX failed" (verb + amount + state, parallel to "Paid ₹X,XXX" success copy)
+4. Body (secondary, optional) — 1 line on next step
+5. Bottom-anchored CTAs: Primary "Retry payment" + Text "Cancel"
+
+Source: cal:2026-05-21 — r14-empty-1404 pick A + reference frame.
+
+### Validation Error (form input)
+1. Field renders with no helper text by default
+2. On error: bottom border turns red, label turns red, caption appears below the field in red ("Invalid UPI ID")
+3. Helper text (caption, tertiary) is **NOT always-on** — only appears when there's an error
+4. On valid input or focus, the error caption disappears
+
+Source: cal:2026-05-21 — r14-empty-1405 pick A.

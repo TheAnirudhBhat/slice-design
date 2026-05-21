@@ -352,3 +352,11 @@ Source: session batch-493 (compare + tune mixed). 5 promotions, 2 flips, 8 new a
 ## 2026-05-21 · batch-405 (2 entries)
 - 2026-05-21 · tune_chip · 1 lock · promoted canonical spec to reference_dls_chips.md. User: "look fine".
 - 2026-05-21 · pay_person_bg_solid_vs_gradient · neither (silent) · dropped pair, both variants need rework.
+
+## 2026-05-21 · R14 empty/error states · batch-263 (6 picks · auto-triage)
+- 2026-05-21 · empty_activity_layout · B + reason · promoted recipe to reference_dls_screen_layouts.md (illustration + title + body + bottom Primary CTA)
+- 2026-05-21 · empty_notifications_layout · A · promoted recipe to reference_dls_screen_layouts.md + new AP "no bottom CTA on Action centre empty"
+- 2026-05-21 · empty_search_results · A + ref · promoted recipe (search-state preserved, real illustration) + new brand rule "lowercase pod titles" → reference_anti_patterns.md
+- 2026-05-21 · connection_lost_pattern · A + 2 refs · promoted recipe (full-screen takeover, NO retry CTA) + new AP "explicit Retry on connection-lost"
+- 2026-05-21 · transaction_failed_pattern · A + ref · promoted recipe (X close + solid red Avatar Bold + verb+amount+state copy + Retry/Cancel CTAs)
+- 2026-05-21 · validation_error_layout · A · promoted recipe (inline error only, no always-on helper) + new AP "always-on helper text"

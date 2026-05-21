@@ -277,3 +277,19 @@ Source: cal:2026-05-18 — tune-1303 reject reason "we don't do divider between 
 ### ❌ Confirmation tick stroke too thin
 The textured grainy gradient success tick (~120px) needs a **stroke thickness of 8px**, not 6. The check needs visual weight on the noisy gradient field to stay legible.
 Source: cal:2026-05-18 — review-1201 reason "tick stroke should be thicker".
+
+### ❌ Retry button on connection-lost takeover
+Slice auto-retries in the background when connection drops. Showing an explicit "Retry" CTA puts work on the user that the system handles itself. Connection-lost = full-screen takeover with illustration + title + body only, no action.
+Source: cal:2026-05-21 — r14-empty-1403.
+
+### ❌ Bottom CTA on Action centre / Notifications empty state
+The Action centre is read-only. An empty state there does NOT carry a CTA (no "View past notifications", no "Get notified", etc.). The illustration + "All caught up" copy is the whole state.
+Source: cal:2026-05-21 — r14-empty-1401 + r14-empty-1400 reason.
+
+### ❌ Always-on helper text below form inputs
+Helper text below input fields stays hidden until the user is in error. Always-on helper crowds the form and trains users to ignore the caption row. Field defaults to clean; error state introduces the red caption.
+Source: cal:2026-05-21 — r14-empty-1405.
+
+### ❌ Capitalised pod titles
+Pod titles (Activity, Banking, Explore, Payments, Credit, Action centre, Rewards) follow the slice brand-voice rule and render in **lowercase**: "activity", "banking", "explore", "payments", "credit", "action centre", "rewards". Mirrors the lowercase-"slice" rule — slice's brand voice extends to pod names.
+Source: cal:2026-05-21 — r14-empty-1402 reference frame showing "activity" lowercase.
