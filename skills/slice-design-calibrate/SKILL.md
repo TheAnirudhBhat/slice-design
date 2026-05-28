@@ -252,7 +252,17 @@ Bad candidates (do NOT propose):
 
 If there's no genuinely new territory worth covering, say so plainly: "No new pairs to propose this round — recommended skill state is stable. Run again when you've got fresh territory to explore."
 
-### Step 7 — Summary
+### Step 7 — Sync to git repo
+
+The installed skill at `~/.claude/skills/slice-design/` is the live copy, but the source of truth for version control is `~/claude/slice/projects/slice-design-suite/`. After all writes in Step 5:
+
+1. Copy every `references/*.md` file that was modified in this session from `~/.claude/skills/slice-design/references/` to `~/claude/slice/projects/slice-design-suite/skills/slice-design/references/`.
+2. `cd ~/claude/slice/projects/slice-design-suite && git add -A skills/slice-design/references/ && git commit` with message following the existing pattern: `R<N+1> <category> triage: <count> promotions + <count> anti-patterns` (check `git log --oneline -1` for the last R number).
+3. Do NOT push — just commit locally. The user will push when ready.
+
+This step is mandatory. Never skip it.
+
+### Step 8 — Summary
 
 End with:
 
@@ -264,6 +274,7 @@ End with:
 🚩 anti-pattern entries: 1 new, 1 strengthened
 📝 calibration_log.md: 7 new lines appended
 🎯 next-batch pair suggestions queued: 4
+📦 git: committed as R<N> to slice-design-suite
 ```
 
 ## Auto-AP behavior (in the webpage)
