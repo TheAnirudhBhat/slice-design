@@ -29,3 +29,17 @@ Figma source: `HBoBlZN1CrmVwO3rXeZjY0`, nodes `686:5439`, `1910:19645`
 - On: track #00A63E, handle right
 - Off: track #CDD0D4, handle left
 - Disabled: reduced opacity
+
+## Calibrated rules
+
+### Switch position: trailing (right side)
+Switch always sits at the trailing edge of the row. Label left, switch right.
+Source: cal:2026-05-28 — `switch_label_position` A pick ✅
+
+### Switch "on" colour: Green (iOS default)
+The switch track colour when on is Green (#00A63E), not brand purple. Matches iOS system convention.
+Source: cal:2026-05-28 — `switch_on_color` A pick ✅
+
+### Checkbox shape: circular
+slice uses **circular** checkboxes (radius 100%), not rounded-square or square. This matches the overall pill/circle language of the design system.
+Source: cal:2026-05-28 — `checkbox_corner_style` neither + reason "we use a circular checkbox, never this" ✅

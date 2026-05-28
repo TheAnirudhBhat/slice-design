@@ -399,3 +399,31 @@ Source: session batch-493 (compare + tune mixed). 5 promotions, 2 flips, 8 new a
 
 **Calibrated this round**
 - 1600–1619 all marked calibrated:true
+
+## 2026-05-28 · R17 batch-399 (15 picks · auto-triage)
+
+**Promoted (10 rules)**
+- 2026-05-28 · footer_tc_link_style · A · promoted to reference_dls_footer_header.md (inline caption + underline link)
+- 2026-05-28 · tag_emphasis_in_list · A + reason · promoted to reference_dls_tags.md (Subtle default)
+- 2026-05-28 · tag_text_size · neither + reason · new rule to reference_dls_tags.md (12px Caption, secondary/tertiary colour)
+- 2026-05-28 · switch_on_color · A · promoted to reference_dls_controls.md (Green, iOS default)
+- 2026-05-28 · switch_label_position · A · promoted to reference_dls_controls.md (trailing/right)
+- 2026-05-28 · footer_trust_layout · A + reason · promoted to reference_dls_footer_header.md (horizontal row, white bg)
+- 2026-05-28 · checkbox_corner_style · neither + reason · new rule to reference_dls_controls.md (circular checkboxes)
+- 2026-05-28 · bottom_bar_elevation_style · A + reason · promoted to reference_dls_elevation.md (shadow, not hairline)
+- 2026-05-28 · nav_active_indicator_style · A · promoted to reference_dls_bottom_nav.md (filled icon)
+- 2026-05-28 · tag_placement_on_card · A · promoted to reference_dls_tags.md (inside card, not floating)
+
+**Reconfirmed existing AP**
+- 2026-05-28 · card_chrome_on_grey_bg · neither · "we never use grey BG" — already in reference_anti_patterns.md L305
+
+**Both fine / no rule**
+- 2026-05-28 · card_chrome_on_white_bg · both_fine (reinforces no-grey-bg AP)
+- 2026-05-28 · badge_type_on_nav · both_fine (dot or count both valid; nav mockup wrong)
+- 2026-05-28 · radio_button_style · both_fine (context-dependent)
+
+**Dropped (mockup quality)**
+- 2026-05-28 · nav_label_always_visible · neither · "our tabs are very different, both wrong" — bottom nav mockup needs rework
+
+**Calibrated this round**
+- 1700–1714 all marked calibrated:true

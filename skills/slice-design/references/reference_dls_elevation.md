@@ -21,3 +21,9 @@ Shadow color: `rgba(0,0,0,0.05)`
 - `0px 6px 8px 0px rgba(0,0,0,0.05)`
 - Shadow cast downward
 - Use for: fixed top elements (app bar on scroll, top navigation)
+
+## Calibrated rules
+
+### Fixed bottom CTA bar: shadow (elevation.above), not hairline
+Bottom CTA bars use shadow separation, not a 1px hairline border. But only when there's scrollable content beneath — if the CTA is at the natural end of the page, no separation needed. Note: the default elevation.above shadow may feel "too loud" — use as-is from DLS but be aware.
+Source: cal:2026-05-28 — `bottom_bar_elevation_style` A pick + reason "only where scroll, shadow too loud" ✅

@@ -40,3 +40,13 @@ Sits above button group. Trust indicators or T&C.
 
 ### Placeholder
 - 312×48px dashed box, bg #f6f9fc, "Replace with local component"
+
+## Calibrated rules
+
+### Trust logos: horizontal row on white
+Trust/compliance logos (RBI, PCI DSS, etc.) display as a horizontal row. Background is white, never grey. No "Secured by" title above — the logos speak for themselves.
+Source: cal:2026-05-28 — `footer_trust_layout` A pick + reason "with logos, never grey, in white" ✅
+
+### T&C link: inline caption with underline
+Legal/T&C text below CTAs uses inline Caption text with an underlined brand-colour link ("By continuing, you agree to our T&C"). Not a standalone Text button.
+Source: cal:2026-05-28 — `footer_tc_link_style` A pick ✅

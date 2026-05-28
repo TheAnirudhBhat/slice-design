@@ -27,3 +27,13 @@ Pods: Banking, Explore, Payments, Credit, Activity
 
 ## Payments Inactive Icons
 - Background: rgba(255,255,255,0.3) | Icon: 20px | Gap: 20px
+
+## Calibrated rules
+
+### Active tab indicator: filled icon
+Active tab uses a filled (solid) icon variant. No underline bar, no outline+indicator combo.
+Source: cal:2026-05-28 — `nav_active_indicator_style` A pick + reason "pattern is more slice" ✅
+
+### Bottom nav mockup note
+The calibration web app's bottom nav mockup is inaccurate (flat 5-tab bar with text labels). Real slice bottom nav uses circular icon containers (64px active, 40px inactive) with gradient bg — very different from standard Material/iOS tab bars. Pairs testing bottom nav patterns should reference the DLS spec above, not the mockup.
+Source: cal:2026-05-28 — `nav_label_always_visible` neither + `badge_type_on_nav` both_fine, both noting "nav bar is wrong"

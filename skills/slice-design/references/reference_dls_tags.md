@@ -31,3 +31,17 @@ Figma source: `HBoBlZN1CrmVwO3rXeZjY0`, nodes `416:1142`, `1910:22980`
 | Brand | #D30AD7 | white |
 | Info | #2B6ACF | white |
 | Neutral | #252A31 | white |
+
+## Calibrated rules
+
+### Default emphasis: Subtle
+Tags in list rows use **Subtle** emphasis (light bg + coloured text) by default. Bold is reserved for promotional surfaces and marketing cards.
+Source: cal:2026-05-28 — `tag_emphasis_in_list` A pick ✅
+
+### Tag placement on cards: inside, not floating
+Tags sit inside the card content area (first element, above title). Never float above the card's top edge.
+Source: cal:2026-05-28 — `tag_placement_on_card` A pick ✅
+
+### Tag text: Caption size (12px) preferred, colour secondary/tertiary
+When tags feel too small at Metadata 10px, use 12px Caption size. Tag text colour should lean secondary/tertiary, not full-intensity primary colour.
+Source: cal:2026-05-28 — `tag_text_size` neither + reason "right is better but colour should be secondary/tertiary" ✅
