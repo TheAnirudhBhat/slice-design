@@ -451,3 +451,15 @@ Source: cal:2026-05-21 — r14-empty-1404 pick A + reference frame.
 4. On valid input or focus, the error caption disappears
 
 Source: cal:2026-05-21 — r14-empty-1405 pick A.
+
+### Onboarding / welcome screen
+Layout: **vertically centred** — illustration + title + body all centred in the screen, with a full-width Primary CTA bottom-anchored. Do NOT use a top-illustration layout with content below.
+Source: cal:2026-05-27 — pair 1611 B ✅
+
+### Sticky date group headers (Activity / transaction lists)
+Date group headers (TODAY, YESTERDAY, etc.) are **sticky** — they pin to the top of the scroll container as the list scrolls. This maintains temporal context while scrolling long lists.
+Source: cal:2026-05-27 — pair 1616 A ✅
+
+### Settings screen — flat list with section headers
+Settings screens use a **flat list with List section headers** (Metadata UPPERCASE on Slate-10 bg) on white background. Do NOT group into iOS-style rounded cards on grey bg — slice keeps settings flat.
+Source: cal:2026-05-27 — pair 1619 B ✅

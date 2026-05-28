@@ -88,3 +88,7 @@ Source: cal:2026-05-17 — review-1112 reference (Pay ₹2,000 in title)
 On Rewards / Fires surfaces, the L0 App bar trailing slot can be a **slice-currency pill** (white bg + outline-subtle border + valentino ₹-glyph avatar leading + amount value) — e.g. `₹43,230` with the slice ₹ icon. This replaces the photo Avatar in this specific pod.
 
 Source: cal:2026-05-17 — review-1103 reference (Rewards L0)
+
+## Scroll behavior
+App bar **stays pinned** (always visible) — does NOT auto-hide on scroll down. The bar is an anchor; hiding it on scroll creates orientation loss.
+Source: cal:2026-05-27 — pair 1609 A ✅

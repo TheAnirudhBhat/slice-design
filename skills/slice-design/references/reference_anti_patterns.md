@@ -301,3 +301,9 @@ Exceptions:
 - Tertiary "Share receipt" / "Download" etc. where a leading icon supports a secondary action
 Primary fill = label only.
 Source: cal:2026-05-21 — r15-icon-1502 pick neither (both white and V-500 leading-icon styles rejected → the leading icon itself is the issue).
+
+### ❌ Grey/secondary background on page-level surfaces
+Looks like: `#F6F9FC` / Slate-10 as the main page background behind white cards
+Why slice doesn't: "white on white" — slice uses white backgrounds with shadow-elevated cards. Grey backgrounds feel like a system settings page, not a fintech product. User: "slice doesn't do grey backgrounds".
+Do instead: white `#FFFFFF` page background + Card elevation shadow for separation.
+Source: cal:2026-05-27 — pair 1607 A + reason "white on white, slice doesn't do grey backgrounds" ✅

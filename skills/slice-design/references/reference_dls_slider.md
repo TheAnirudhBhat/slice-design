@@ -17,3 +17,9 @@ Figma source: `HBoBlZN1CrmVwO3rXeZjY0`, nodes `1955:16555`, `1956:23186`
 - **Max**: thumb at right, filled ~95%
 
 Drag thumb to change value. Filled track follows thumb position.
+
+## Calibrated rules
+
+### Value display
+Do NOT add a tooltip bubble above the thumb or a highlighted value in the range labels row. The selected value is already displayed in the screen content above the slider (e.g. as the page heading or in a dedicated value label). The slider's own display is just the track + thumb.
+Source: cal:2026-05-27 — pair 1602 neither + reason "value already under label up top" ✅

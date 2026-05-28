@@ -368,3 +368,34 @@ Source: session batch-493 (compare + tune mixed). 5 promotions, 2 flips, 8 new a
 - 2026-05-21 · icon_color_on_brand_gradient · B · promoted to reference_dls_iconography.md (icons on gradient = V-50 subtle white, not pure #fff)
 - 2026-05-21 · icon_state_specific_variant · A · promoted to reference_dls_iconography.md (use state-specific variants when DLS provides them)
 - 2026-05-21 · icon_outline_vs_solid_default · both_fine · promoted to reference_dls_iconography.md (context-dependent: Outline for utility, Solid for active/primary)
+
+## 2026-05-27 · R16 batch-108 (21 picks · auto-triage)
+
+**Promoted (14 rules)**
+- 2026-05-27 · accordion_chevron_animation · A · promoted to reference_dls_accordion.md (rotate 180°, animated)
+- 2026-05-27 · accordion_border_between · A · promoted to reference_dls_accordion.md (inset divider between items)
+- 2026-05-27 · slider_value_display · neither · new rule from reason → reference_dls_slider.md (no tooltip/inline highlight — value shown in page content above)
+- 2026-05-27 · file_upload_multi_layout · B · promoted to reference_dls_file_upload.md (2×2 grid)
+- 2026-05-27 · dot_indicator_default_type · A · promoted to reference_dls_dot_indicator.md (Pill type default)
+- 2026-05-27 · card_outline_vs_shadow_on_grey · A · promoted to reference_dls_cards.md + reference_anti_patterns.md (shadow cards, no grey bg)
+- 2026-05-27 · appbar_scroll_behavior · A · promoted to reference_dls_appbar.md (stays pinned)
+- 2026-05-27 · tooltip_bg_color · A · promoted to reference_dls_tooltip.md (dark bg Slate-900)
+- 2026-05-27 · onboarding_illustration_position · B · promoted to reference_dls_screen_layouts.md (centred layout)
+- 2026-05-27 · info_banner_bg_color · B · promoted to reference_dls_misc_patterns.md (Slate-10 neutral)
+- 2026-05-27 · destructive_secondary_copy · A · promoted to reference_dls_misc_patterns.md ("Cancel" not "Not now")
+- 2026-05-27 · search_bar_anatomy · A · promoted to reference_dls_search.md (icon left + left placeholder)
+- 2026-05-27 · list_date_header_sticky · A · promoted to reference_dls_screen_layouts.md (sticky headers)
+- 2026-05-27 · amount_decimal_on_detail · B · promoted to reference_dls_misc_patterns.md (hide .00 on detail)
+- 2026-05-27 · countdown_timer_style · A · promoted to reference_dls_misc_patterns.md (digital countdown)
+- 2026-05-27 · settings_group_container_style · B · promoted to reference_dls_screen_layouts.md (flat list + section headers)
+
+**Reconfirmed**
+- 2026-05-27 · l0_card_gap_16_vs_24 · A · reconfirm 16px gap (slice-dls L306)
+
+**Dropped (no rule)**
+- 2026-05-27 · slider_track_thickness · both_fine (revised) · no rule
+- 2026-05-27 · file_upload_trigger_style · both_fine · no rule
+- 2026-05-27 · bottom_nav_elevation_style · neither (silent) · no rule
+
+**Calibrated this round**
+- 1600–1619 all marked calibrated:true

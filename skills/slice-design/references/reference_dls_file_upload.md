@@ -32,3 +32,7 @@ Figma source: `HBoBlZN1CrmVwO3rXeZjY0`, nodes `727:1496`, `1910:20442`
 
 ## Multi-Upload
 Multiple containers side by side, each independent state.
+
+### Multi-upload layout
+Use a **2×2 grid** for 4 upload slots (not a horizontal scroll row). Grid keeps all slots visible at once without scroll interaction.
+Source: cal:2026-05-27 — pair 1606 B ✅

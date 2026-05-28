@@ -16,3 +16,7 @@ Types: **Pill**, **Circle**
 
 ## Inactive Dot (both types)
 - Size: 6x6px | Color: rgba(0,0,0,0.05) | Radius: 45px
+
+## Calibrated default
+**Pill type** is the default for carousel pagination. The elongated active dot (12×6) provides a clearer positional signal than same-size circles.
+Source: cal:2026-05-27 — pair 1605 A ✅

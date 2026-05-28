@@ -36,3 +36,9 @@ Figma source: `HBoBlZN1CrmVwO3rXeZjY0`, nodes `678:611`, `1956:21399`
 ## Dark Mode
 - bg: #090b0c | border subtle: rgba(255,255,255,0.05) | border bold: rgba(255,255,255,0.1)
 - Focused: #d30ad7 (same) | text primary: white | text tertiary: rgba(255,255,255,0.5)
+
+## Calibrated rules
+
+### Search bar resting state
+Default (unfocused) search bar: **search icon left + left-aligned placeholder text**. Do NOT centre the placeholder or omit the search icon — the icon provides tap-target clarity and the left-alignment matches reading direction.
+Source: cal:2026-05-27 — pair 1614 A ✅

@@ -180,3 +180,19 @@ Anatomy: a single radius-100 pill that holds an Avatar leading + amount text in 
 **Not** a separate floating badge sitting next to a value pill — the avatar is structurally inside the pill.
 
 Source: cal:2026-05-18 — review-1202 reason "the circle should be inside the pill".
+
+## Info banner — neutral background
+Inline info banners use **Slate-10 (`#F6F9FC`) neutral background**, not Blue-50 semantic blue. The neutral bg keeps the banner calm; semantic blue reads as a system alert, which is too heavy for informational messages.
+Source: cal:2026-05-27 — pair 1612 B ✅
+
+## Destructive sheet secondary CTA — "Cancel"
+On destructive confirmation sheets, the secondary action label is **"Cancel"**, not "Not now". "Cancel" is direct and unambiguous; "Not now" implies deferral.
+Source: cal:2026-05-27 — pair 1613 A ✅
+
+## Amount decimals — hide .00 everywhere
+Hide `.00` decimals on **detail screens** too (not just surfaces). Show `₹2,450` not `₹2,450.00`. Only show decimals when the fractional part is non-zero.
+Source: cal:2026-05-27 — pair 1617 B (extends surface rule `currency_no_decimals_on_surface` from R10) ✅
+
+## Countdown timer — digital
+Payment countdown timers use **large digital text** (`04:32`), not circular progress rings. The digital readout is precise and scannable; a ring adds visual weight for no information gain.
+Source: cal:2026-05-27 — pair 1618 A ✅
