@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: #000;
+    font-family: 'Rubik', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+  }
+  body {
+    overflow: hidden;
+  }
+  /* R23 fix-it-2-cont-9: ensure the proto stage truly fills the viewport. */
+  #root { display: flex; align-items: stretch; justify-content: stretch; }
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .touch-pan-y {
+    touch-action: pan-y;
+  }
+}
+
+/* Hide scrollbars EVERYWHERE — slice native app never shows a scrollbar */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Prevent native image drag on desktop — without this, clicking an <img>
+ * and dragging triggers browser drag-to-save behavior instead of dragging
+ * the page/nav. Apply globally; we never want this for slice UI elements. */
+img,
+svg {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  user-drag: none;
+}
+img {
+  pointer-events: none; /* clicks/drags pass through to parent buttons/divs */
+}
+
+/* Keypad keys — no hover/focus state (mobile-first design). */
+.slice-keypad-key:hover,
+.slice-keypad-key:focus,
+.slice-keypad-key:focus-visible {
+  background-color: transparent !important;
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.slice-keypad-key:active {
+  /* Brief press-state feedback only */
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  transition: background-color 80ms ease-out;
+}

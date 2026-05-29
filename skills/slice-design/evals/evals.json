@@ -1,0 +1,108 @@
+{
+  "skill_name": "slice-design",
+  "version": "R22-baseline",
+  "created": "2026-05-29",
+  "purpose": "Quality baseline + regression detection. Each eval exercises a different layer of the skill (product model / pod recipe / flow / cross-cutting hard rules / exploration). After every major sweep (R20+), rerun these.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "pod-specific-build_atom-l1",
+      "layer": "Pod recipe",
+      "prompt": "Design the slice atom L1 returning-user home screen. Walk me through the recipe: layout, components, tokens, motion. Then sanity-check it against slice's anti-patterns.",
+      "expected_output": "Should cite the R19 Atom returning-user L1 recipe: App bar Standard chevron back + 'atom' lowercase title, centred caption + Display amount (current total) + green positive delta, mid-screen full-width Primary 'Create atom' (NOT bottom-anchored — third valid CTA pattern), active atoms list with outline-border cards + progress bars + recurring sync-icon, SUGGESTED FOR YOU UPPERCASE List section header, suggested-atom cards with inline pink/blue Metadata UPPERCASE tag pills (RECOMMENDED/POPULAR). Sanity check should hit: lowercase 'atom' title (not pod-title-capitalised — L1 surface descriptor rule), mid-screen Primary is exception not default, no section header directly under App bar.",
+      "assertions": [
+        {"text": "References the R19 Atom returning-user L1 recipe", "type": "content"},
+        {"text": "Specifies mid-screen full-width Primary 'Create atom'", "type": "content"},
+        {"text": "Notes 'atom' lowercase title is a valid L1 surface descriptor (not pod title)", "type": "content"},
+        {"text": "Includes anti-pattern check (slice-slop test or specific bans)", "type": "content"},
+        {"text": "Cites source node ID (8534:23336) or calibration round (R19)", "type": "content"}
+      ],
+      "files_expected_loaded": [
+        "reference_pod_banking.md",
+        "OR reference_dls_screen_layouts.md (Atom suite section)",
+        "OR reference_flows.md (Atom flow)",
+        "OR reference_dls_top_header.md (Display amount hero)"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "anti-pattern-enforcement_orange-fire",
+      "layer": "Cross-cutting hard rules",
+      "prompt": "A teammate suggests using orange (#FF9A17) for a 'winning streak' indicator on the Spark fires count tile. Is that slice? Walk me through your reasoning.",
+      "expected_output": "Should refuse decisively. WHY: slice fire is Valentino purple (V-500 #D30AD7), NEVER orange/yellow. Orange/yellow is generic conventional UI; slice owns Valentino as the brand-hot signal. The rule cites user direction 'orange/yellow horrible' + calibrated source. Suggest the V-500 fill OR V-50 subtle-bg + V-500 text OR Valentino-pink → coral 2-stop gradient (sanctioned Rewards leaderboard gradient) instead. Should also surface the related ban on >2-stop rainbow gradients.",
+      "assertions": [
+        {"text": "Refuses orange decisively", "type": "content"},
+        {"text": "Names Valentino-500 as the slice brand-hot color", "type": "content"},
+        {"text": "Cites WHY (brand identity / orange is AI-slop signal)", "type": "content"},
+        {"text": "Offers sanctioned alternatives (V-500 / V-50 subtle / pink-coral Rewards gradient)", "type": "content"},
+        {"text": "Mentions related ban (no >2-stop gradients)", "type": "content"}
+      ],
+      "files_expected_loaded": [
+        "reference_pod_cross_cutting.md",
+        "OR reference_anti_patterns.md",
+        "OR reference_dls_colors.md"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "cross-pod-flow_pay-someone-via-upi",
+      "layer": "Flow understanding",
+      "prompt": "Walk me through the complete 'Pay someone via UPI' flow from Payments L0 to confirmation. List every surface, the page transitions between them, and what happens for rewarded vs un-rewarded transactions.",
+      "expected_output": "Should narrate the canonical flow: Payments L0 dialer (V-500 brand-immersive, Action Pills row, custom keypad) → enter amount → 3 branches (QR scan / Transfer pill / Paste UPI ID) → converge at Pay person (V-500 full-fill, X close, payee + amount + Add a note) → PIN entry (App bar Standard, dynamic title 'Pay ₹X to [payee]', SYSTEM keyboard not custom) → loading → confirmation. Rewarded txns (FIRE/MONIES/SPARK+FIRE+MONIES) go through 3-stage envelope: brand-immersion pink → reveal reward art → resolve white grainy gradient tick. Un-rewarded goes straight white tick. Page transitions: push nav 320ms ease-out for forward (right slide-in), pink-immersion 520ms linger for rewarded intermediate, sheet present 280ms for any bottom sheets. Failed → red Avatar Bold X (money-failure = red, distinct from system errors). Pending → blue indicator (initiated).",
+      "assertions": [
+        {"text": "Lists the 3 entry branches (QR / Transfer / Paste UPI ID) converging to Pay person", "type": "content"},
+        {"text": "Distinguishes Payments L0 dialer (custom keypad) from PIN entry (system keyboard)", "type": "content"},
+        {"text": "Documents 3-stage transition envelope for rewarded txns (pink immersion → reveal → tick)", "type": "content"},
+        {"text": "Specifies page transitions with durations (push 320ms, sheet 280ms, etc.)", "type": "content"},
+        {"text": "Differentiates Success / Failed / Pending / Initiated states with correct status colors", "type": "content"},
+        {"text": "Notes money-failure = red, system-error = mascot (cross-frame error rule)", "type": "content"}
+      ],
+      "files_expected_loaded": [
+        "reference_flows.md",
+        "reference_pod_payments.md",
+        "reference_interaction_layer.md",
+        "OR reference_dls_error_states.md"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "judge-mode_compliance-review",
+      "layer": "Judge / audit",
+      "prompt": "Here's a hypothetical slice screen: 'Banking home with a centred photo Avatar (120px) of the user at the top, name 'Aman Singh' in H2 below, phone +91 9876543210 in caption, and a full-width Primary CTA Pay Bills mid-screen above the Savings card. The bottom nav is hidden. Capital S Slice appears in the App bar.' Judge this in Before/After/Why table format.",
+      "expected_output": "Should produce a Before/After/Why table with rows for: (hard) Capital S 'Slice' → lowercase 'slice' (brand voice rule); (hard) Bottom nav hidden on L0 → Bottom nav always present on L0 pods (only Profile is overlay-style without dock); (soft) Centred photo Avatar 120px + name + phone at top of Banking L0 → that's the Profile recipe, not Banking L0. Banking L0 leads with the Savings hero L0 Large card; (soft) Mid-screen full-width Primary 'Pay Bills' → mid-screen Primary is reserved for hero-with-actionable-data surfaces (Atom L1 returning-user). On Banking L0 the Add money Primary lives INSIDE the Savings card (in-card CTA pattern). Also: 'Pay Bills' should route to Bills sub-pod, not be a direct CTA. Should also flag the screen is confused — it mixes Profile V3 anatomy (Avatar + name + phone) with Banking L0 chrome.",
+      "assertions": [
+        {"text": "Uses Before/After/Why markdown table format", "type": "content"},
+        {"text": "Tags severity (hard / soft / minor)", "type": "content"},
+        {"text": "Flags Capital S Slice as hard rule violation", "type": "content"},
+        {"text": "Flags bottom nav hidden as hard rule violation (only Profile is overlay)", "type": "content"},
+        {"text": "Identifies that the Avatar+name+phone is Profile V3 anatomy, not Banking L0", "type": "content"},
+        {"text": "Notes mid-screen Primary is reserved for hero-with-actionable-data surfaces", "type": "content"}
+      ],
+      "files_expected_loaded": [
+        "reference_pod_cross_cutting.md (hard rules)",
+        "reference_pod_banking.md (Banking L0 recipe)",
+        "OR reference_dls_screen_layouts.md (Profile V3 + Banking L0)"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "exploration-mode_novel-pattern",
+      "layer": "Exploration",
+      "prompt": "I want to try something new for the Spark Fires count on Explore L0. Currently it's a tile with a number — I want to make it feel more alive without breaking the slice way. Propose 2-3 alternatives.",
+      "expected_output": "Should treat this as explore mode: hard rules locked (V-500 only for hot/winning, no orange/yellow, slice fire glyph not emoji, Rubik only, Indian numerals on count), soft rules remixable. Propose 2-3 alternatives like: (1) Spark hero reveal motion adapted to the tile — anchor → bling twitch (640ms spring-soft) every time a new fire is added, ONE-SHOT not infinite; (2) Sequential ticker for the count animation — value-change motion (translateY 100%→0 + opacity 0→1, 240ms out) every increment, never simultaneous if monies also tick; (3) Brand-tinted callout strip below the tile showing 'X fires this week' with subtle V-50 → deep V-700/950 in dark mode. Should explicitly call out: NO scale-on-press (anti-pattern), NO infinite ambient motion, NO color shift away from V-500. Lead with recommendation + reasoning, present 2-3 alternatives, not 1 prescription.",
+      "assertions": [
+        {"text": "Recognizes this as explore mode (hard vs soft distinction)", "type": "content"},
+        {"text": "Lists locked hard rules (V-500, no orange, Rubik, etc.)", "type": "content"},
+        {"text": "Proposes 2-3 alternatives, not 1", "type": "content"},
+        {"text": "Leads with a recommendation + reasoning", "type": "content"},
+        {"text": "Explicitly avoids anti-patterns (no scale-on-press, no infinite motion)", "type": "content"},
+        {"text": "Cites motion vocabulary (bling 640ms spring-soft, value-change 240ms out, etc.)", "type": "content"}
+      ],
+      "files_expected_loaded": [
+        "reference_exploration_patterns.md",
+        "reference_motion.md",
+        "reference_pod_cross_cutting.md (hard rules)"
+      ]
+    }
+  ]
+}

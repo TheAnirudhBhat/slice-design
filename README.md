@@ -1,19 +1,21 @@
 # slice design
 
-A suite of Claude Code skills that encode slice's DLS 2.0 design system — and the calibration loop that keeps the rules honest.
+A suite of Claude Code skills that encode slice's DLS 2.0 design system — plus a working iPhone-16-Pro proto and the calibration loop that keeps the rules honest.
 
-## Suite
+## What ships
 
-| Skill | Role |
+| Piece | Role |
 |---|---|
-| **slice-design** | Build, judge, and apply DLS 2.0 to slice screens (Figma execution, web protos, motion, anti-patterns, calibrated judgments) |
-| **slice-design-calibrate** | Companion. Walks the senior designer through A/B pairs + "is this slice?" review screens, triages picks + reference frames, promotes the resulting rules into `slice-design/references/` |
+| **`slice-design` skill** | Build, judge, and apply DLS 2.0 to slice screens (Figma execution, web protos, motion, anti-patterns, calibrated judgments). Includes the canonical iPhone 16 Pro proto. |
+| **`slice-design-calibrate` skill** | Companion. Walks the senior designer through A/B pairs + "is this slice?" review screens, triages picks + reference frames, promotes the resulting rules into `slice-design/references/`. |
+| **`skills/slice-design/proto/`** | Live Vite + React proto — 5 L0 pods (Banking, Explore, Pay/Valentino, Credit, Activity) + L1 routing (Profile, Transaction Detail). The skill's primary reference artifact. |
+| **`skills/slice-design/references/proto-snapshot/`** | Frozen point-in-time copy of the proto at the last milestone (currently R24 cont-23) — used as a recipe source when scaffolding a new proto elsewhere. |
 
-The two ship together. The calibrate skill is the maintenance loop. It pairs with a local web proto (described below) — the user owns the proto, the skill owns the loop.
+The three pieces ship together. Use the proto as the source of truth for any "what does a slice screen look like in code?" question.
 
 ## Precedence (non-negotiable)
 
-When working on slice, **slice-design wins** on any contradiction with `impeccable`, `design-motion-principles`, `frontend-design`, `taste-skill`, `brand-guidelines`, or any other design skill. Calibrated overrides inside `references/` win over baseline rules in the SKILL.md.
+When working on slice, **slice-design wins** on any contradiction with `impeccable`, `design-motion-principles`, `frontend-design`, `taste-skill`, `brand-guidelines`, or any other design skill. Calibrated overrides inside `references/` win over baseline rules in `SKILL.md`.
 
 Full priority order lives at the top of `skills/slice-design/SKILL.md`.
 
@@ -23,17 +25,27 @@ Symlink or copy into your Claude Code skills directory:
 
 ```bash
 # Symlink (recommended — edits flow in both directions)
-ln -s "$(pwd)/skills/slice-design"           ~/.claude/skills/slice-design
-ln -s "$(pwd)/skills/slice-design-calibrate" ~/.claude/skills/slice-design-calibrate
+ln -s "$(pwd)/skills/slice-design"             ~/.claude/skills/slice-design
+ln -s "$(pwd)/skills/slice-design-calibrate"   ~/.claude/skills/slice-design-calibrate
 ln -s "$(pwd)/commands/update-slice-design.md" ~/.claude/commands/update-slice-design.md
 
 # Or copy
-cp -R skills/slice-design           ~/.claude/skills/slice-design
-cp -R skills/slice-design-calibrate ~/.claude/skills/slice-design-calibrate
+cp -R skills/slice-design             ~/.claude/skills/slice-design
+cp -R skills/slice-design-calibrate   ~/.claude/skills/slice-design-calibrate
 cp     commands/update-slice-design.md ~/.claude/commands/update-slice-design.md
 ```
 
 Restart Claude Code or open a new session for the skills to be picked up.
+
+## Running the proto
+
+```bash
+cd skills/slice-design/proto
+npm install
+npm run dev          # serves on http://localhost:8766
+```
+
+The proto renders inside a real iPhone 16 Pro chassis (393×852 logical screen). Hot reloading on save. Drags between pods swipe horizontally; tap the avatar in any L0's AppBar to open Profile L1; tap a transaction row in Activity to open Transaction Detail L1.
 
 ## Using the build / judge side (`slice-design`)
 
@@ -42,21 +54,28 @@ Triggers:
 - "build the Spark FD details screen in Figma"
 - "is this slice?" + a screenshot
 - Pasting a Figma URL and asking for a build / variant / audit
+- Anything about Atom / Spark / Monies / UPI flows / Valentino purple / DLS 2.0
 
 The skill self-describes the sub-commands (`build` / `iterate` / `judge` / `audit` / `recipe` / `proto` / `motion` / `calibrate`). It plans internally, executes in one `use_figma` call, then verifies with a screenshot.
 
-`references/` contains:
-- `reference_calibrated_digest.md` — single-page index of every calibrated rule (read this first when judging)
-- `reference_dls_screen_layouts.md` — full screen recipes (Activity L0, Balance L1, Confirm success, Empty Rewards, Recharge & bills, PIN entry, Bottom sheet confirm, Spark FD details, Add money, Pay person brand-immersive, Credit bill summary, Pay screen, Action centre)
-- `reference_dls_<component>.md` — 28 per-component spec files
-- `reference_anti_patterns.md` — hard "don't do" list + cross-skill conflict table
-- `reference_motion.md` — named durations, easings, choreographies
-- `reference_web_proto.md` — how to start a new slice web proto
-- `reference_calibration_log.md` — append-only audit of every promoted rule (since 2026-05-13)
+### Canonical-fetch-first (R24 meta-rule)
+
+Before claiming any spec value matches DLS, the skill MUST fetch the published variant via `search_design_system` + `figma_get_library_component_by_key`. See `references/reference_canonical_fetch.md` for the full protocol. Eyeballing from screenshots is the single most common source of wrong specs — the rule replaces it with a one-fetch loop that returns exact `paddingTop/Right/Bottom/Left`, `itemSpacing`, `counterAxisAlign`, and per-variant visualSpec.
+
+### Key references
+
+- `reference_canonical_fetch.md` — **R24 meta-rule.** Always fetch the canonical before claiming a spec matches DLS.
+- `reference_calibration_log.md` — append-only audit of every promoted rule (since 2026-05-13).
+- `reference_calibrated_digest.md` — single-page index of every calibrated rule (read this first when judging).
+- `reference_dls_screen_layouts.md` — full screen recipes (Activity L0, Balance L1, PIN entry, Bottom sheet confirm, Spark FD details, Add money, Pay person brand-immersive, Credit bill summary, Action centre, plus L1 overlays).
+- `reference_dls_<component>.md` — 30+ per-component spec files including `reference_dls_appbar.md`, `reference_dls_list_items.md`, `reference_dls_avatar.md`, `reference_dls_phone_shell.md` (all updated through R24).
+- `reference_anti_patterns.md` — hard "don't do" list + cross-skill conflict table.
+- `reference_motion.md` — named durations, easings, choreographies.
+- `reference_web_proto.md` — how to start a new slice web proto.
 
 ## Using the calibration loop (`slice-design-calibrate`)
 
-The calibrate skill expects a local web proto at `~/claude/slice/projects/dls-calibration/` to exist. **This repo does not ship the proto** — it's user-specific and contains your own calibration history. Set one up only if you want to run the loop.
+The calibrate skill expects a local web proto at `~/claude/slice/projects/dls-calibration/` to exist. **This repo does not ship that proto** — it's user-specific and contains your own calibration history. Set one up only if you want to run the loop.
 
 ### Setting up the calibration proto (one-time)
 
@@ -86,25 +105,40 @@ Or in plain text: "calibrate slice", "run the calibration", "triage the calibrat
 ## Directory layout
 
 ```
-slice-design/
+slice-design-suite/
 ├── README.md                                    ← you are here
 ├── LICENSE
 ├── .gitignore
 ├── skills/
 │   ├── slice-design/
 │   │   ├── SKILL.md                             ← the main skill
+│   │   ├── ROADMAP.md / OPEN_ITEMS.md / INTEGRATION_PLAN.md / AUDIT_COMPRESSION.md
+│   │   ├── proto/                               ← live Vite + React proto (npm run dev → localhost:8766)
+│   │   │   ├── ARCHITECTURE.md / L1_PLAN.md
+│   │   │   ├── src/  (App.jsx, components/, pods/, icons/)
+│   │   │   ├── public/assets/  (canonical Figma exports)
+│   │   │   └── package.json + vite config
+│   │   ├── docs/                                ← design audit + quality baseline + proto snapshots
+│   │   ├── evals/                               ← skill quality eval cases
 │   │   └── references/
 │   │       ├── INDEX.md
+│   │       ├── reference_canonical_fetch.md     ← R24 meta-rule
 │   │       ├── reference_calibrated_digest.md   ← read first when judging
-│   │       ├── reference_calibration_log.md     ← append-only audit
+│   │       ├── reference_calibration_log.md     ← append-only audit (R12 → R24)
 │   │       ├── reference_anti_patterns.md
 │   │       ├── reference_motion.md
 │   │       ├── reference_web_proto.md
 │   │       ├── reference_dls_screen_layouts.md
-│   │       ├── reference_dls_<component>.md     ← 28 component specs
-│   │       └── feedback_*.md                    ← workflow / process rules
+│   │       ├── reference_dls_<component>.md     ← 30+ component specs
+│   │       ├── feedback_*.md                    ← workflow / process rules
+│   │       └── proto-snapshot/                  ← frozen proto @ last milestone (R24 cont-23)
+│   │           ├── README.md / INDEX.md
+│   │           ├── code/  (frozen JSX + scaffold)
+│   │           ├── assets/  (frozen canonical PNGs + SVGs)
+│   │           └── manifests/  (components.json, assets.json)
 │   └── slice-design-calibrate/
 │       └── SKILL.md                             ← the calibration loop
+├── icons/                                       ← canonical DLS icons (top-level, also mirrored in proto/public)
 └── commands/
     └── update-slice-design.md                   ← slash-command pointer to slice-design-calibrate
 ```
@@ -114,10 +148,11 @@ slice-design/
 - New rule comes from a calibration session → `slice-design-calibrate` writes it into the right `reference_*.md` and appends a line to `reference_calibration_log.md`. Commit on the next push.
 - A rule turns out wrong → user picks against it again, the loop flips `expected_winner` and updates the rule. Old log entries are never deleted (append-only audit).
 - A skill from outside the suite (impeccable, motion, frontend-design) suggests something that contradicts slice → slice-design wins. If the contradiction is structural, append a row to `reference_anti_patterns.md`'s "Cross-skill conflicts" table.
+- New proto state landing → refresh `references/proto-snapshot/` (rsync `proto/src` → `code/`, `proto/public/assets` → `assets/`) and bump the snapshot's README banner. Commit the snapshot bump in the same PR as the proto changes.
 
 ## Status
 
-Calibrated through 2026-05-17 round 11 (review-with-reference mode). 80+ promoted rules. Active development.
+Calibrated through **2026-05-29 R24 cont-23** — full L1 routing scaffold (Profile, Transaction Detail), iPhone 16 Pro phone size (393×852), white-on-scroll AppBar+status reserve, drag-vs-click guard on swipeable list rows, canonical avatars (44×44 visual / 48×48 hit, no ring), canonical-fetch-first meta-rule. 100+ promoted rules. Active development.
 
 ## License
 

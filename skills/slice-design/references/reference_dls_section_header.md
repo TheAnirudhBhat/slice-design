@@ -38,3 +38,19 @@ Figma source: `HBoBlZN1CrmVwO3rXeZjY0`, nodes `686:5876`, `1978:21002`
 Settings screens group rows under **List section headers** (grey #F6F9FC bg, UPPERCASE Metadata), not Bold. The List header reads as a quiet group label; Bold would compete with the row content's hierarchy.
 
 Source: cal:2026-05-17 — pair 617 A ✅
+
+## R19 update (2026-05-28) — chevron valid on collapsible headers
+
+The original Bold variant in this file mentions "Optional trailing chevron (20px, rotatable for collapse)" — that pattern is **valid and confirmed by R19 sweep**. Adding scope clarification on the existing chevron-on-section-headers anti-pattern:
+
+**Scope**: chevron on a section header is **invalid** when used as a "tap here to see all" / go-to-detail navigation affordance (the trailing CTA in the Bold-with-CTA variant should be a text button, not a chevron). Chevron IS **valid** when used as a **collapse/expand toggle** — the chevron rotates 180° on expand.
+
+Recipe for collapsible section header:
+- Bold variant base (H4 left, transparent bg, sits on white page)
+- Trailing chevron (20px, rotates 0° collapsed / 180° expanded)
+- Tap the header → toggles collapse state for section below
+- Smooth rotation animation, ~200ms `out`
+
+Why: collapse/expand is a different affordance from navigation. Users expect the chevron to rotate (it's a state toggle, not a "go" arrow). Same chevron-rotation pattern as the Accordion molecule.
+
+Source: cal:2026-05-28 R19 — DLS molecules sweep, canonical Section header page `686:5876` shows Bold + chevron variant ✅

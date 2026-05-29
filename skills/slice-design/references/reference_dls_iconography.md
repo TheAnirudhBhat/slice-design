@@ -38,12 +38,22 @@ Figma source: `HBoBlZN1CrmVwO3rXeZjY0`, node `582:257`
 | Cards | 5 | Card, Card status, Card delivery |
 | Messaging | 4 | Message, Mail, WhatsApp |
 
-## Local icon files (ship with the slice-design suite)
+## Local icon files — ⚠️ CURRENTLY MISSING ON DISK
 
-All 277 DLS 2.0 icons are exported to `icons/` in the slice-design-suite repo, organized by category:
+**R19 finding (cal:2026-05-28)**: the `slice-design-suite/icons/` directory referenced below **does NOT exist on disk** in the current skill. The export was documented but never (or no longer) shipped with the skill. This is a real gap that needs action.
+
+The directory structure documented below describes the intended state when icons are re-exported. Until that re-export happens:
+
+- **For code / proto work**: pull the icon SVG directly from the DLS Figma file via the figma MCP tools (e.g. `figma_get_node` with the icon's node ID, then export it). Ask the user when in doubt.
+- **For any other use**: cite the icon by name + category from the taxonomy table above. Don't fabricate SVG.
+- **Never generate icon SVGs ad-hoc** — see the anti-pattern below. The ban stands even though the local files are missing.
+
+### Intended structure (post re-export)
+
+When icons are re-exported, the directory will look like:
 
 ```
-icons/
+slice-design-suite/icons/
 ├── buildings/     (7 icons)   house, bank, shop, office, bank-transfer ...
 ├── cards/         (5)         card, card-status, card-delivery ...
 ├── cashback/      (13)        cashback, invite-and-earn, scratch-card, shimmer ...
@@ -54,14 +64,38 @@ icons/
 ├── messaging/     (5)         message, mail, whatsapp ...
 ├── money/         (21)        transfer, autopay, deposit, rupees, pay_now, add-money ...
 ├── objects/       (34)        game, car, flight, electricity, medical, bell, moon ...
-├── products/      (10)        spark, monies, explore, borrow, upi, fire ...
+├── products/      (10)        spark, monies, explore, borrow, upi, fire, &, bonfire ...
 ├── profile/       (8)         profile, self-transfer, add-people, nominee ...
 ├── shopping/      (15)        coupon, shopping-bag, wallet, tag, filter, graph ...
 ├── status/        (15)        ban, tick-rounded, info, verified, error-outline ...
 └── time/          (23)        calendar, alarm, stopwatch, imps, rtgs, frequency ...
 ```
 
-Each file is named `<icon-slug>.svg` (no variants) or `<icon-slug>__<variant-slug>.svg` (for component-set variants like `general/qr__style-outline.svg`).
+Each file named `<icon-slug>.svg` (no variants) or `<icon-slug>__<variant-slug>.svg` (component-set variants like `general/qr__style-outline.svg`).
+
+### R19 taxonomy sync — new icons in DLS not in skill taxonomy
+
+The DLS sweep surfaced **30+ icons** in the canonical file that aren't in the taxonomy table above. New additions to consider:
+
+- **Products** — new entries: `&`, `Bonfire`
+- **General** — new entries: `Action_centre`, `Voice`, `placeholder`
+- **Interface** — new entries: `Side arrows`, `up-and-down arrow`, `Withdraw`, `Widgets library`, `Upgrade`, `Library`, `Language`, `Hashtag`, `Exclude`, `Double arrow`, `Circle share`, `Bullet point dot`, `Align`, `Applications`, `Analytics`
+- **Money** — new entries: `Advance money`, `Cashback history`, `Money_bag`, `Money canceled`, `Money cross`, `Money notification`, `Purchase power issue`, `Purchase power lock`, `Repayment failed`, `surplus transfer`
+- **Status** — new entries: `Add`, `Disclaimer`, `Primary`, `Remove`, `Source`, `Tick-pending`, `Upload circle`
+- **Documents** — new entries: `Application issue`, `Contacts`, `File closed/filled/signed/time`, `Grievience`
+- **Shopping** — new entries: `Calculate interest`, `Interest square`, `Logistic box`, `Miscellaneous`, `Suitcase`
+- **Objects** — new entries: `Crown`, `Investment`, `Fast tag`, `Headphone`, `Pet`, `Thumbs up/down`
+- **Cashback** — placement quirk: `monies` icon appears under Cashback in DLS but is a Product
+
+### Source file typos worth flagging next sync
+- `Documents/Cheque_status` (underscore in name)
+- `Documents/Edit ` (trailing space)
+- `Profile/Wrong aacount` (typo — should be `account`)
+- `Cashback/Card cashback ` (trailing space)
+- `Cashback/Cash ` (trailing space)
+- `Device` (singular) vs `Devices` (plural) — category typo
+
+When re-exporting, sanitize slugs (strip trailing spaces, fix `aacount` → `account`, decide single category name `devices`).
 
 ## Usage
 

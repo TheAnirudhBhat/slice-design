@@ -53,3 +53,27 @@ Source: cal:2026-05-17 — review-1104 reference ("₹0 FEE" blue solid pill on 
 ```
 
 Source: cal:2026-05-21 — tune-1302 lock. Reason (user): "look fine". Default chip = `info-subtle`; switch variant by intent (brand-subtle for slice fire / Spark, positive/negative for status, neutral for default tag).
+
+## R19 update (2026-05-28) — Chip anatomy corrections
+
+### Icon size: 20px (not 16px)
+**Earlier doc (Trailing variant)**: "Selected chip with 16px remove/cross icon."
+
+**Override (R19)**: the canonical DLS Chips page (`1861:38329`) anatomy panel explicitly states: **"20px icons are used inside the chips. They have 48px touch target."**
+
+Use **20px** icon glyphs inside chips (both leading and trailing). The 48px touch target rule still applies — pad the chip's tap area to 48px minimum.
+
+### Disabled state — add as emphasis axis
+Earlier doc treated chip states as Unselected / Selected / Trailing / Badge. The canonical DLS adds a **Disabled emphasis axis** (Active / Disabled) crossed with each state.
+
+Disabled chip:
+- Opacity reduced (~40-50% of normal)
+- No hover, no active, no pressed state
+- Same fill colour family as Active but greyed out
+- Tap is suppressed
+- Used for: filter chips that can't apply in current context, chip pickers where some options are conditionally locked
+
+### Badge with Trailing Icon — combo state
+Documented as a separate variant in the canonical file: chip with **both** leading badge AND trailing close icon (e.g. `₹50K [2] ×`). Use when a filter chip carries an item count AND is dismissible.
+
+Source: cal:2026-05-28 R19 — DLS molecules sweep, Chips page anatomy panel ✅

@@ -100,3 +100,67 @@ Reconfirmed via R15 iconography round: inner glyph scales as **size / 2** for ev
 - XXXL-128 → 64pt
 
 Source: cal:2026-05-21 — r15-icon-1503 pick A. Original spec from cal:2026-05-18 tune-1300.
+
+## Avatar background rules by row context (R19 — Payment OS 26)
+
+The canonical Payment OS file documents 6 rules for what Avatar background to use based on the row's role. These were observed in `1115:6700` (Payment OS 26 file) as a labeled rules sheet — undocumented in slice-design until now.
+
+### Rule 1: System-row / "no logo" merchant
+- **Avatar**: CardBG-colored fill + line icon in slate/V-500
+- **Used for**: rows where the entity has no specific logo (e.g. "Subscription" without merchant attribution, system-generated transactions)
+- **Example**: Activity row for "Dec savings interest" — green up-arrow Avatar with CardBG fill
+
+### Rule 2: Saved beneficiary / contact list
+- **Avatar**: Subtle-color avatar (V-50 / V-25) + line icon
+- **Used for**: contact / saved beneficiary list rows in Payments flows
+- **Example**: "Pay anyone" contact picker — first-letter Subtle V-50 Avatar
+
+### Rule 3: System list (notifications, action centre)
+- **Avatar**: CardBG-colored fill + line icon
+- **Used for**: notification / Action centre rows where the icon represents the notification type, not a sender
+
+### Rule 4: Banking row leading (bank logo present)
+- **Avatar**: Bank logo on **WHITE circle** (NOT subtle)
+- **Fallback**: Bank line icon on CardBG when no logo available
+- **Used for**: account selection rows, transfer destination rows ("From: HDFC Savings ····5732")
+- WHY white circle: banks are external entities with their own brand marks; slate-subtle Avatar dilutes the bank's brand identity. White circle lets the bank logo read clearly.
+
+### Rule 5: Merchant row leading (merchant logo present)
+- **Avatar**: Filled merchant logo (e.g. Blinkit, Indigo style — the merchant's actual brand colour)
+- **Fallback**: First-letter Avatar with CardBG fill
+- **Used for**: transaction rows in Activity feed, payee selection
+- **Example**: "Paid ₹370 to Uber" — black-fill Uber wordmark in white Avatar; "Sanjay S." photo Avatar
+
+### Rule 6: Transfer screen large-avatar exception
+- **Avatar**: Large avatars (S-72+) — subtle/CardBG fails in light mode here
+- **Used for**: dedicated Transfer / Send screens where the recipient Avatar is the hero (large size, prominent placement)
+- **Why exception**: at large sizes, subtle Avatar bg disappears against the white page surface. Use a stronger fill (V-500 Bold or merchant logo / photo).
+
+## Background colour summary
+
+| Row context | Default Avatar bg |
+|---|---|
+| Standard list row (icon-context) | Subtle V-50 + V-500 glyph (default) OR White + outline-subtle + V-500 glyph |
+| Standard list row (text initials, no specific identity) | CardBG fill + first-letter slate text |
+| System / notification row | CardBG fill + slate line icon |
+| Saved contact / beneficiary | Subtle V-50 / V-25 + V-500 glyph (or first-letter) |
+| Bank row | **White circle** + bank logo (NOT subtle) |
+| Merchant row | Filled merchant logo (uses merchant's brand colour) OR fallback to CardBG + first-letter |
+| Large transfer / recipient hero | V-500 Bold or photo/logo at full size |
+| Quick-action tile (Send, Bills, Mobile) | White + outline-subtle + V-500 glyph (NOT Avatar — see anti-pattern) |
+| Content-grid tile (PLAY & WIN, MAY SPENDS) | Slate glyph in white outline circle (NOT V-500 Bold) |
+
+Source: cal:2026-05-28 R19 — Payment OS 26 `xIc12scqCFBSJ5Kgyd6Krh` node `1115:6700` (Avatar usage rules sheet). 6 numbered rules + cross-referenced against AVC transaction-detail Avatars and Credit Card 2026 row Avatars ✅
+
+---
+
+## R24 cont-23: L0 AppBar avatar 44 × 44 (was 40)
+
+- **Visual size 44×44** (bumped from 40 per user direction "increase by 4px on all L0 pages").
+- **Hit area 48×48** when tappable (wrapped in `<button>`).
+- **No outline, no border, no ring** — applies on ALL L0 surfaces including immersive Valentino.
+- Tap opens Profile L1.
+
+Note: this is the **AppBar avatar**. The Avatar component's `M-40` size (40×40) still stands for in-content uses (e.g. transaction list rows). The 44×44 override is specific to the AppBar slot.
+
+Source: R24 cont-23, 2026-05-29.

@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>atom — L1 returning-user home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ---------- slice DLS 2.0 tokens ---------- */
+    :root {
+      --v-500: #D30AD7;            /* Valentino main */
+      --v-50:  #FAE2FA;            /* Valentino subtle */
+      --blue-50: #E6EDF9;          /* Blue subtle */
+      --green-50: #E0F4E8;         /* Positive subtle */
+      --positive-500: #00A63E;     /* Positive green */
+      --info-500: #2B6ACF;         /* Info blue */
+      --slate-10: #F6F9FC;         /* Background secondary */
+      --slate-30: #F0F4F7;
+      --slate-50: #EAEBED;         /* outline-subtle */
+      --slate-100: #CDD0D4;
+      --slate-400: #78808B;
+      --slate-500: #4E5866;
+      --slate-800: #252A31;
+      --slate-900: #171A1F;
+      --text-primary: rgba(0,0,0,0.9);
+      --text-secondary: rgba(0,0,0,0.5);
+      --text-tertiary: rgba(0,0,0,0.35);
+      --white: #FFFFFF;
+      --page-pad: 24px;
+    }
+
+    * { box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      font-family: "Rubik", system-ui, -apple-system, sans-serif;
+      font-weight: 400;
+      background: #C9CCD1;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 32px 0;
+      color: var(--text-primary);
+    }
+
+    /* ---------- phone-width viewport ---------- */
+    .phone {
+      width: 360px;
+      background: var(--white);
+      min-height: 780px;
+      overflow: hidden;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+      border-radius: 24px;
+      padding-bottom: 24px;
+    }
+
+    /* ---------- App bar Standard ---------- */
+    .appbar {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 4px;
+    }
+    .appbar-back {
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    .appbar-back svg { display: block; }
+    .appbar-title {
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: -0.1px;
+      color: var(--text-primary);
+      margin-left: 4px;
+    }
+
+    /* ---------- Hero block (Top header centred) ---------- */
+    .hero {
+      padding: 16px var(--page-pad) 28px;
+      text-align: center;
+    }
+    .hero-caption {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      letter-spacing: 0.1px;
+      margin-bottom: 6px;
+    }
+    .hero-amount {
+      font-size: 48px;
+      font-weight: 500;
+      letter-spacing: -1.2px;
+      line-height: 1.05;
+      color: var(--text-primary);
+    }
+    .hero-amount .rupee {
+      font-weight: 500;
+    }
+    .hero-delta {
+      margin-top: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--positive-500);
+    }
+    .hero-delta .arrow {
+      width: 14px; height: 14px;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+
+    /* ---------- Primary CTA (mid-screen) ---------- */
+    .cta-wrap {
+      padding: 4px var(--page-pad) 24px;
+    }
+    .cta-primary {
+      width: 100%;
+      background: var(--v-500);
+      color: var(--white);
+      border: 0;
+      border-radius: 100px;
+      padding: 14px 24px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: -0.1px;
+      cursor: pointer;
+      transition: background 120ms ease;
+    }
+    .cta-primary:active { background: #A008A3; }
+
+    /* ---------- Active atoms list ---------- */
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 0 var(--page-pad);
+    }
+
+    .atom-card {
+      background: var(--white);
+      border: 1px solid var(--slate-50);
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .atom-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .atom-thumb {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      flex: 0 0 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .thumb-v   { background: var(--v-50); }
+    .thumb-blue { background: var(--blue-50); }
+    .thumb-green { background: var(--green-50); }
+
+    .atom-thumb svg { display: block; }
+
+    .atom-body {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .atom-titlerow {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .atom-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.2;
+      letter-spacing: -0.1px;
+    }
+    .atom-amount {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+    .atom-caption {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      line-height: 1.35;
+    }
+    .atom-caption .sync-ico {
+      width: 12px; height: 12px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--slate-500);
+    }
+
+    /* ---------- pills (inline tags) ---------- */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .tag-recommended { background: var(--v-50); color: var(--v-500); }
+    .tag-popular { background: var(--blue-50); color: var(--info-500); }
+
+    /* ---------- progress ---------- */
+    .progress {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .progress-track {
+      flex: 1 1 auto;
+      height: 6px;
+      background: var(--slate-30);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--v-500);
+      border-radius: 999px;
+    }
+    .progress-value {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--v-500);
+      min-width: 36px;
+      text-align: right;
+      letter-spacing: -0.1px;
+    }
+
+    /* ---------- section header (slate-10 row) ---------- */
+    .section-header {
+      margin-top: 24px;
+      background: var(--slate-10);
+      padding: 10px var(--page-pad);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+    }
+
+    .section-spacer-top { padding-top: 16px; }
+
+    /* ---------- glyph base for thumbnails ---------- */
+    .glyph {
+      width: 28px; height: 28px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone" role="region" aria-label="atom L1 home">
+
+    <!-- App bar Standard: chevron back + 'atom' (lowercase) -->
+    <div class="appbar">
+      <div class="appbar-back" role="button" aria-label="Back">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 6L9 12L15 18" stroke="rgba(0,0,0,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="appbar-title">atom</div>
+    </div>
+
+    <!-- Hero: Total saved + Display amount + positive delta -->
+    <section class="hero">
+      <div class="hero-caption">Total saved</div>
+      <div class="hero-amount"><span class="rupee">&#8377;</span>1,24,500</div>
+      <div class="hero-delta" aria-label="Up 3,200 rupees this month">
+        <span class="arrow">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 11V3M7 3L3.5 6.5M7 3L10.5 6.5" stroke="#00A63E" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span>&#8377;3,200 this month</span>
+      </div>
+    </section>
+
+    <!-- Mid-screen Primary CTA -->
+    <div class="cta-wrap">
+      <button class="cta-primary" type="button">Create atom</button>
+    </div>
+
+    <!-- Active atoms list -->
+    <div class="stack">
+      <!-- Emergency fund — 50% -->
+      <article class="atom-card">
+        <div class="atom-row">
+          <div class="atom-thumb thumb-v" aria-hidden="true">
+            <svg class="glyph" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 3L4 6V11C4 15.5 7.5 19.5 12 21C16.5 19.5 20 15.5 20 11V6L12 3Z" stroke="#D30AD7" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M9 12L11 14L15 10" stroke="#D30AD7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="atom-body">
+            <div class="atom-titlerow">
+              <div class="atom-title">Emergency fund</div>
+              <div class="atom-amount">&#8377;50,000</div>
+            </div>
+            <div class="atom-caption">Target &middot; &#8377;1,00,000</div>
+          </div>
+        </div>
+        <div class="progress">
+          <div class="progress-track"><div class="progress-fill" style="width:50%"></div></div>
+          <div class="progress-value">50%</div>
+        </div>
+      </article>
+
+      <!-- Vacation — 75% + recurring -->
+      <article class="atom-card">
+        <div class="atom-row">
+          <div class="atom-thumb thumb-blue" aria-hidden="true">
+            <svg class="glyph" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 18L8 11L12 15L16 9L21 16" stroke="#2B6ACF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="17" cy="6" r="1.6" stroke="#2B6ACF" stroke-width="1.6"/>
+            </svg>
+          </div>
+          <div class="atom-body">
+            <div class="atom-titlerow">
+              <div class="atom-title">Vacation</div>
+              <div class="atom-amount">&#8377;37,500</div>
+            </div>
+            <div class="atom-caption">
+              <span class="sync-ico">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2.5 5.5C2.9 3.6 4.6 2.2 6.6 2.5C7.7 2.65 8.6 3.2 9.2 4M9.5 6.5C9.1 8.4 7.4 9.8 5.4 9.5C4.3 9.35 3.4 8.8 2.8 8" stroke="#4E5866" stroke-width="1.3" stroke-linecap="round"/>
+                  <path d="M8.4 2.2L9.2 4L7.5 4.4" stroke="#4E5866" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M3.6 9.8L2.8 8L4.5 7.6" stroke="#4E5866" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span>Set up recurring contribution</span>
+            </div>
+          </div>
+        </div>
+        <div class="progress">
+          <div class="progress-track"><div class="progress-fill" style="width:75%"></div></div>
+          <div class="progress-value">75%</div>
+        </div>
+      </article>
+
+      <!-- Daily saver — 30% -->
+      <article class="atom-card">
+        <div class="atom-row">
+          <div class="atom-thumb thumb-green" aria-hidden="true">
+            <svg class="glyph" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="8" stroke="#00A63E" stroke-width="1.8"/>
+              <path d="M12 7V12L15 14" stroke="#00A63E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="atom-body">
+            <div class="atom-titlerow">
+              <div class="atom-title">Daily saver</div>
+              <div class="atom-amount">&#8377;6,000</div>
+            </div>
+            <div class="atom-caption">Target &middot; &#8377;20,000</div>
+          </div>
+        </div>
+        <div class="progress">
+          <div class="progress-track"><div class="progress-fill" style="width:30%"></div></div>
+          <div class="progress-value">30%</div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Section header (slate-10 row, UPPERCASE Metadata) -->
+    <div class="section-header">SUGGESTED FOR YOU</div>
+
+    <!-- Suggested atoms -->
+    <div class="stack section-spacer-top">
+      <!-- Round ups — RECOMMENDED -->
+      <article class="atom-card">
+        <div class="atom-row">
+          <div class="atom-thumb thumb-v" aria-hidden="true">
+            <svg class="glyph" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 14C4 10.5 6.5 8 10 8H16" stroke="#D30AD7" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M13.5 5L16.5 8L13.5 11" stroke="#D30AD7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="8" cy="17" r="2" stroke="#D30AD7" stroke-width="1.8"/>
+              <circle cx="16" cy="17" r="2" stroke="#D30AD7" stroke-width="1.8"/>
+            </svg>
+          </div>
+          <div class="atom-body">
+            <span class="tag tag-recommended">Recommended</span>
+            <div class="atom-titlerow">
+              <div class="atom-title">Round ups</div>
+            </div>
+            <div class="atom-caption">Save the spare change from every UPI payment</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Travel fund — POPULAR -->
+      <article class="atom-card">
+        <div class="atom-row">
+          <div class="atom-thumb thumb-blue" aria-hidden="true">
+            <svg class="glyph" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 13L11 5L13 7L21 5L19 13L11 21L9 19L3 13Z" stroke="#2B6ACF" stroke-width="1.8" stroke-linejoin="round"/>
+              <circle cx="14" cy="10" r="1.2" fill="#2B6ACF"/>
+            </svg>
+          </div>
+          <div class="atom-body">
+            <span class="tag tag-popular">Popular</span>
+            <div class="atom-titlerow">
+              <div class="atom-title">Travel fund</div>
+            </div>
+            <div class="atom-caption">Stash for your next trip — top up any time</div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+  </div>
+</body>
+</html>
+
+<!--
+  proto-R22 / atom-l1.html — slice atom L1 returning-user home
+  =============================================================
+
+  Files loaded from the slice-design skill:
+  - SKILL.md (skill index, HARD rules, lowercase 'slice', no emoji, Rubik only)
+  - references/reference_pod_banking.md (Atom suite — Returning-user L1 recipe, frame 8534:23336)
+  - references/reference_dls_colors.md (V-500 #D30AD7, V-50 #FAE2FA, Positive #00A63E, slate-10 #F6F9FC, outline-subtle slate-50 #EAEBED)
+  - references/reference_dls_cards.md (outline-border card: 1px outline-subtle, 16px radius, no shadow, white bg) [via index]
+
+  Recipe applied (per R19 — cal:2026-05-28, frame 8534:23336):
+  1. App bar Standard — chevron back left + 'atom' lowercase H3 Medium + no trailing
+  2. Centred Top header — caption 'Total saved' + Display ₹1,24,500 + Positive green delta with up-arrow (no '+' prefix)
+  3. Full-width Primary 'Create atom' MID-SCREEN (third valid CTA anchor — not bottom-anchored)
+  4. Active atoms list — 3 outline-border cards, 12px gap, 24px page padding, 56px rounded-square thumbs in V-50/Blue-50/Green-50
+     - Emergency fund 50%, Vacation 75% (with sync-icon recurring caption), Daily saver 30%
+     - V-500 progress bar + V-500 % value right-aligned
+  5. 'SUGGESTED FOR YOU' UPPERCASE Metadata section header on slate-10 row (10/24 padding)
+  6. Suggested cards — same shell + inline coloured pill ABOVE title (V-50/V-500 RECOMMENDED, Blue-50/Info-500 POPULAR)
+
+  Anti-pattern checks applied:
+  - lowercase 'atom' in app bar title (HARD rule — sub-product L1 surface descriptor)
+  - lowercase 'slice' is not used in copy (not needed on this screen)
+  - No emoji anywhere — all glyphs are inline SVG line icons in DLS palette colours
+  - No '+' prefix on the positive delta — Positive Green colour alone signals credit/gain
+  - No arrow + sign combo — up-arrow alone, no '+'
+  - Primary CTA is mid-screen, NOT bottom-anchored (R19 exception, calibrated)
+  - No section header directly under App bar — Top header + Primary + active list sit between (anti-pattern guard cleared)
+  - Cards have outline-border (1px slate-50) — no shadow, no double chrome
+  - Card body content is left-aligned; only the hero block is centred
+  - 24px page padding, no full-bleed cards
+  - Thumbnails wrapped in coloured-subtle rounded square (acts as Avatar surrogate — no standalone illustration in list-leading slot)
+  - Pill tags are Metadata UPPERCASE (10px, letter-spacing) on coloured-subtle fills
+  - Indian number grouping used: ₹1,24,500 / ₹1,00,000 / ₹50,000 / ₹37,500 / ₹20,000 / ₹6,000 / ₹3,200
+  - Rubik loaded with Regular 400 + Medium 500 only (no Bold, no Light, no Inter/SF Pro)
+
+  What I'd flag for review:
+  - Thumbnail glyphs (shield / mountain-photo / clock / round-ups / compass) are placeholder line icons in DLS palette.
+    R19 canonical Atom suite ships real branded illustrations (atom_stash_thumbnails: corgi, mountains, cassette+coin, etc.).
+    Should be swapped for real branded thumbnails before any user-facing surface.
+  - The mid-screen Primary CTA pattern is sanctioned per R19 but has limited corpus (one calibrated frame).
+    Worth a calibration confirmation round when more Atom L1 variants land.
+  - Vacation card shows recurring sync-icon caption but no amount-target line — recipe permits either, but if Target is shown
+    on the other two cards consistency suggests showing it here too. Left as-is to demonstrate the recurring caption variant
+    from the R19 recipe.
+  - 'Total saved' is a best-guess caption per the brief (the brief says 'or your best guess'). The R19 source frame may use
+    a different caption ('Your atoms' or similar) — worth confirming against the canonical frame on next sweep.
+-->

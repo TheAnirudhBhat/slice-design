@@ -299,3 +299,49 @@ Cards in the **Action centre** (slice's name for the notifications feed) use a *
 - Hero / income / balance cards → these keep the shadow elevation chrome (read as "first-class surface")
 - In-flow content cards → shadow
 - Anywhere the card needs to "lift off" the page
+
+## R19 update (2026-05-28) — Card variant additions from canonical DLS
+
+### L0 Large 2-insight subvariant
+The canonical L0 Large card supports **two stacked insight rows** below the amount (used on Credit L0 spends summary). Anatomy:
+- Caption + Display amount (standard L0 Large hero)
+- **Two stacked insight rows**, 12px gap between them, 16px gap between amount and first insight
+- Each insight row: leading colored Avatar (~28px, Blue Bold for transport / Red Bold for retail / etc.) + caption text describing the txn
+
+Example: Credit L0 hero card with `₹1,00,550` + `Paid ₹370 to Uber` (car icon Blue Avatar) + `Paid ₹180 to Sampath stores` (shopping icon Red Avatar) + Blue-50 callout row below.
+
+Distinct from single-insight L0 Large (Banking Savings card has 1 insight: green "Earn interest at 100% RBI repo rate").
+
+Source: cal:2026-05-28 R19 — Credit L0 reference frame `885:20015`
+
+### Label + Title + Repay footer variant
+Card with bottom-row footer showing small Label (Caption) + Title (Body) + trailing brand button.
+- Used for: due / repay cards on bill-pay or credit surfaces
+- Footer row: leading 2-line text block (Label caption + Title body) + trailing Primary or Secondary small pill button
+- Card body above the footer can be any content; the footer is the action zone
+
+Example: `Total due › ₹35,000 [Repay]` footer on a credit-card-statement card.
+
+Source: cal:2026-05-28 R19 — DLS Cards page canonical variants
+
+### Stat tile (compact KPI variant)
+Small stat card distinct from L0 Large / Medium. Used for compact dashboard tiles.
+- Width: ~150-180px (fits 2-up on 360 page with 24px padding + 12px gap)
+- Padding: 16px
+- Content: Caption secondary (UPPERCASE Metadata for category label) + Heading (₹ amount or count) + Caption secondary with ↗/↘ delta in colour
+- Example: `₹20,000 / ↑ ₹136.3` stat tile
+
+Distinguish from L0 Medium (wider, supports trailing illustration). Stat tile is value-first, no illustration.
+
+Source: cal:2026-05-28 R19 — DLS Cards page
+
+### "FD at 8.5% p.a." illustration card (specific composition)
+Compact 312-wide card with title + subtitle + Invest-now grey-pill CTA + side illustration (~96×96 cute mascot). Distinct from generic L0 Medium with trailing illustration — the FD card has an explicit CTA inside the card.
+
+Anatomy:
+- Title H4 left ("Fixed deposits" or specific FD product name)
+- Subtitle Caption secondary left ("8.5% p.a", "1-year FD")
+- Body row: Invest now grey-pill (Tertiary Small)
+- Trailing illustration ~96×96 (graph-with-people for slice FDs)
+
+Source: cal:2026-05-28 R19 — DLS Cards page

@@ -18,9 +18,15 @@ Figma source: `HBoBlZN1CrmVwO3rXeZjY0`, nodes `1952:26869`, `1910:19922`
 
 ## Big
 - **Height**: 8px
-- **Background**: #F6F9FC (Slate/10)
+- **Background**: `rgba(0,0,0,0.05)` (outline-subtle) — **NOT** Slate/10 grey. slice never uses grey page backgrounds.
 - **Width**: full-bleed
 - Use for: major section breaks (e.g. between "View Your Wealth" and "Quick Actions")
+- Source: cal:2026-05-28 — review critique "dividers are grey but page has grey bg, should not be" ✅
+
+## Divider type by row leading
+- **Avatar-leading rows**: inset divider (76px left offset) — or no divider between same-type avatar rows (see flipped rule below)
+- **Non-avatar rows** (icon, empty, info rows): full-bleed or middle divider — **never** inset
+- Source: cal:2026-05-28 — review critique "why used inset here, idiot — middle divider for this list" ✅
 
 ## Dashed (calibrated 2026-05-17)
 Slice uses **dashed full-bleed dividers** between rows in specific list contexts where the rhythm should feel softer than a solid hairline — notably **Spark FD details** (Accumulated Interest / Interest paid till date / Interest to be earned). The dash also signals "these rows belong to one continuous structured table" without the heaviness of a card border.

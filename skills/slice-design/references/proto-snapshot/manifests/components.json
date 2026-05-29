@@ -1,0 +1,122 @@
+{
+  "snapshot_date": "2026-05-29",
+  "source_proto": "/Users/anirudhbhat/claude/slice/projects/slice-app-proto",
+  "calibration_round": "R23 fix-it-2 cont-22",
+  "components": [
+    {
+      "name": "App",
+      "kind": "scaffold",
+      "file": "code/App.jsx",
+      "depends_on": ["framer-motion", "components/BottomNav.jsx", "components/StatusBar.jsx", "components/Pager.jsx", "all pod L0s"],
+      "owns_state": ["active", "visuallyActive", "pagerX (motion value)"],
+      "calibration_rounds": ["FX2", "FX10", "FX20", "FX33", "FX38", "FX41", "FX44", "FX47"]
+    },
+    {
+      "name": "main",
+      "kind": "scaffold",
+      "file": "code/main.jsx",
+      "depends_on": ["agentation@^3.0.2", "App.jsx"],
+      "calibration_rounds": ["FX19", "FX42", "FX49"]
+    },
+    {
+      "name": "Pager",
+      "kind": "chrome",
+      "file": "code/components/Pager.jsx",
+      "props": ["activeIndex", "pageCount", "pageWidth", "externalX", "onIndexChange", "onCommit"],
+      "depends_on": ["framer-motion"],
+      "calibration_rounds": ["FX55"]
+    },
+    {
+      "name": "MotionStatusBar",
+      "kind": "chrome",
+      "file": "code/components/StatusBar.jsx",
+      "props": ["pagerX", "pages", "pageWidth", "time"],
+      "depends_on": ["framer-motion"],
+      "calibration_rounds": ["FX1", "FX11"]
+    },
+    {
+      "name": "DynamicIsland",
+      "kind": "chrome",
+      "file": "code/components/StatusBar.jsx",
+      "props": [],
+      "calibration_rounds": ["FX1"]
+    },
+    {
+      "name": "BottomNav",
+      "kind": "chrome",
+      "file": "code/components/BottomNav.jsx",
+      "css": "code/components/BottomNav.css",
+      "props": ["active", "visuallyActive", "onChange", "onVisualChange", "balance", "pagerX", "pages"],
+      "depends_on": ["framer-motion", "code/icons/NavIcons.jsx"],
+      "calibration_rounds": ["A1", "FX17", "FX21", "FX25", "FX29", "FX30", "FX34", "FX39", "FX43", "FX50", "FX53", "FX54", "FX55", "FX65"]
+    },
+    {
+      "name": "BottomFade",
+      "kind": "chrome",
+      "file": "code/components/BottomFade.jsx",
+      "props": ["color", "height"],
+      "default_height": 200,
+      "calibration_rounds": ["FX5", "FX52"]
+    },
+    {
+      "name": "AppBar",
+      "kind": "chrome",
+      "file": "code/components/AppBar.jsx",
+      "props": ["variant", "title", "leading", "actions", "avatar", "onBack", "scroll", "background"],
+      "exports": ["AppBar", "EyeOpenGlyph", "EyeClosedGlyph", "SearchGlyph", "FilterGlyph", "usePageScroll"],
+      "calibration_rounds": ["FX13", "FX23", "FX27", "FX36", "FX37"]
+    },
+    {
+      "name": "NavIcons",
+      "kind": "icons",
+      "file": "code/icons/NavIcons.jsx",
+      "exports": ["BankingActive", "ExploreActive", "ExploreInactive", "CreditActive", "CreditInactive", "ActivityActive", "ActivityInactive", "PayInactive", "PayActiveSpecial"]
+    },
+    {
+      "name": "BankingL0",
+      "kind": "pod",
+      "file": "code/pods/banking/L0.jsx",
+      "canonical_figma_node": "885:19757",
+      "depends_on": ["AppBar", "BottomFade"],
+      "assets": ["monies_mark.png", "fd_card_corner.png", "monies_card_corner.png", "avatar_only.png"],
+      "calibration_rounds": ["A2", "FX12", "FX26"]
+    },
+    {
+      "name": "ExploreL0",
+      "kind": "pod",
+      "file": "code/pods/explore/L0.jsx",
+      "canonical_figma_node": "885:19759",
+      "depends_on": ["AppBar", "BottomFade"],
+      "assets": ["bill_v2_*.png", "flame_orange.png", "fire_sparkle.png", "may_spends.png", "invite_magnet.png", "avatar_only.png"],
+      "calibration_rounds": ["A4", "FX7", "FX18", "FX22", "FX26"]
+    },
+    {
+      "name": "CreditL0",
+      "kind": "pod",
+      "file": "code/pods/credit/L0.jsx",
+      "canonical_figma_node": "885:20015",
+      "depends_on": ["AppBar"],
+      "assets": ["credit_avatar.png", "credit_car.svg", "credit_bag.svg", "credit_invite_scatter.svg", "super_card_mascot.png"],
+      "calibration_rounds": ["FX26"]
+    },
+    {
+      "name": "ActivityL0",
+      "kind": "pod",
+      "file": "code/pods/activity/L0.jsx",
+      "canonical_figma_node": "885:20122",
+      "depends_on": ["AppBar", "BottomFade"],
+      "appbar_background": "#FFFFFF",
+      "txn_count": 20,
+      "calibration_rounds": ["A3", "FX4", "FX8", "FX27", "FX28"]
+    },
+    {
+      "name": "L0ValentinoHome",
+      "kind": "pod",
+      "file": "code/pods/payments/L0_valentinoHome.jsx",
+      "canonical_figma_node": "885:19901",
+      "depends_on": [],
+      "assets": ["bhim_upi.png", "valentino_audio_icon.svg", "avatar_only.png"],
+      "calibration_rounds": ["A1", "FX15", "FX32", "FX36", "FX40", "FX48"]
+    }
+  ]
+}

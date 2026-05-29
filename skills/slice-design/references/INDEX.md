@@ -1,4 +1,5 @@
 ## Design Rules
+- [reference_canonical_fetch.md](reference_canonical_fetch.md) — **R24 meta-rule** Before claiming any spec matches DLS, fetch the published variant via `search_design_system` + `figma_get_library_component_by_key`. No guessing from screenshots.
 - [feedback_dls_design.md](feedback_dls_design.md) — Always use DLS 2.0 tokens, never raw hex
 - [feedback_figma_first.md](feedback_figma_first.md) — Match Figma specs 1:1, never improvise
 - [feedback_reuse_existing.md](feedback_reuse_existing.md) — Never recreate components, always reuse
