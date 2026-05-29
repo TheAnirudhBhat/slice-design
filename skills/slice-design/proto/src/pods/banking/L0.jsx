@@ -372,7 +372,11 @@ export default function BankingL0({ onScrollChange }) {
   // R24 cont-13: lift scroll state up so App.jsx's 54px status reserve can
   // also paint white when this L0 is scrolled (matches the AppBar's scroll
   // elevation so the cards don't bleed past the chrome).
-  useEffect(() => { onScrollChange?.(scrolled); }, [scrolled, onScrollChange]);
+  // Depend on `scrolled` only — `onScrollChange` is a fresh inline arrow on
+  // every App render, so including it re-fired this effect each render (R24
+  // cont-24 audit). setScrolledByPod uses the updater form, no stale closure.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { onScrollChange?.(scrolled); }, [scrolled]);
 
   return (
     <div

@@ -1582,3 +1582,47 @@ needs a fetch in the same turn.
 
 Source: R24 cont-2 through cont-23, 2026-05-29.
 
+
+---
+
+### 2026-05-29 · R24 cont-24 (4.8 model audit pass)
+
+Switched to a newer model and ran a correctness/pattern review over the whole
+R24 batch. Findings + fixes:
+
+**Verified OK** (no change needed):
+- Font loading: Rubik 400/500/600/700 loaded via Google Fonts in index.html +
+  font-family on html/body/#root. The Medium-vs-Regular weight work is valid.
+- Avatar sizes consistent: AppBar 44, list TxnAvatar 40 (canonical M-40),
+  Valentino avatar 44 + audio-icon circle 40, Profile photo 128. No drift.
+- PAGES → PAGES_BY_POD rename clean (no leftover bare `PAGES` refs).
+- Drag-vs-click guard handles keyboard/programmatic clicks (downRef null →
+  onTap fires) and out-of-button release (downRef stays set, next pointerdown
+  resets). No stuck state.
+
+**Fixed**:
+1. Scroll-state effect churn — all 4 scroll-elevation L0s had
+   `useEffect(() => onScrollChange?.(scrolled), [scrolled, onScrollChange])`.
+   `onScrollChange` is a fresh inline arrow on every App render, so the effect
+   re-fired each render. Not an infinite loop (setScrolledByPod bails on
+   unchanged value) but churny + fragile. Changed dep to `[scrolled]` only
+   (setState updater form means no stale-closure risk). eslint-disable added
+   for exhaustive-deps.
+2. Removed empty `src/pages/` scaffolding cruft.
+
+**Flagged for follow-up (spawned task, not done inline to avoid regression)**:
+- Avatar reimplemented 4× (AppBar AvatarContainer, Activity TxnAvatar,
+  Valentino inline, Profile inline) and ChevronBackGlyph defined 2× (AppBar +
+  TxnDetailL1). Violates DLS reuse principle — this is why "bump avatar +4px"
+  took 3 edits. Should consolidate into `src/components/Avatar.jsx` + move
+  chevron to `src/icons/`. Tracked as a separate refactor task.
+
+**Pattern meta-learning**: the proto has no shared component/token layer —
+each pod inlines its own COLORS object, avatar, and glyphs. For a proto this
+is tolerable, but every cross-cutting change (avatar size, a color token)
+becomes an N-place find-replace. The shared-component consolidation is the
+structural fix; the canonical-fetch-first rule (cont-2 §A) is the spec-
+accuracy fix. Together they're the two highest-leverage process changes
+coming out of R24.
+
+Source: R24 cont-24, 2026-05-29.

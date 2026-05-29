@@ -437,7 +437,8 @@ export default function ActivityL0({ onScrollChange }) {
   const scrolled = usePageScroll(scrollRef);
   const { push } = useL1();
   // R24 cont-13: lift scroll state so App.jsx's status reserve paints white.
-  useEffect(() => { onScrollChange?.(scrolled); }, [scrolled, onScrollChange]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { onScrollChange?.(scrolled); }, [scrolled]); // dep [scrolled] only — R24 cont-24 audit
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
