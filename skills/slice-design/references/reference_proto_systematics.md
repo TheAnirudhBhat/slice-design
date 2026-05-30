@@ -426,3 +426,45 @@ each individually corrected by the user. Every single one was either already
 solved in the cache (compose-from-cache would've prevented it) or visible in a
 10-second self-screenshot (self-audit would've caught it). This checklist is the
 durable fix so the next new-screen build ships right the first time.
+
+---
+
+## RULE (R24 cont-31): tap-vs-drag guard for ANY tappable element on the pager
+
+Every tappable element that lives INSIDE the swipe Pager (L0 cards, list rows,
+entry cards) MUST guard against a drag firing a tap. When the user drags to swipe
+pages but releases before the snap midpoint, the synthetic click at release opens
+an L1 under their finger.
+
+Use the shared hook `proto/src/utils/useTapGuard.js`:
+```jsx
+import useTapGuard from '../../utils/useTapGuard.js';
+const tap = useTapGuard(() => push('insurance'));
+<button {...tap}> … </button>   // NOT onClick={…}
+```
+It tracks pointer-move distance between pointerdown and click and cancels the
+click if the pointer moved ≥ 10px (keyboard + programmatic clicks still work).
+Activity TxnRow has the original inline version; NEW cards/rows use the hook.
+Why: R24 cont-31 — the insurance entry card opened the flow on a page-swipe drag,
+the exact bug already fixed on Activity. Codified as a hook so it isn't re-derived
+per card.
+
+---
+
+## PLANNED (R24 cont-31): multi-device mockup support
+
+Designers want to preview a proto across multiple device frames to catch scaling
+issues (e.g. the 393-screen-overflows-chassis bug) before they ship. Today the
+proto renders ONE shell (iPhone 16 Pro: 393×852 screen / 405×864 chassis).
+
+Planned capability — a device picker that swaps the shell + screen dims while
+keeping the SAME app content, so the designer sees how the layout reflows:
+- **iPhone**: SE (375×667), 14/15/16 (393×852), 16 Pro Max (440×956)
+- **Android (top)**: Pixel 8 (412×915), Galaxy S24 (360×780), S24 Ultra (384×824)
+Approach: parametrize the shell — `PHONE_WIDTH/HEIGHT` per device + chassis derived
+as screen + 2×bezel (per the cont-31 bezel fix); pager `pageWidth` + StatusBar
+element centers read from the active device. Render ONE shell at a time (a
+dropdown switches device), NOT a wall of phones. Precondition: pods must be
+width-fluid (`width:100%`, NO hardcoded 393) for reflow to be real.
+Status: deferred per user ("for now keep only 1 phone shell"); build when the
+multi-device review workflow is prioritized.

@@ -22,6 +22,7 @@ export const WHITE_30 = 'rgba(255,255,255,0.30)';
 // Themed surfaces
 export const PAGE_BG = 'var(--page-bg)';   // page background (white → dark)
 export const SURFACE = 'var(--surface)';   // card / elevated surface
+export const BRAND_BG = 'var(--brand-bg)'; // Pay/Valentino immersive — V-500 light, #090B0C dark (Figma Background/Brand)
 
 // Themed text
 export const TEXT_PRIMARY = 'var(--text-primary)';

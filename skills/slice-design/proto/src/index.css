@@ -10,6 +10,7 @@
   color-scheme: light;
   --page-bg: #FFFFFF;
   --surface: #FFFFFF;
+  --brand-bg: #D30AD7;
   --text-primary: rgba(0, 0, 0, 0.9);
   --text-secondary: rgba(0, 0, 0, 0.7);
   --text-tertiary: rgba(0, 0, 0, 0.5);
@@ -38,6 +39,7 @@
      pattern + primitive scale — confirm against a dark Activity/tints frame. */
   --page-bg: #090B0C;                            /* ✓ Background/Primary */
   --surface: rgba(255, 255, 255, 0.05);          /* ✓ Background/Card BG (#ffffff0d) */
+  --brand-bg: #090B0C;                           /* ✓ Background/Brand (dark Valentino) */
   --text-primary: #FFFFFF;                       /* ✓ Text&Icons/Default/Primary */
   --text-secondary: rgba(255, 255, 255, 0.70);   /* ✓ #ffffffb2 */
   --text-tertiary: rgba(255, 255, 255, 0.50);    /* ✓ #ffffff80 */

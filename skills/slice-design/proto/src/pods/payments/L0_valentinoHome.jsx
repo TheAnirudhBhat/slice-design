@@ -20,7 +20,7 @@ import { useL1 } from '../../components/L1Stack.jsx';
 import Avatar from '../../components/Avatar.jsx';
 import formatINR from '../../utils/formatINR.js';
 
-import { V_500, WHITE_10, WHITE_20, WHITE_30 } from '../../tokens.js';
+import { BRAND_BG, WHITE_10, WHITE_20, WHITE_30 } from '../../tokens.js';
 
 const USER_AVATAR_URL = '/assets/avatar_only.png';
 const UPI_ID = 'rajan@sliceaxis';
@@ -366,7 +366,7 @@ export default function L0ValentinoHome({ onScrollChange }) {
       style={{
         width: '100%',
         height: '100%',
-        background: V_500,
+        background: BRAND_BG,
         display: 'flex',
         flexDirection: 'column',
         paddingBottom: 140, // floating bottom nav reserve

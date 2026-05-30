@@ -35,7 +35,7 @@ const PODS = ['banking', 'explore', 'pay', 'credit', 'activity'];
 const PAGE_BG = {
   banking: 'var(--page-bg)',
   explore: 'var(--page-bg)',
-  pay: '#D30AD7', // Valentino immersive — stays V-500 (dark-Pay treatment TBD)
+  pay: 'var(--brand-bg)', // Valentino immersive — V-500 light, #090B0C dark (Figma Background/Brand)
   credit: 'var(--page-bg)',
   activity: 'var(--page-bg)',
 };
