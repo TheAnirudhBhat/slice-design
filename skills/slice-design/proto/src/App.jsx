@@ -49,6 +49,22 @@ const STATUS_VARIANT = {
   activity: 'light',
 };
 
+// Theme-switch reveal — CANONICAL from Figma "App visual fix" node 3309:13267.
+// A full-screen Valentino-gradient cover carries the DESTINATION celestial
+// illustration (moon → dark, sun → light) + a "Switching to … mode" caption,
+// holds briefly so it reads, then slides off in the reveal direction (up = dark
+// fills from the bottom; down = light fills from the top). Gradient stops + caption
+// type + the two SVGs are pulled verbatim from the canonical transition frames.
+const REVEAL_BG = {
+  // black base, magenta crown at the TOP fading to transparent at the bottom
+  toDark: 'linear-gradient(to top, rgba(147,65,255,0) 0%, rgba(98,31,255,0.34) 53%, #FF55BA 101%), #090B0C',
+  // white base, magenta hem at the BOTTOM fading to transparent at the top
+  toLight: 'linear-gradient(to bottom, rgba(211,65,255,0) 57%, rgba(197,100,255,0.83) 88%, #F655FF 104%), #FFFFFF',
+};
+const REVEAL_ICON = { toDark: '/assets/theme_moon.svg', toLight: '/assets/theme_sun.svg' };
+const REVEAL_LABEL = { toDark: 'Switching to dark mode', toLight: 'Switching to light mode' };
+const REVEAL_TEXT = { toDark: 'rgba(255,255,255,0.9)', toLight: 'rgba(0,0,0,0.9)' };
+
 // R24 cont-13: map from pod → component constructor (not pre-instantiated JSX)
 // so we can hand each L0 a per-pod `onScrollChange` callback at render time.
 // The callback lifts the L0's scroll state up to App.jsx so the 54px status
@@ -202,9 +218,9 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
   const [active, setActive] = useState(initialPod);
   const [visuallyActive, setVisuallyActive] = useState(initialPod);
   const [theme, setTheme] = useState('light'); // light | dark — flips data-theme on the stage
-  // Theme-switch reveal: flip data-theme instantly, then slide a cover of the
-  // PREVIOUS bg out — up for →dark (dark fades in from the bottom), down for
-  // →light (light fades in from the top). Cleared when the slide finishes.
+  // Theme-switch reveal: flip data-theme instantly, then play the canonical
+  // gradient-cover reveal (see REVEAL_* above) — moon/"to dark" slides up, sun/
+  // "to light" slides down. `dir` drives the gradient, icon, caption + direction.
   const [themeAnim, setThemeAnim] = useState(null);
   const [l1Open, setL1Open] = useState(false);
   // R24 cont-13: per-pod scroll state lifted up so the 54px status reserve
@@ -247,17 +263,7 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
   };
   const handleThemeToggle = () => {
     const goingDark = theme !== 'dark';
-    // Cover = the CURRENT (pre-flip) page bg of the active pod, so the reveal
-    // starts from exactly what's on screen (Pay is V-500 in light, #090B0C dark).
-    const cover =
-      active === 'pay'
-        ? theme === 'dark'
-          ? '#090B0C'
-          : '#D30AD7'
-        : theme === 'dark'
-        ? '#090B0C'
-        : '#FFFFFF';
-    setThemeAnim({ dir: goingDark ? 'toDark' : 'toLight', cover, id: Date.now() });
+    setThemeAnim({ dir: goingDark ? 'toDark' : 'toLight', id: Date.now() });
     setTheme(goingDark ? 'dark' : 'light');
   };
 
@@ -384,32 +390,59 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
               pages={pagesMeta}
             />
 
-            {/* Theme-switch reveal — flips data-theme instantly, then slides a
-               cover of the PREVIOUS bg out: up for →dark (dark fades in from the
-               bottom), down for →light (light fades in from the top). The soft
-               gradient leading edge makes it read as a fade, not a hard wipe.
-               Sits inside the screen (under the bezel), above pager/status/nav. */}
+            {/* Theme-switch reveal (canonical Figma 3309:13267) — flips data-theme
+               instantly, then a full-screen Valentino-gradient cover carrying the
+               DESTINATION illustration (moon → dark / sun → light) + caption holds
+               briefly so it reads, then slides off in the reveal direction (up =
+               dark from the bottom; down = light from the top). Sits inside the
+               screen (under the bezel), above pager/status/nav. */}
             <AnimatePresence>
               {themeAnim && (
                 <motion.div
                   key={themeAnim.id}
                   initial={{ y: '0%' }}
-                  animate={{ y: themeAnim.dir === 'toDark' ? '-100%' : '100%' }}
-                  // Calm, appreciable reveal — slow settle (user: "make it calmer,
-                  // right now it's too fast"). ~1s with a gentle ease-out.
-                  transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
+                  // Hold at 0% for ~45% of the run (the "Switching to…" beat the
+                  // user wanted to be able to appreciate), then ease off-screen.
+                  animate={{ y: ['0%', '0%', themeAnim.dir === 'toDark' ? '-100%' : '100%'] }}
+                  transition={{ duration: 1.25, times: [0, 0.45, 1], ease: [0.22, 1, 0.36, 1] }}
                   onAnimationComplete={() => setThemeAnim(null)}
                   style={{
                     position: 'absolute',
                     inset: 0,
                     zIndex: 999,
                     pointerEvents: 'none',
-                    background:
-                      themeAnim.dir === 'toDark'
-                        ? `linear-gradient(to bottom, ${themeAnim.cover} 78%, transparent 100%)`
-                        : `linear-gradient(to top, ${themeAnim.cover} 78%, transparent 100%)`,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 24,
+                    background: REVEAL_BG[themeAnim.dir],
                   }}
-                />
+                >
+                  <motion.img
+                    src={REVEAL_ICON[themeAnim.dir]}
+                    alt=""
+                    aria-hidden="true"
+                    initial={{ scale: 0.7, opacity: 0 }}
+                    animate={{ scale: [0.7, 1, 1], opacity: [0, 1, 1] }}
+                    transition={{ duration: 1.25, times: [0, 0.35, 1], ease: [0.22, 1, 0.36, 1] }}
+                    style={{ width: 80, height: 80, objectFit: 'contain', display: 'block' }}
+                  />
+                  <div
+                    style={{
+                      fontFamily: 'Rubik, sans-serif',
+                      fontWeight: 400,
+                      fontSize: 16,
+                      lineHeight: '24px',
+                      letterSpacing: '0.32px',
+                      textAlign: 'center',
+                      width: 200,
+                      color: REVEAL_TEXT[themeAnim.dir],
+                    }}
+                  >
+                    {REVEAL_LABEL[themeAnim.dir]}
+                  </div>
+                </motion.div>
               )}
             </AnimatePresence>
           </L1Stack>

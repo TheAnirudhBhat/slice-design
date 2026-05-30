@@ -208,7 +208,7 @@ and re-broke the screen. The canonical Figma values above (active chip @60% +
 
 ## Calibration history
 
-- cal:2026-05-30 — **dark-mode colours canonical** (Figma `6591:60485` get_variable_defs). Active chip #FFFFFF@60% + #090B0C glyph; inactive chip #FFFFFF@20% + WHITE glyph; Pay scan glyph V-500 light / #090B0C dark. Corrected a bad earlier draft that kept getting re-applied (~10 rounds of churn). Folded in from the retired reference_dark_mode.md §14.
+- cal:2026-05-30 — **dark-mode colours canonical** (Figma `6591:60485` get_variable_defs). Active chip #FFFFFF@60% + #090B0C glyph; inactive chip #FFFFFF@20% + WHITE glyph; Pay scan glyph V-500 light / #090B0C dark. Corrected a bad earlier draft that kept getting re-applied (~10 rounds of churn). Folded in from the retired reference_dark_mode.md section 14.
 - cal:2026-05-29 R23 — append-only R23 rules above. Transparent nav bg, variant-aware glyph/circle, ₹3K balance pill V-500 on immersive, instant bg swap with size-only tween, bidirectional midpoint via `lastEmittedRef`.
 - cal:2026-05-28 R23 — full anatomy rewrite based on building the canonical React component (`slice-app-proto/src/components/BottomNav.jsx`). Replaced R22's sparse spec.
 - cal:2026-05-28 — `nav_active_indicator_style` A pick + reason "pattern is more slice" (active = filled glyph in white circle).

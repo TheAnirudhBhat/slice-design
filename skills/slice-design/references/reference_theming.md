@@ -163,14 +163,31 @@ dark page** — the "weird box in dark". Lesson: a sprite crop is not theme-safe
 prefer the clean standalone official asset. (And per the icon rule above, don't
 re-trace it — get the official file.)
 
-## 11. Theme-switch reveal motion (light⇄dark)
-Pattern the user signed off on: flip `data-theme` INSTANTLY, then slide a cover
-of the PREVIOUS bg out — **up for →dark (dark fades in from the bottom)**, **down
-for →light (light fades in from the top)**. Cover bg = the pre-flip page bg of
-the active pod (Pay = V-500 light / #090B0C dark). A soft gradient leading edge
-(`linear-gradient(... cover 78%, transparent)`) reads as a fade, not a hard
-wipe. Timing: **~1.0s, gentle ease-out** — user: "make it calmer, right now it's
-too fast, don't even have time to appreciate it." (Implemented in `App.jsx`.)
+## 11. Theme-switch reveal motion (light⇄dark) — CANONICAL (Figma "App visual fix" node `3309:13267`)
+Flip `data-theme` INSTANTLY, then play a **full-screen Valentino-gradient cover**
+that carries the **destination celestial illustration + caption**, holds briefly
+so it reads, then **slides off in the reveal direction**: up for →dark (dark fills
+from the bottom), down for →light (light fills from the top). This supersedes the
+earlier "flat cover of the pre-flip bg" — the mood board adds the gradient + the
+sun/moon illustration + the "Switching to … mode" caption.
+
+- **Destination icon** (the one you're switching TO): **moon → dark**, **sun → light**.
+  Official assets pulled from the canonical transition frames →
+  `proto/public/assets/theme_moon.svg` (purple crescent) + `theme_sun.svg` (orange sun).
+  They're multi-colour brand illustrations → use `<img>` (NOT currentColor inlining);
+  both are transparent-bg + theme-safe. Fix Figma's `preserveAspectRatio="none"` →
+  `xMidYMid meet` on save (the stretch gotcha, section 9), render 80×80 `objectFit:contain`.
+- **Gradient cover (verbatim canonical stops):**
+  - →dark: `linear-gradient(to top, rgba(147,65,255,0) 0%, rgba(98,31,255,0.34) 53%, #FF55BA 101%), #090B0C` — black base, magenta crown at the TOP.
+  - →light: `linear-gradient(to bottom, rgba(211,65,255,0) 57%, rgba(197,100,255,0.83) 88%, #F655FF 104%), #FFFFFF` — white base, magenta hem at the BOTTOM.
+- **Caption**: `Switching to dark mode` / `Switching to light mode`. Rubik Regular
+  16/24, letter-spacing 0.32px, centered, 24px gap under the icon. Text colour
+  rgba(255,255,255,0.9) on →dark, rgba(0,0,0,0.9) on →light.
+- **Choreography**: one motion.div, `y: ['0%','0%', ±'100%']` with `times:[0,0.45,1]`
+  over **~1.25s, ease [0.22,1,0.36,1]** — the 0%→0% leg is the ~0.56s HOLD (user:
+  "make it calmer … don't even have time to appreciate it"), then it eases off.
+  Icon scales 0.7→1 + fades in over the first ~35%. (Implemented in `App.jsx`
+  `REVEAL_BG / REVEAL_ICON / REVEAL_LABEL / REVEAL_TEXT` + the AnimatePresence cover.)
 
 ## 12. More dark-mode component gotchas (this session)
 - **Card-corner illustrations** (Banking FD rocket, monies cluster): the Figma node

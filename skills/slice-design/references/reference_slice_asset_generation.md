@@ -11,7 +11,7 @@ type: reference
 > *"no don't trace wtf, just use the image i gave you"*. **The final, authoritative
 > rule: icons are NEVER generated/traced/hand-drawn — official DLS icon (`582:257`)
 > or a clear DUMMY placeholder, full stop** (SKILL.md "ICONS — official ONLY"). The
-> Icon engine below (§Engine 1) is kept ONLY as a record of the retired harness —
+> Icon engine below (Engine 1) is kept ONLY as a record of the retired harness —
 > do not use it to produce icons for a build.
 >
 > **What still stands: ILLUSTRATION generation.** Big 3D/brand art genuinely missing
