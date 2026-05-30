@@ -164,37 +164,41 @@ prefer the clean standalone official asset. (And per the icon rule above, don't
 re-trace it — get the official file.)
 
 ## 11. Theme-switch reveal motion (light⇄dark) — CANONICAL (Figma "App visual fix" node `3309:13267`)
-A full-screen cover travels a **COLOUR JOURNEY: current theme colour → Valentino
-bridge → target theme colour** (white⇄valentino⇄black), resolving to a FULL solid
-target, while the **destination illustration + caption rise from the bottom and
-exit toward the top**. User-directed 2026-05-30: *"the fade white to valentino to
-black has to come in … shows the centre image and text, then fades … light mode
-revealed"* + *"start fully white / fully black"* (resolve on a clean solid). Same
-choreography both ways — only the from/to colours + icon differ.
+A full-screen **gradient overlay FADES in** (opacity), the **destination icon +
+caption sit CENTRED**, then it **FADES out** — it does **NOT slide**. Verified
+against the user's screen recording 2026-05-30 (`ScreenRecording_…19-00-46`).
 
-- **Three stacked layers** (`position:absolute; inset:0`, ~1.6s run):
-  1. **base** — solid `backgroundColor` swaps `FROM`→`TO` (`#FFFFFF`⇄`#090B0C`),
-     keyframes `[from,from,to,to]`, `times [0,0.46,0.56,1]` (fast swap mid-run).
-  2. **Valentino bridge** — OPAQUE brand gradient `linear-gradient(180deg,#9341FF,
-     #621FFF 50%,#FF55BA)`, opacity `[0,1,1,0]`, `times [0,0.3,0.6,0.92]`. It blooms
-     OVER the swap so the colour never passes through a banned grey, and is the
-     "valentino" middle. `data-theme` flips behind it (`setTimeout ~800ms`, midpoint).
-  3. **illustration + caption** — rise + exit: `y [64,0,0,-64]`, opacity `[0,1,1,0]`,
-     `times [0,0.3,0.62,0.96]`. Enters from below centre, holds, exits the top.
-- **Destination icon** (switching TO): **moon → dark**, **sun → light**. Official
-  transparent SVGs from the canonical frames → `proto/public/assets/theme_moon.svg`
-  (purple crescent) + `theme_sun.svg` (orange sun). Multi-colour brand illustrations →
-  `<img>` (NOT currentColor); transparent-bg + theme-safe (no bg rect, `fill="none"` root).
-  Fix Figma's `preserveAspectRatio="none"` → `xMidYMid meet` (stretch gotcha, section 9),
-  render 80×80 `objectFit:contain`.
-- **Caption**: `Switching to dark mode` / `Switching to light mode`. Rubik Regular 16/24,
-  +0.32px tracking, centred, 24px under the icon, `rgba(255,255,255,0.95)` (reads on the
-  Valentino bridge where the caption is most visible).
-- Implemented in `App.jsx`: `REVEAL_FROM / REVEAL_TO / VALENTINO_BRIDGE / REVEAL_ICON /
-  REVEAL_LABEL` + the 3-layer AnimatePresence cover; `handleThemeToggle` guards re-tap.
-- ⚠️ History: was a flat-cover SLIDE (dark-from-bottom/light-from-top), then a single-
-  direction opacity fade, now this colour-journey. If iterating, match the live `App.jsx`
-  REVEAL_* — don't resurrect the slide.
+- **The gradient = canonical (Figma `3311:7095`)**: `linear-gradient(to top,
+  rgba(147,65,255,0) 0%, rgba(98,31,255,0.34) 53%, #FF55BA 101%)` layered over the
+  target base (`#090B0C` dark / `#FFFFFF` light). The **FIRST stop is 0% opacity**
+  (transparent) — user-directed, this is the soft edge; the magenta glow sits at the
+  TOP. Same gradient orientation BOTH directions (one direction); only the base
+  colour + icon differ.
+- **Opacity fade** — one overlay `opacity [0,1,1,0]`, `times [0,0.16,0.78,1]`,
+  **~2.2s** easeInOut (short fade-in, LONG hold so it reads, fade-out). `data-theme`
+  flips mid-hold (`setTimeout ~1000ms`) so the transparent lower band of the gradient
+  reveals the already-flipped target-colour page underneath (no flash, seamless fill).
+- **Destination icon** (switching TO): **moon → dark**, **sun → light** — held
+  centred the whole time (NOT a sun→moon morph; the video shows only the destination).
+  Official transparent SVGs → `proto/public/assets/theme_moon.svg` (purple crescent) +
+  `theme_sun.svg` (orange sun). Multi-colour brand illustrations → `<img>` (NOT
+  currentColor); transparent-bg (no bg rect, `fill="none"` root). Fix Figma's
+  `preserveAspectRatio="none"` → `xMidYMid meet` (stretch gotcha, section 9), 80×80
+  `objectFit:contain`. Icon layer `opacity [0,1,1,0]`, `times [0,0.2,0.76,0.98]`.
+- **Caption** TYPES on (typewriter, user-directed): `Switching to dark mode` /
+  `Switching to light mode`. Letters reveal left→right via an opacity STAGGER (each
+  char pre-occupies its space so the centred line never jitters) — `delayChildren 0.4`
+  (waits for the overlay to cover), `staggerChildren 0.035`. Component `TypeCaption`
+  in `App.jsx`. Rubik Regular 16/24, +0.32px tracking, centred, 24px under the icon.
+  `rgba(255,255,255,0.95)` on →dark, `rgba(0,0,0,0.9)` on →light (over the target fill).
+- **Icon does NOT morph** — the destination glyph is shown for the whole transition
+  (no sun↔moon crossfade), confirmed against the recording.
+- Implemented in `App.jsx`: `REVEAL_GLOW / REVEAL_CURTAIN / REVEAL_ICON / REVEAL_LABEL
+  / REVEAL_TEXT` + the 2-layer AnimatePresence overlay; `handleThemeToggle` guards re-tap.
+- ⚠️ History (don't resurrect): a flat-cover SLIDE → a magenta-at-bottom fade → a
+  current→valentino→target colour-journey → a fill-and-reveal curtain. ALL rejected.
+  The signed-off behaviour is THIS: a plain opacity fade of the canonical transparent-
+  first-stop gradient, destination icon centred. Match the live `App.jsx` REVEAL_*.
 
 ## 12. More dark-mode component gotchas (this session)
 - **Card-corner illustrations** (Banking FD rocket, monies cluster): the Figma node
