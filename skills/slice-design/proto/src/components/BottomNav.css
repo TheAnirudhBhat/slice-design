@@ -100,6 +100,13 @@
      browsers (clipping vertically). Must set both explicitly. */
   overflow-x: clip;
   overflow-y: visible;
+  /* Soft edge fade: items sliding off-screen FADE out instead of hard-clipping as a
+     chopped half-medallion at the viewport edge (user: "last icons cutting off" — the
+     side flips L/R with whichever pod is active, since the row translates to centre it).
+     Centred states are unaffected (their margins exceed the 28px fade). Horizontal-only
+     gradient so the active circle is never masked vertically. (cont-38) */
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%);
 }
 
 .slice-bnav-row {
@@ -346,6 +353,14 @@
   border-radius: 40px;
   background: var(--gesture-bar-bg);
   transition: background 360ms cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* On real mobile / installed PWA the OS draws the real home indicator, so HIDE the
+   proto's fake gesture pill — but with `visibility` (not `display:none`) so the
+   `.slice-bnav-gesture` band KEEPS its height: the nav still clears the bottom and
+   the OS indicator sits in that same space. (cont-38, user-directed.) */
+@media (max-width: 600px), (display-mode: standalone) {
+  .slice-bnav-gesture-bar { visibility: hidden; }
 }
 
 /* Tap feedback */
