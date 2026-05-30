@@ -45,12 +45,21 @@ function CloseGlyph() {
       }}
       aria-hidden="true"
     >
-      <img
-        src="/assets/icons/profile_close.svg"
-        alt=""
-        width={14}
-        height={14}
-        style={{ display: 'block', pointerEvents: 'none', userSelect: 'none' }}
+      {/* Masked official close glyph → recolours with the theme (white in dark). */}
+      <div
+        style={{
+          width: 14,
+          height: 14,
+          backgroundColor: TEXT_PRIMARY,
+          WebkitMaskImage: 'url(/assets/icons/profile_close.svg)',
+          maskImage: 'url(/assets/icons/profile_close.svg)',
+          WebkitMaskRepeat: 'no-repeat',
+          maskRepeat: 'no-repeat',
+          WebkitMaskSize: 'contain',
+          maskSize: 'contain',
+          WebkitMaskPosition: 'center',
+          maskPosition: 'center',
+        }}
       />
     </div>
   );
@@ -89,12 +98,24 @@ function MenuRow({ icon, iconW, iconH, label, onTap }) {
         }}
         aria-hidden="true"
       >
-        <img
-          src={icon}
-          alt=""
-          width={iconW}
-          height={iconH}
-          style={{ display: 'block', pointerEvents: 'none', userSelect: 'none' }}
+        {/* Official icon used as a CSS mask so it RECOLOURS with the theme. The
+           source SVGs fill `var(--fill-0, black)` → via <img> they fell back to
+           black and vanished in dark. Masking keeps the exact official shape and
+           paints it with a themed token: tertiary = white-50% in dark. */}
+        <div
+          style={{
+            width: iconW,
+            height: iconH,
+            backgroundColor: TEXT_TERTIARY,
+            WebkitMaskImage: `url(${icon})`,
+            maskImage: `url(${icon})`,
+            WebkitMaskRepeat: 'no-repeat',
+            maskRepeat: 'no-repeat',
+            WebkitMaskSize: 'contain',
+            maskSize: 'contain',
+            WebkitMaskPosition: 'center',
+            maskPosition: 'center',
+          }}
         />
       </div>
       <span

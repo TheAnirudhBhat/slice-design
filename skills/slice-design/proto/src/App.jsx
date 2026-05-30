@@ -469,6 +469,11 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
                       top: 0,
                       height: '300%',
                       background: REVEAL_SLIDE[themeAnim.dir],
+                      // Frosted "blur" phase: where the gradient is transparent (the
+                      // leading/trailing edges), the app behind shows BLURRED, so the
+                      // sweep reads fade → blur → solid → fade (user-directed).
+                      backdropFilter: 'blur(16px)',
+                      WebkitBackdropFilter: 'blur(16px)',
                     }}
                   />
                   {/* centre destination icon (no morph) + type-on caption — shown
