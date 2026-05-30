@@ -142,7 +142,10 @@ function ThemeToggle({ theme, onToggle }) {
         alignItems: 'center',
         justifyContent: 'center',
         padding: 0,
-        color: '#171A1F',
+        // Tertiary icon. The toggle pill is always white (it lives on the white
+        // proto stage, which doesn't theme), so this is the on-light tertiary value
+        // — NOT var(--text-tertiary), which would flip to white-on-white in dark.
+        color: 'rgba(0,0,0,0.5)',
         WebkitTapHighlightColor: 'transparent',
       }}
     >
