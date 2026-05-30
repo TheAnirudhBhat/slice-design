@@ -1778,6 +1778,23 @@ User direction, after exploring FLUX for icon/illustration generation: "I want s
 
 Source: R24 cont-33, 2026-05-30.
 
+### 2026-05-30 · R24 cont-34 (icon-gen rating loop validated; illustration engine parked on setup)
+
+Closed the feedback loop on the icon engine via a built stress-test harness (`icon-lab/`): a "spot-the-bad-ones" rating game (verdicts + per-icon "why" comments → `ratings.jsonl`).
+
+1. **Icon engine validated — 10/12 nice first-pass**, across 6 concepts × {filled, outline}. Confirms the SVG few-shot approach reproduces slice icon DNA without any model. Two off, both fixed from the user's comments:
+   - **calendar (filled): "too many shapes"** → dropped the 3 inner dots; clean solid-header/hollow-body in ONE evenodd path. New general rule: **minimize shape count** in filled icons.
+   - **tag (outline): "the circle ring should be filled, it looks very tight"** → punch-hole is a FILLED dot, not a stroked ring, with breathing room. New general rule: **accent/punch holes are filled dots, never rings — even in outline icons.**
+   Both rules written into `reference_slice_asset_generation.md` § "Calibrated icon-craft rules".
+
+2. **Filled-vs-outline is context-driven** (user direction): find in the set first; if missing, generate; choose filled (slice default) vs outline by usage (inactive↔outline / active↔filled, hero-heavy↔outline); colour rules always apply (currentColor, slate 0.5 / strong 0.9 / V-500 active, inline SVG never PNG). Written into the reference as the canonical resolution rule.
+
+3. **Illustration engine PARKED — blocked on setup, not capability.** Two prerequisites the bare OAuth login does NOT satisfy: a free `NANOBANANA_API_KEY` (AI Studio), and re-enabling the nanobanana extension (disabled by a `!/Users/anirudhbhat/*` override → `gemini extensions list` empty → `/generate` not parsed as a command, CLI spirals as a free-form agent). Corrected an earlier WRONG note in the reference that claimed OAuth/no-key works. Action item recorded in the reference's Status table: re-enable + re-test when the user supplies the key.
+
+Lesson: validate generated assets through the rating harness, not by self-assertion — the two craft rules came straight from one-line user comments and now generalize. And verify an external tool's auth/enablement state empirically before claiming it "just works" (the OAuth assumption was wrong).
+
+Source: R24 cont-34, 2026-05-30.
+
 ### 2026-05-30 · R24 cont-34 (L1 push pacing — iOS-natural, not snappy)
 
 User on the L1 slide-in: "when i click on something the slide in from the right happens too fast, please pace to ios natural speed."

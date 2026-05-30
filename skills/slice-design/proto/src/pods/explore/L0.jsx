@@ -370,7 +370,7 @@ export default function ExploreL0({ onScrollChange, extraCards = [] }) {
           </div>
         </div>
       </div>
-      <BottomFade color="var(--page-bg)" height={200} />
+      <BottomFade color="var(--page-bg)" height={200} bottom={12} />
     </div>
   );
 }

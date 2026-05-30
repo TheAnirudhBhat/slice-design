@@ -46,7 +46,8 @@ The directory structure documented below describes the intended state when icons
 
 - **For code / proto work**: pull the icon SVG directly from the DLS Figma file via the figma MCP tools (e.g. `figma_get_node` with the icon's node ID, then export it). Ask the user when in doubt.
 - **For any other use**: cite the icon by name + category from the taxonomy table above. Don't fabricate SVG.
-- **Never generate icon SVGs ad-hoc** — see the anti-pattern below. The ban stands even though the local files are missing.
+- **Generating a missing icon in PROTO context (user-directed override, 2026-05-30)**: if the icon is truly missing everywhere and you're building a proto, generate a **flagged** slice-style SVG placeholder per `reference_slice_asset_generation.md` (filled / `currentColor` / rounded / 24-grid + mandatory flag comment). This is now the sanctioned third fallback (copy → Figma → generate) — dull dummies made proto pages read as broken during design review.
+- **Never generate icon SVGs for product builds or post-handoff surfaces** — the ban below stands everywhere except flagged proto placeholders.
 
 ### Intended structure (post re-export)
 

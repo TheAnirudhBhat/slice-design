@@ -133,9 +133,11 @@ export default function MotionStatusBar({ pagerX, pages, pageWidth, time = '9:41
           top: 0,
           left: 0,
           right: 0,
-          // Height 40 (not the full 54) so time + icons vertically CENTER on the
-          // Dynamic Island (island center ≈ screen-y 20), not the status area.
-          height: 40,
+          // Vertically CENTER time + icons on the Dynamic Island. Measured from
+          // the bezel PNG: the island pill spans screen-y ~14–50, center ≈ 32
+          // (NOT 20 — the earlier value was wrong, which left the icons sitting
+          // ~12px too high). Height 64 + alignItems:center → content centers at 32.
+          height: 64,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',

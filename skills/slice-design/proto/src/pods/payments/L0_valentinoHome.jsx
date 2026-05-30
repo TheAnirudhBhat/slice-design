@@ -172,7 +172,7 @@ function AmountHero({ amount }) {
         <img
           src="/assets/upi_pill.png"
           alt="UPI"
-          style={{ height: 16, width: 'auto', display: 'block', pointerEvents: 'none', userSelect: 'none' }}
+          style={{ height: 12, width: 'auto', display: 'block', pointerEvents: 'none', userSelect: 'none' }}
         />
         <span
           style={{

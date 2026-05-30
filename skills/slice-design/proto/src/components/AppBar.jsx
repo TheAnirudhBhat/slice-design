@@ -232,8 +232,10 @@ function ActionSlot({ children }) {
         width: 48,
         height: 48,
         padding: 0,
-        color: 'rgba(0,0,0,1)',
-        opacity: 0.5,
+        // Themed tertiary so inline-SVG action glyphs (currentColor) read in BOTH
+        // light and dark — was a hardcoded black + opacity:0.5 which, with the old
+        // opaque PNG eye, showed a white box on the dark page.
+        color: 'var(--text-tertiary)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -247,33 +249,27 @@ function ActionSlot({ children }) {
 
 // ----- Glyphs (inline slice DLS line icons) -----
 
-// R23 fix-it-2-cont-6: eye open + closed glyphs now use the canonical slice DLS
-// PNGs fetched from Figma nodes 586:138 (open) and 586:132 (closed) — was inline
-// SVG approximation. Per user direction: "the eye icon is not from slice, please
-// get the slice icons from figma".
+// Official slice DLS eye (open) — paths from dls_eye.svg (Figma node 586:138),
+// INLINED with `currentColor` so the parent themes it (tertiary in light, white-
+// tertiary in dark). The earlier slice_eye_*.png were 100% opaque → a white box
+// on the dark page. Closed = the same eye with a slash (universal "hide" state
+// modifier, not a brand mark).
 export function EyeOpenGlyph() {
   return (
-    <img
-      src="/assets/icons/slice_eye_open.png"
-      alt=""
-      width={24}
-      height={24}
-      style={{ display: 'block', pointerEvents: 'none', userSelect: 'none' }}
-      aria-hidden="true"
-    />
+    <svg width="22" height="22" viewBox="0 0 20 14" fill="none" preserveAspectRatio="xMidYMid meet" aria-hidden="true" style={{ display: 'block' }}>
+      <path d="M19.4144 5.24481C16.9817 1.96291 13.4531 0 9.97487 0C6.49661 0 3.17919 1.87982 0.565469 5.28635C-0.18849 6.273 -0.18849 7.74777 0.565469 8.77596C2.97813 12.089 6.41618 14 9.98492 14C13.5537 14 17.0018 12.089 19.4345 8.75519C20.1885 7.71662 20.1885 6.273 19.4345 5.24481H19.4144ZM17.4139 7.18694C15.4637 9.86647 12.7494 11.3932 9.97487 11.3932C7.2003 11.3932 4.50616 9.86647 2.56597 7.20772C2.4956 7.10386 2.4956 6.94807 2.53581 6.89614C4.667 4.12315 7.30083 2.59644 9.97487 2.59644C12.6489 2.59644 15.4637 4.17507 17.4139 6.81306C17.4843 6.90653 17.4843 7.08309 17.4139 7.18694Z" fill="currentColor" />
+      <path d="M9.98511 9.03565C11.0955 9.03565 11.9957 8.10568 11.9957 6.9585C11.9957 5.81132 11.0955 4.88135 9.98511 4.88135C8.87471 4.88135 7.97456 5.81132 7.97456 6.9585C7.97456 8.10568 8.87471 9.03565 9.98511 9.03565Z" fill="currentColor" />
+    </svg>
   );
 }
 
 export function EyeClosedGlyph() {
   return (
-    <img
-      src="/assets/icons/slice_eye_closed.png"
-      alt=""
-      width={24}
-      height={24}
-      style={{ display: 'block', pointerEvents: 'none', userSelect: 'none' }}
-      aria-hidden="true"
-    />
+    <svg width="22" height="22" viewBox="0 0 20 14" fill="none" preserveAspectRatio="xMidYMid meet" aria-hidden="true" style={{ display: 'block' }}>
+      <path d="M19.4144 5.24481C16.9817 1.96291 13.4531 0 9.97487 0C6.49661 0 3.17919 1.87982 0.565469 5.28635C-0.18849 6.273 -0.18849 7.74777 0.565469 8.77596C2.97813 12.089 6.41618 14 9.98492 14C13.5537 14 17.0018 12.089 19.4345 8.75519C20.1885 7.71662 20.1885 6.273 19.4345 5.24481H19.4144ZM17.4139 7.18694C15.4637 9.86647 12.7494 11.3932 9.97487 11.3932C7.2003 11.3932 4.50616 9.86647 2.56597 7.20772C2.4956 7.10386 2.4956 6.94807 2.53581 6.89614C4.667 4.12315 7.30083 2.59644 9.97487 2.59644C12.6489 2.59644 15.4637 4.17507 17.4139 6.81306C17.4843 6.90653 17.4843 7.08309 17.4139 7.18694Z" fill="currentColor" />
+      <path d="M9.98511 9.03565C11.0955 9.03565 11.9957 8.10568 11.9957 6.9585C11.9957 5.81132 11.0955 4.88135 9.98511 4.88135C8.87471 4.88135 7.97456 5.81132 7.97456 6.9585C7.97456 8.10568 8.87471 9.03565 9.98511 9.03565Z" fill="currentColor" />
+      <path d="M2.4 0.8 L17.6 13.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
   );
 }
 

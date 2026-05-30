@@ -263,16 +263,23 @@ function FixedDepositsCard({ balanceHidden }) {
           </span>
         </div>
       </div>
+      {/* Rocket mascot — TRANSPARENT SVG (Figma imgLayer2 illustration only, no
+         baked "Card Background"). The old fd_card_corner.png had an opaque bg →
+         white box in dark mode. */}
       <img
-        src="/assets/fd_card_corner.png"
+        src="/assets/fd_card_corner.svg"
         alt=""
         aria-hidden="true"
         style={{
+          // Per Figma "Live deposit" corner (885:19672): 96×96 box flush to the
+          // top-right with the mascot inset 32.21%/30.27%/29.13%/24.78% → the art
+          // resolves to ~43×37 at top 30 / right 28 from the card corner.
           position: 'absolute',
-          top: 0,
-          right: 0,
-          width: 96,
-          height: 96,
+          top: 30,
+          right: 28,
+          width: 43,
+          height: 'auto',
+          objectFit: 'contain',
           pointerEvents: 'none',
           userSelect: 'none',
         }}
@@ -341,16 +348,23 @@ function MoniesCard({ balanceHidden }) {
           </span>
         </div>
       </div>
+      {/* monies cluster — TRANSPARENT render (Figma illustration only, no baked
+         "Card Background"). The old monies_card_corner.png had an opaque bg →
+         white box in dark mode. */}
       <img
         src="/assets/monies_card_corner.png"
         alt=""
         aria-hidden="true"
         style={{
+          // Per Figma "Monies" corner (885:24850): 96×96 box flush to the
+          // top-right with the cluster inset 26.67%/29.2%/28.47%/28.67% → the art
+          // resolves to ~40×43 at top 25 / right 27 from the card corner.
           position: 'absolute',
-          top: 0,
-          right: 0,
-          width: 96,
-          height: 96,
+          top: 25,
+          right: 27,
+          height: 43,
+          width: 'auto',
+          objectFit: 'contain',
           pointerEvents: 'none',
           userSelect: 'none',
         }}
@@ -446,7 +460,7 @@ export default function BankingL0({ onScrollChange }) {
           <MoniesCard balanceHidden={balanceHidden} />
         </div>
       </div>
-      <BottomFade color="var(--page-bg)" height={200} />
+      <BottomFade color="var(--page-bg)" height={200} bottom={12} />
     </div>
   );
 }

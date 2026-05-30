@@ -14,7 +14,7 @@ import React from 'react';
 // R23 fix-it-2-cont-14: default height bumped 140 → 200 per user — fade must
 // fully obscure scrolling content behind the floating nav (transactions in
 // Activity were peeking through the gap above the dock).
-export default function BottomFade({ color = 'var(--page-bg)', height = 200 }) {
+export default function BottomFade({ color = 'var(--page-bg)', height = 200, bottom = 0 }) {
   // Build the start/end gradient stops by stripping alpha at start.
   const transparent = colorWithAlpha(color, 0);
   return (
@@ -23,7 +23,9 @@ export default function BottomFade({ color = 'var(--page-bg)', height = 200 }) {
         position: 'absolute',
         left: 0,
         right: 0,
-        bottom: 0,
+        // `bottom` lets a pod lift the fade off the screen edge (e.g. 12px on the
+        // white L0s so it sits a touch above the floating nav).
+        bottom,
         height,
         background: `linear-gradient(to bottom, ${transparent} 0%, ${color} 60%)`,
         pointerEvents: 'none',
