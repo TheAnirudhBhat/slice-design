@@ -566,7 +566,9 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
           </ThemeContext.Provider>
         </PhoneFrame>
       </div>
-      <ThemeToggle theme={theme} onToggle={handleThemeToggle} />
+      {/* Dev-only control — hidden in full-bleed device/mobile view so it reads as a
+         real app (toggle theme there via App Settings → Dark mode). */}
+      {!isMobile && <ThemeToggle theme={theme} onToggle={handleThemeToggle} />}
     </div>
   );
 }

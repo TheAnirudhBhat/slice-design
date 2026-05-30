@@ -19,12 +19,37 @@ import './index.css';
 // a direct sibling of <App />, NO wrapper. The wrapper-with-pointer-events:
 // none experiment broke the toolbar's click handler. agentation's own UI uses
 // z-index 99994-100020 so it stacks above App's z-auto stage naturally.
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
+// Hide the Agentation toolbar in full-bleed device/mobile view — it's a desktop
+// design-review tool and shouldn't show on a real phone. Same query as App's
+// useIsMobile (phone viewport OR installed PWA). Still mounted on desktop, so the
+// skill's "agentation wired in every proto" rule holds for the review surface.
+function MaybeAgentation() {
+  const query = '(max-width: 600px), (display-mode: standalone)';
+  const [mobile, setMobile] = React.useState(
+    typeof window !== 'undefined' && window.matchMedia(query).matches
+  );
+  React.useEffect(() => {
+    const mq = window.matchMedia(query);
+    const on = () => setMobile(mq.matches);
+    mq.addEventListener?.('change', on);
+    window.addEventListener('resize', on);
+    return () => {
+      mq.removeEventListener?.('change', on);
+      window.removeEventListener('resize', on);
+    };
+  }, []);
+  if (mobile) return null;
+  return (
     <Agentation
       onAnnotationAdd={(a) => console.log('[agentation] add', a)}
       onSubmit={(payload) => console.log('[agentation] submit', payload)}
     />
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+    <MaybeAgentation />
   </React.StrictMode>,
 );
