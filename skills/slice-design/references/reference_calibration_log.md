@@ -1722,4 +1722,18 @@ Rebuilt the insurance exploration as a feature wired INTO the app (Explore entry
 
 Process note: every one of these was caught by actually running the proto (Claude Preview) + screenshotting + inspecting computed styles — the "wrong font" was invisible in screenshots and only `document.fonts`/network inspection revealed the CDN dependency. Reinforces the self-audit rule: screenshot AND inspect computed styles before showing.
 
-Source: R24 cont-31, 2026-05-30.
+**cont-31 (continued) — the visual-polish arc (a→e).** After the rebuild, a SECOND long tail of one-at-a-time corrections followed. Each was already a rule or cache-able; together they're the real lesson:
+
+a. **Icons hand-drawn AGAIN.** After fixing the back chevron (learning 4), I then hand-drew the close X. User: "this is the wrong cross, the cross on the profile page is correct, use that. also stop making mistakes with icons." Fix: `profile_close.svg` (14×14 in a 24×24 hit box). The pattern — reaching for `<path>` instead of the real asset — recurred across chevron + cross. Codified as a pre-flight gate: if you're about to draw a glyph, STOP and pull the DLS asset.
+
+b. **No grey, ever — re-reiterated.** User: "the choose your cover page is not white / we dont have a grey BG ever, how many times do i have to reiterate." The DOM was computed pure white; the actual culprit was a heavy card shadow (`0.08/24px`) reading as a grey wash, plus selection cards that should be outline-only. Fix: page bg pure white; SELECTION cards = 1px outline / no shadow (active = 2px V-500); CONTENT cards = `0 2px 32px 0.05` only.
+
+c. **Optical centering — flagged 3×.** Shield entry-icon, bill glyphs, and the success content block all read low when geometrically centered. User: "what part of not optically centered don't you understand." Fix: nudge icons up a few px; anchor top-heavy status/success/empty blocks near the TOP. Now a PROACTIVE pre-flight gate, not a wait-to-be-told fix. (Also in `reference_craft_principles.md`.)
+
+d. **Drop the "slice" prefix in-app.** "since this is health insurance, why write slice health insurance, it's in the slice app." Generic in-app features carry no brand prefix ("Health cover"); the mark stays only on named sub-products. (Folded into the copy-caps gate + anti-patterns.)
+
+e. **Data-in-a-box is rare → flush rows.** I boxed the success summary AND the "You pay" total. User, with the Payment OS 26 canonical (node 6910:49952): "they should not be in a box, data inside a box is a really rare pattern." Fix: multi-field detail = stacked label-top/value-below flush rows w/ hairlines; single total = label-left/value-right on a top hairline. A box is for an interactive choice, not read-only data. New anti-pattern + pre-flight gate.
+
+**Honest meta-root-cause (the whole of cont-31).** ~15 correction rounds for one 3-screen flow. The cause was NOT missing knowledge — every fix above was already in a reference file, the cache, or visible in a 10-second self-screenshot. The cause was process: I shipped first drafts WITHOUT running the NEW-SCREEN PRE-FLIGHT CHECKLIST, then treated each piece of feedback as a one-off patch instead of as a checklist gate to internalize. The durable remedy is not more rules — it's running the existing checklist end-to-end before showing, every single time, and adding a same-day stale-server/cache check before re-editing code that's already correct.
+
+Source: R24 cont-31 (rebuild + visual-polish arc), 2026-05-30.

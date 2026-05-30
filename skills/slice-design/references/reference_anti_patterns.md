@@ -234,6 +234,14 @@ Source: dmp:jhey-tompkins.md + slice judgment
 
 ## Data display
 
+### ❌ Read-only detail wrapped in a card / outline box
+Looks like: a transaction summary, payment breakdown, policy detail, or "You pay ₹X" total enclosed in a rounded card with a border or shadow.
+Why slice doesn't: data-in-a-box is a rare slice pattern. Read-only detail belongs in FLUSH rows separated by hairlines, not boxed. A box signals an INTERACTIVE choice (a tappable plan/option), so boxing static data reads wrong.
+Do instead:
+- **Multi-field block** (e.g. Cover amount / Premium / Valid till): stacked rows, label-on-top (Caption 12/16, tertiary) / value-below (Body 16/24, primary), left-aligned, a hairline (`rgba(0,0,0,0.05)`) between each, no surrounding box.
+- **Single total** (e.g. "You pay ₹549/month" above a CTA): label-left tertiary / value-right primary on a single top hairline — the divider anchors it so it doesn't "hang" as bare floating text.
+Source: cal:2026-05-30 R24 cont-31 — user, on the boxed insurance success summary + "You pay" box: "they should not be in a box, data inside a box is a really rare pattern." Canonical: Payment OS 26 node 6910:49952 (file xIc12scqCFBSJ5Kgyd6Krh).
+
 ### ❌ "Monthly SIP" or active-SIP filters in mutual-funds sections
 Looks like: a chip filter showing "Monthly SIP: ₹5,000"
 Why slice doesn't: user runs monthly **manual** deploys. SIPs are not part of how the MF flow is framed.

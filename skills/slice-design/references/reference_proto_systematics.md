@@ -412,6 +412,47 @@ non-negotiable #2).
       free-floating `<div>`s you align by hand. Reach for the list-item
       component from the snapshot. (cont-26)
 
+**Layout & composition gates (R24 cont-31 — each one was a separate correction this round):**
+- [ ] **DATA IS NOT IN A BOX.** Transaction / payment / summary / confirmation
+      detail is FLUSH rows separated by hairlines — never wrapped in a card or
+      outline box. Two row shapes: (a) a single total = label-left tertiary /
+      value-right primary on a top hairline (anchors it so it doesn't "hang"
+      above the CTA); (b) a multi-field block = stacked rows, label-on-top
+      (Caption 12/16 tertiary) / value-below (Body 16/24 primary), left-aligned,
+      hairline between each, NO surrounding box. Canonical: Payment OS 26 node
+      6910:49952. "data inside a box is a really rare pattern." A box is for an
+      INTERACTIVE choice (a tappable plan/option card), not for read-only data.
+- [ ] **Icons come from the DLS, never hand-drawn.** Back chevron = filled DLS
+      Chevron-left (node 582:580), NOT a 2px stroke `<path>`. Close = the SAME
+      `profile_close.svg` the Profile app bar uses, NOT a hand-drawn X. If you're
+      about to write `<path d="M…"/>` for a glyph, STOP and pull the real asset
+      (cache → Figma export). Hand-drawn glyphs read thin/wrong every time and
+      the user has flagged this 3×.
+- [ ] **PDP type matches product class.** A CORE bank product (insurance,
+      savings, deposits, cards) uses **Core PDP** (centered, gradient
+      Valentino→Blue H2, 256px illustration, tertiary subtitle, FAB bottom-right
+      — node 2061:86696). A sub-product / feature (Atom, Spark) uses **Feature
+      PDP** (left-aligned feature list — node 2063:87946). Pick deliberately;
+      don't default to the feature layout for a core product.
+- [ ] **Copy caps: lowercase is for NAMES only.** Headings, questions, CTAs are
+      sentence-case (capital first letter). Lowercase is reserved for brand +
+      product names (slice, spark, monies, slice super card). Drop the "slice"
+      prefix on in-app GENERIC features — it's already in the slice app, so
+      "Health cover" not "slice health cover". Keep the mark only on named
+      sub-products ("slice atom", "slice super card").
+- [ ] **No grey, ever. Cards: outline OR shadow by role.** Page bg = pure white
+      (#FFFFFF) on every non-immersive surface. A SELECTION / chooser card =
+      1px outline (`rgba(0,0,0,0.1)`), no shadow; active = 2px V-500. A floating
+      CONTENT card = white + `0 2px 32px rgba(0,0,0,0.05)` ONLY. Never the heavier
+      `0.08/24px` shadow — it reads as a grey wash and the user calls it "grey."
+- [ ] **Optically center top-heavy blocks PROACTIVELY.** A success / empty /
+      confirmation block (big tick/illustration → headline → detail) is top-heavy,
+      so a geometric center reads LOW / bottom-biased. Either anchor it near the
+      TOP (canonical for status screens: hero in the upper portion, detail rows
+      below, CTA pinned bottom) or, if truly centered, lift the mass-center up
+      (~tens of px). Apply without being told — the user has flagged "not
+      optically centered" repeatedly. See `reference_craft_principles.md`.
+
 **Before showing the user (the self-audit — SKILL.md #2):**
 - [ ] `npm run build` is clean (0 errors).
 - [ ] Screenshot your own output and diff it against the canonical Figma frame
@@ -419,13 +460,48 @@ non-negotiable #2).
 - [ ] If the browser is unavailable, SAY SO and do a careful manual spec diff
       instead — never silently ship the unaudited first build.
 
-Why this exists: R24 cont-25→29 shipped an insurance flow that "still was kinda
-mid." Root cause was never one big miss — it was a dozen small ones (button
-height, lowercase CTA, double header, font not inheriting, hand-drawn tick),
-each individually corrected by the user. Every single one was either already
-solved in the cache (compose-from-cache would've prevented it) or visible in a
-10-second self-screenshot (self-audit would've caught it). This checklist is the
-durable fix so the next new-screen build ships right the first time.
+Why this exists: R24 cont-25→31 shipped an insurance flow that took ~15 separate
+correction rounds. Root cause was never one big miss — it was a long tail of small
+ones (button height, lowercase CTA, double header, font not inheriting, hand-drawn
+tick + chevron + cross, boxed data, grey-wash shadow, bottom-biased success block),
+each individually corrected by the user. EVERY single one was either already solved
+in the cache (compose-from-cache would've prevented it), specified in a reference
+file, or visible in a 10-second self-screenshot (self-audit would've caught it).
+The deepest meta-root-cause: I shipped first drafts WITHOUT running this checklist,
+then treated each round of feedback as a one-off fix instead of a checklist gate.
+The fix is discipline, not more rules — run the whole list before showing, every
+time. This is the durable gate so the next new-screen build ships right the first
+time.
+
+---
+
+## RULE (R24 cont-31): when a reported visual bug contradicts the code, suspect a STALE SERVER / CACHE
+
+When the user reports a visual problem (wrong font, grey background, old layout)
+and your code + computed styles say it's already correct, DO NOT keep "fixing"
+code that is already right. The likely cause is a stale artifact, not a stale
+rule. Checklist:
+- **Stale dev server.** A long-running `vite`/`http.server` may be serving an old
+  bundle, or you edited a different copy than the one being served. Kill it and
+  start a FRESH server on a NEW port.
+- **Browser cache.** The user's tab may be holding old JS/CSS/fonts. A new port =
+  a fresh cache key; also hard-reload (the proto's own reload won't always bust
+  font caches).
+- **Verify with computed style, not vibes.** Read the live value
+  (`getComputedStyle(el).fontFamily` / `.background`) on the running page before
+  concluding. If the DOM says `Rubik` / `#FFFFFF` and the user still sees wrong,
+  it's 100% a cache/server-staleness problem — say so and reserve a fresh port.
+- **Two "still wrong" reports in a row on the same property = stop editing code.**
+  That pattern is the tell. The second report means the first fix WAS right and
+  never reached the user's tab.
+
+Why: R24 cont-27→28 — "the fonts are still wrong" fired twice after the font fix
+was already correct in code. The real cause was stale dev servers + a cached tab;
+the resolution was killing servers and serving fresh on a new port, not another
+font edit. Wasted two rounds editing already-correct code. Same shape recurred on
+"the cover page is not white" (DOM computed pure white; the culprit was a heavy
+shadow reading as grey — a real fix — but the FIRST instinct should still be to
+rule out staleness before re-editing).
 
 ---
 
