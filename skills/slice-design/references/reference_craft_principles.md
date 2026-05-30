@@ -139,8 +139,15 @@ Nudge it a few px so it LOOKS centered:
 - Top-heavy illustration in a card → `translateY(calc(-50% - 4px))` (up a touch).
 - ▶ glyph in a round button → shift right ~1–2px (the triangle's mass is left-of-center).
 - A glyph with a tail/descender → nudge against the tail.
+- A full-screen CENTERED content block (success / empty / confirmation: big icon →
+  headline → summary card, with a bottom CTA) → `justifyContent: center` reads LOW
+  because the block is top-heavy AND the CTA anchors the bottom. Lift the WHOLE block
+  up — e.g. `paddingBottom: ~140` on the centered flex container (mass-center up ~70px)
+  — so its visual mass centers, not its bounding box. Same rule, screen scale.
 
-Magnitude: ~1–3% of the element / a few px — enough to balance, not enough to look
-misaligned. Squint test: the version that looks centered when blurred IS centered.
-(cal:2026-05-30 R24 cont-31 — insurance entry-card shield illustration nudged up 4px;
-user: "this is top heavy with the rich illustration, bias it slightly to the top.")
+Magnitude: a few px for an icon; tens of px for a full content block. Squint test: the
+version that looks centered when blurred IS centered.
+(cal:2026-05-30 R24 cont-31 — insurance entry-card shield nudged up 4px; bill glyphs up
+2px; SuccessStep content block lifted ~70px. User, repeatedly: "what part of not
+optically centered don't you understand" → APPLY THIS PROACTIVELY to every centered
+hero / success / empty screen; don't wait to be told.)
