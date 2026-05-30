@@ -276,6 +276,7 @@ export default function CreditL0({ onScrollChange }) {
         fontFamily: 'Rubik, sans-serif',
         overflowY: 'auto',
         overflowX: 'hidden',
+        touchAction: 'pan-y', // horizontal swipe → Pager on touch (see cont-38)
         display: 'flex',
         flexDirection: 'column',
       }}

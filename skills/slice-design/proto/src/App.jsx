@@ -468,7 +468,8 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
                           height: 54,
                           flexShrink: 0,
                           background: reserveBg,
-                          transition: 'background 160ms linear',
+                          // Instant (no transition): must opacify with the AppBar so
+                          // cards never bleed through the reserve mid-scroll. (cont-38)
                         }}
                       />
                       <div style={{ flex: 1, minHeight: 0, position: 'relative' }}>

@@ -660,6 +660,9 @@ Per-component recipes alone don't catch cross-cutting failures. Every L0 build /
 21. **Slice DLS icons fetched from canonical nodes**, not approximated. Eye open `586:138`, eye closed `586:132`.
 22. **Valentino app bar canonical (cont-6, node `885:19901`)**: row padding `8px 20px 8px 16px`. LEFT = "Check balance" pill (1px white-20 border, `8/16` padding, 14/20R white). RIGHT cluster (gap 8): audio button (48 hit → 40 circle + 1px white-30 border → 20×20 glyph) + avatar button (48 hit → 40 photo + 1px white-30 border). The Valentino avatar KEEPS its white-30 ring (differs from the no-ring standard rule because canonical shows it).
 
+23. **App bar (+ the 54px status reserve) opacify INSTANTLY on scroll — NO background transition.** A fading bg (e.g. `transition: background 160ms`) lets cards show THROUGH the half-opaque bar for those ms while scrolling (caught on Banking, cont-38). Keep the transition on the elevation SHADOW only (`box-shadow …`), swap the background with no transition. The reserve must opacify in lockstep with the AppBar.
+24. **Every scrollable pod's scroll-container declares `touch-action: pan-y`** so a horizontal TOUCH swipe reaches the framer Pager (the container would otherwise claim it and page-swipe dies on touch — desktop mouse-drag is unaffected, so it only shows on mobile). Ancestor `pan-y` (on the Pager page) is NOT sufficient — set it on the `overflowY:auto` element itself. Pay has no scroller (always worked); Banking/Explore/Credit/Activity each need it. (cont-38 QA)
+
 If any item fails → fix before claiming done, AND surface why the skill didn't catch it earlier (so this checklist gets a new line). See `reference_anti_patterns.md` "R23 fix-it" + `reference_proto_patterns.md` "R23 fix-it" for the failure modes + patterns.
 
 ---

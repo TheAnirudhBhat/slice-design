@@ -85,7 +85,10 @@ export function AppBar({
         height: 64,
         background: effectiveBg,
         boxShadow: scroll ? '0 6px 8px rgba(0,0,0,0.05)' : 'none',
-        transition: 'background 160ms linear, box-shadow 200ms cubic-bezier(0.25, 0.1, 0.25, 1)',
+        // Background swap is INSTANT (no transition on it): a fading bg lets cards
+        // show THROUGH the half-opaque bar while scrolling. Only the elevation
+        // shadow eases. (cont-38 — app bar must opacify instantly on scroll.)
+        transition: 'box-shadow 200ms cubic-bezier(0.25, 0.1, 0.25, 1)',
         display: 'flex',
         alignItems: 'center',
         flexShrink: 0,
