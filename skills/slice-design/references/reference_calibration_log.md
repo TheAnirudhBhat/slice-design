@@ -2,6 +2,8 @@
 
 Append-only audit trail. Maintained by `/update-slice-design`. Each row records a calibration session, what was learned, and where the learning was promoted.
 
+> ⚠️ **This is HISTORY, not a live spec.** Current calibrated values live in the topical `reference_*.md` files — that's the source of truth. Rows here can be SUPERSEDED; if a row disagrees with a topical reference, the **reference wins**. Don't re-apply a value straight from a log row without confirming it against the topical reference (stale rows have been re-applied as "current" before — e.g. the 2026-05-30 bottom-nav colour churn). When a value changes, update the reference AND note the superseding here.
+
 Format: `YYYY-MM-DD · rule_key · N picks · agreement% · action · target file`
 
 ## History

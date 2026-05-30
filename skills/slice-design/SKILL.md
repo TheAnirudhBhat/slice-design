@@ -12,7 +12,7 @@ user-invocable: true
 > **slice-design / slice-DLS wins on any contradiction.**
 >
 > Priority order, top wins:
-> 1. `references/reference_calibration_log.md` + calibrated overrides in any `reference_*.md` (the user's own validated judgments)
+> 1. **Calibrated values in the topical `reference_*.md` files** — the current source of truth (the user's validated judgments). `reference_calibration_log.md` is the dated AUDIT TRAIL (rationale + superseded entries), NOT a live spec: if the log disagrees with a topical reference, the **topical reference wins**. When a calibrated value changes, update the topical reference AND mark the old log entry superseded — never leave two live values for one fact (stale log rows have been re-applied as "current" before).
 > 2. Project-local memory at `.slice-design/project.md` if present (project-specific patterns + exploration decisions)
 > 3. Base rules in this `SKILL.md` and other `references/reference_*.md` files
 > 4. `impeccable`, `design-motion-principles`, `emil-design-eng`, `frontend-design` (toolkit extensions — pull techniques, but slice rules win on conflict)
@@ -26,6 +26,16 @@ user-invocable: true
 > When a contradiction surfaces mid-task, state it briefly ("impeccable says X, slice-design overrides to Y because cal:2026-05-17 — proceeding with Y") and continue. Don't re-litigate.
 
 DLS 2.0 components/tokens (Figma execution), motion, web-proto defaults, anti-patterns, and calibrated judgments. Calibrated overrides win over any baseline rule in this file.
+
+## Canonical-first — fetch the spec before you build or iterate (HARD)
+
+The single biggest time-sink is **guessing**. Before implementing or changing any spec'd value — a colour, a component state, a layout/margin number, an icon, a token:
+
+1. **Pull the canonical Figma values** with `get_variable_defs` / `get_design_context` on the **specific frame node-id** — not a screenshot, not memory, not a terse chat description. For a dark value, pass a **dark** frame (variables resolve in the frame's mode).
+2. **Disambiguate terse feedback before acting.** "Make it black in dark" is ambiguous — confirm *which element* (chip vs glyph vs background) and remember colours are **per-mode** (light and dark are SEPARATE values; never apply one to both).
+3. **Verify both states before claiming done** — toggle light/dark and read the computed values. Gotchas: `setAttribute('data-theme')` re-themes CSS but does NOT recompute React-driven state (e.g. nav slot variants); `getComputedStyle` is live — read it immediately, never after mutating the same node.
+
+Why this is HARD: the 2026-05-30 dark-mode build burned ~10 rounds on bottom-nav colours alone by iterating on terse feedback instead of pulling `get_variable_defs` on the canonical node (`6591:60485`). Fetch-first is faster than guess-and-correct.
 
 ## Be flow-aware, not just surface-aware
 
