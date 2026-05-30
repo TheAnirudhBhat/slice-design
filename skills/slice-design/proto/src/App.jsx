@@ -55,11 +55,16 @@ const STATUS_VARIANT = {
 // holds briefly so it reads, then slides off in the reveal direction (up = dark
 // fills from the bottom; down = light fills from the top). Gradient stops + caption
 // type + the two SVGs are pulled verbatim from the canonical transition frames.
+// Valentino glow rises from the SAME edge (bottom) for BOTH modes — the fade
+// direction is constant; only the base colour (black → dark, white → light) and
+// the icon/caption differ. Stops are the canonical values (#9341FF→#621FFF→
+// #FF55BA), oriented so the opaque magenta sits at the bottom and fades UP to
+// reveal the destination base colour.
+const REVEAL_GRADIENT =
+  'linear-gradient(to top, #FF55BA 0%, rgba(98,31,255,0.34) 47%, rgba(147,65,255,0) 99%)';
 const REVEAL_BG = {
-  // black base, magenta crown at the TOP fading to transparent at the bottom
-  toDark: 'linear-gradient(to top, rgba(147,65,255,0) 0%, rgba(98,31,255,0.34) 53%, #FF55BA 101%), #090B0C',
-  // white base, magenta hem at the BOTTOM fading to transparent at the top
-  toLight: 'linear-gradient(to bottom, rgba(211,65,255,0) 57%, rgba(197,100,255,0.83) 88%, #F655FF 104%), #FFFFFF',
+  toDark: `${REVEAL_GRADIENT}, #090B0C`,
+  toLight: `${REVEAL_GRADIENT}, #FFFFFF`,
 };
 const REVEAL_ICON = { toDark: '/assets/theme_moon.svg', toLight: '/assets/theme_sun.svg' };
 const REVEAL_LABEL = { toDark: 'Switching to dark mode', toLight: 'Switching to light mode' };
@@ -262,9 +267,13 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
     setVisuallyActive(pod);
   };
   const handleThemeToggle = () => {
+    if (themeAnim) return; // ignore taps while a switch is mid-flight
     const goingDark = theme !== 'dark';
     setThemeAnim({ dir: goingDark ? 'toDark' : 'toLight', id: Date.now() });
-    setTheme(goingDark ? 'dark' : 'light');
+    // Flip the mode BEHIND the fully-opaque cover (after the fade-in), so the
+    // swap is hidden and the fade-OUT reveals the new theme — no flash of the
+    // new mode during the fade-in.
+    window.setTimeout(() => setTheme(goingDark ? 'dark' : 'light'), 520);
   };
 
   // R23 fix-it-2-cont-10: simplified to 2-div scaffold. Outer is the App
@@ -390,21 +399,22 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
               pages={pagesMeta}
             />
 
-            {/* Theme-switch reveal (canonical Figma 3309:13267) — flips data-theme
-               instantly, then a full-screen Valentino-gradient cover carrying the
-               DESTINATION illustration (moon → dark / sun → light) + caption holds
-               briefly so it reads, then slides off in the reveal direction (up =
-               dark from the bottom; down = light from the top). Sits inside the
-               screen (under the bezel), above pager/status/nav. */}
+            {/* Theme-switch reveal (canonical Figma 3309:13267) — a FULL-PAGE
+               Valentino-gradient cover carrying the destination illustration
+               (moon → dark / sun → light) + caption. It FADES in over the current
+               screen, HOLDS while you read it, then FADES out to reveal the new
+               mode. The data-theme flip happens behind the fully-opaque cover (no
+               flash). The gradient is maintained through the fade, and the fade is
+               IDENTICAL for both directions — opacity only, never a slide. */}
             <AnimatePresence>
               {themeAnim && (
                 <motion.div
                   key={themeAnim.id}
-                  initial={{ y: '0%' }}
-                  // Hold at 0% for ~45% of the run (the "Switching to…" beat the
-                  // user wanted to be able to appreciate), then ease off-screen.
-                  animate={{ y: ['0%', '0%', themeAnim.dir === 'toDark' ? '-100%' : '100%'] }}
-                  transition={{ duration: 1.25, times: [0, 0.45, 1], ease: [0.22, 1, 0.36, 1] }}
+                  initial={{ opacity: 0 }}
+                  // fade IN (0→1) · HOLD (1) · fade OUT (1→0). The hold is the
+                  // "Switching to…" beat the user wanted time to appreciate.
+                  animate={{ opacity: [0, 1, 1, 0] }}
+                  transition={{ duration: 1.5, times: [0, 0.22, 0.68, 1], ease: 'easeInOut' }}
                   onAnimationComplete={() => setThemeAnim(null)}
                   style={{
                     position: 'absolute',
@@ -423,9 +433,9 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
                     src={REVEAL_ICON[themeAnim.dir]}
                     alt=""
                     aria-hidden="true"
-                    initial={{ scale: 0.7, opacity: 0 }}
-                    animate={{ scale: [0.7, 1, 1], opacity: [0, 1, 1] }}
-                    transition={{ duration: 1.25, times: [0, 0.35, 1], ease: [0.22, 1, 0.36, 1] }}
+                    initial={{ scale: 0.88 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                     style={{ width: 80, height: 80, objectFit: 'contain', display: 'block' }}
                   />
                   <div

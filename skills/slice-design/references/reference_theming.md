@@ -164,30 +164,39 @@ prefer the clean standalone official asset. (And per the icon rule above, don't
 re-trace it — get the official file.)
 
 ## 11. Theme-switch reveal motion (light⇄dark) — CANONICAL (Figma "App visual fix" node `3309:13267`)
-Flip `data-theme` INSTANTLY, then play a **full-screen Valentino-gradient cover**
-that carries the **destination celestial illustration + caption**, holds briefly
-so it reads, then **slides off in the reveal direction**: up for →dark (dark fills
-from the bottom), down for →light (light fills from the top). This supersedes the
-earlier "flat cover of the pre-flip bg" — the mood board adds the gradient + the
-sun/moon illustration + the "Switching to … mode" caption.
+A **FULL-PAGE Valentino-gradient cover** carrying the **destination celestial
+illustration + caption** that **FADES** (opacity) in → holds → out. It is **NOT a
+slide** — user-corrected 2026-05-30: *"it's supposed to be a fade … it covers the
+whole thing, shows the icon, then fades to the intended colours."* The cover fades
+in over the current screen, holds while the icon + caption read, then fades out to
+reveal the new mode. The `data-theme` flip happens **behind the fully-opaque cover**
+(~520ms in) so there is no flash of the new mode during the fade-in.
 
+- **Fade direction is CONSTANT for both modes** (user: *"the direction of the fade
+  should always be in one direction"*). Only the BASE colour + icon/caption differ;
+  the gradient orientation is identical. Do NOT reintroduce the dark-from-bottom /
+  light-from-top split — that was the earlier slide, now retired.
 - **Destination icon** (the one you're switching TO): **moon → dark**, **sun → light**.
-  Official assets pulled from the canonical transition frames →
+  Official transparent SVGs pulled from the canonical transition frames →
   `proto/public/assets/theme_moon.svg` (purple crescent) + `theme_sun.svg` (orange sun).
-  They're multi-colour brand illustrations → use `<img>` (NOT currentColor inlining);
-  both are transparent-bg + theme-safe. Fix Figma's `preserveAspectRatio="none"` →
-  `xMidYMid meet` on save (the stretch gotcha, section 9), render 80×80 `objectFit:contain`.
-- **Gradient cover (verbatim canonical stops):**
-  - →dark: `linear-gradient(to top, rgba(147,65,255,0) 0%, rgba(98,31,255,0.34) 53%, #FF55BA 101%), #090B0C` — black base, magenta crown at the TOP.
-  - →light: `linear-gradient(to bottom, rgba(211,65,255,0) 57%, rgba(197,100,255,0.83) 88%, #F655FF 104%), #FFFFFF` — white base, magenta hem at the BOTTOM.
+  Multi-colour brand illustrations → `<img>` (NOT currentColor inlining); both are
+  transparent-bg + theme-safe (verified: no bg rect, `fill="none"` root). Fix Figma's
+  `preserveAspectRatio="none"` → `xMidYMid meet` on save (the stretch gotcha, section 9),
+  render 80×80 `objectFit:contain`.
+- **Gradient cover** — one orientation, magenta glow rising from the BOTTOM, over
+  the destination base. Canonical stops `#9341FF`(α0)→`#621FFF`(α.33)→`#FF55BA`(α1):
+  `linear-gradient(to top, #FF55BA 0%, rgba(98,31,255,0.34) 47%, rgba(147,65,255,0) 99%)`
+  layered over `#090B0C` (→dark) or `#FFFFFF` (→light). The transparent top reveals
+  the base, so it reads as "fade to black / fade to white with a Valentino glow."
 - **Caption**: `Switching to dark mode` / `Switching to light mode`. Rubik Regular
   16/24, letter-spacing 0.32px, centered, 24px gap under the icon. Text colour
   rgba(255,255,255,0.9) on →dark, rgba(0,0,0,0.9) on →light.
-- **Choreography**: one motion.div, `y: ['0%','0%', ±'100%']` with `times:[0,0.45,1]`
-  over **~1.25s, ease [0.22,1,0.36,1]** — the 0%→0% leg is the ~0.56s HOLD (user:
-  "make it calmer … don't even have time to appreciate it"), then it eases off.
-  Icon scales 0.7→1 + fades in over the first ~35%. (Implemented in `App.jsx`
-  `REVEAL_BG / REVEAL_ICON / REVEAL_LABEL / REVEAL_TEXT` + the AnimatePresence cover.)
+- **Choreography**: one motion.div, `opacity: [0,1,1,0]`, `times:[0,0.22,0.68,1]`
+  over **~1.5s, easeInOut** — fade-in ≈0.33s, HOLD ≈0.7s (the "Switching to…" beat
+  the user wanted time to appreciate), fade-out ≈0.45s. Icon scales 0.88→1 over the
+  first ~0.6s. `handleThemeToggle` guards against re-tap mid-flight and flips
+  `data-theme` via `setTimeout(…, 520)`. (Implemented in `App.jsx` `REVEAL_GRADIENT /
+  REVEAL_BG / REVEAL_ICON / REVEAL_LABEL / REVEAL_TEXT` + the AnimatePresence cover.)
 
 ## 12. More dark-mode component gotchas (this session)
 - **Card-corner illustrations** (Banking FD rocket, monies cluster): the Figma node
