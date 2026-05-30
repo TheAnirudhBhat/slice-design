@@ -24,7 +24,6 @@ import BottomFade from '../../components/BottomFade.jsx';
 import { useL1 } from '../../components/L1Stack.jsx';
 import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, OUTLINE_SUBTLE, BLUE_500, SLATE_10, SURFACE } from '../../tokens.js';
 import { CreditCardIcon, ElectricityIcon, MobileIcon, MoreIcon } from '../../icons/BillIcons.jsx';
-import { InviteEarnIcon } from '../../icons/InviteEarnIcon.jsx';
 
 // ---- Tokens ----
 const CARD_BG = SURFACE;
@@ -87,8 +86,8 @@ function BillAvatar({ children }) {
   return (
     <div
       style={{
-        width: 48,
-        height: 48,
+        width: 40,
+        height: 40,
         borderRadius: 100,
         background: SLATE_10,
         color: TEXT_SECONDARY,
@@ -151,7 +150,7 @@ function BillsCompositeCard() {
             }}
           >
             <BillAvatar>
-              <b.Icon size={24} />
+              <b.Icon size={20} />
             </BillAvatar>
             <div
               style={{
@@ -348,7 +347,15 @@ export default function ExploreL0({ onScrollChange }) {
             <ExploreMedium
               subtext="Invite"
               title="Earn ₹150"
-              icon={<InviteEarnIcon size={54} color={TEXT_PRIMARY} />}
+              icon={
+                <img
+                  src="/assets/invite_magnet.png"
+                  width={54}
+                  height={54}
+                  alt=""
+                  style={{ display: 'block' }}
+                />
+              }
             />
             <div style={{ display: 'flex', flexDirection: 'column', gap: CARD_GAP }}>
               <ExploreSmall subtext="Credit score" title="785" />

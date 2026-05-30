@@ -786,7 +786,7 @@ After the retraction pass, the user surfaced five more polish issues. Code + ski
 - `pods/payments/L0_valentinoHome.jsx` — `Keypad` rows now `padding: 0 24px` + `justify-content: space-between` so the row spans the full screen width minus the canonical gutter, matching the Request|Transfer button row.
 - `components/BottomNav.jsx` — `isImmersive = active === 'pay'` (was `visuallyActive === 'pay'`). Variant snaps on commit, not mid-drag.
 - `components/BottomNav.css` — immersive `--inactive-bg` `0.18 → 0.22`, `--inactive-fg` `0.7 → 0.85`. Matches the ₹3K pill visual weight in canonical Figma.
-- `pods/explore/L0.jsx` — `T.h3` (20/24M) for card titles (was H4 16/20M); `T.metadata` `11/14` (was canonical 10/12); `BillAvatar` 48×48 (was 40); bill icons 24×24 (was 20). Proto-calibrated deviation from strict canonical because the iPhone 16 Pro Max scale at our browser viewport made H4 feel small.
+- `pods/explore/L0.jsx` — `T.h3` (20/24M) for card titles (was H4 16/20M); `T.metadata` `11/14` (was canonical 10/12); ~~`BillAvatar` 48×48 (was 40); bill icons 24×24 (was 20)~~. Proto-calibrated deviation from strict canonical because the iPhone 16 Pro Max scale at our browser viewport made H4 feel small. **SUPERSEDED (cont-32): the bill avatar/icon bump to 48/24 read TOO BIG — reverted to canonical 40/20. The card-title/metadata bumps stand; the bill-tile bump did not. Lesson: bumping for "felt small" is risky — bill tiles were fine at canonical.**
 - `package.json` — added `agentation@^3.0.2`.
 - `src/main.jsx` — wired `<Agentation ... />` sibling of `<App />` with console-logging callbacks.
 
@@ -1760,6 +1760,20 @@ Lesson: "diverged file" ≠ "customized file." Most divergence is staleness; dif
 
 Also this round (folded in as cont-32 work):
 - **"Today" is banned copy.** Activity TxnRow rendered a literal "today"/"Today, 9:41 am". slice never writes relative day labels — use the real date (`25 Jan '26`). Fixed in both proto copies + new anti-pattern (pods are project-owned, so the same fix had to land in each copy — a reminder that pod-level fixes don't propagate via the kit; only the design-system layer does).
-- **Invite & earn = themeable inline SVG.** Replaced `invite_magnet.png` (a raster that couldn't recolor) with `icons/InviteEarnIcon.jsx` — the DLS "Cashback/Friends" glyph (node 6572:60179) inlined with `fill={color}`, driven by `var(--text-primary)`. Verified it flips rgba(0,0,0,0.9) (light) → #fff (dark). Lives in the LINKED `icons/`, so the icon itself propagates to every project even though its usage site (the Explore pod) is per-project. General rule: an icon that must theme is an inline SVG with a token/`currentColor` fill, never a PNG.
+- ~~**Invite & earn = themeable inline SVG.**~~ **RETRACTED (cont-32 same day).** I swapped `invite_magnet.png` for the DLS "Cashback/Friends" mono glyph (node 6572:60179) inlined with `fill=var(--text-primary)`. WRONG on two counts: (1) wrong SUBJECT — the canonical invite card uses a rich colourful 3D **magnet** illustration, not a two-people glyph; (2) wrong STYLE — a flat single-fill glyph looks out of place beside the card's rich illustrations (spark, pie, shield). User: "you fucked this is the wrong illustration for this place." Reverted to `invite_magnet.png`; deleted `InviteEarnIcon.jsx`. The general technique (inline SVG + token fill for a MONO icon that must theme) is still valid — but it does NOT apply to rich/multicolour ILLUSTRATIONS, and the node the user pastes is a starting hint, not a guarantee it's the right art for the slot.
 
 Source: R24 cont-32, 2026-05-30.
+
+### 2026-05-30 · R24 cont-33 (missing-asset placeholders — generate, don't drop dull dummies)
+
+User direction, after exploring FLUX for icon/illustration generation: "I want something which can help me generate illustrations and icons for slice when I am working… the dummy circle doesn't really always work, page looks dull, this will be a much better solution… whenever there is an asset requirement and icon does not exist, then it should be auto-invoked," and "I need it to be free."
+
+**Override.** The base skill said missing asset → dull dummy + flag, and iconography said "never generate icon SVGs." Overruled for **proto/working context only**: missing asset → AUTO-GENERATE a high-fidelity, slice-accurate, **flagged** placeholder. The flag is the guardrail that preserves the original ban's intent (nothing fake ships) while giving the user non-dull pages to evaluate during design review. Product builds + post-handoff surfaces keep the no-generate ban.
+
+1. **Two engines, both free.** Icons = direct SVG few-shot (no model, instant) using the derived slice icon DNA: **filled paths (`fill-rule=evenodd`), single `currentColor` fill @ 0.5/0.9 opacity, rounded geometry, 24-grid** — derived from the real `proto/public/assets/icons/*.svg`. Illustrations = Gemini/Nano-Banana (`cc-nano-banana` skill, free OAuth tier) anchored on `fy_3d_*`/`fire_*` reference images, transparent bg. FLUX rejected: LoRA needs an NVIDIA GPU → on a Mac that's paid cloud, not free; and FLUX is raster/off-grid for icons anyway.
+
+2. **Guardrails.** Every generated asset carries a flag (SVG comment / `gen_` prefix + `GENERATED_ASSETS.md` manifest = visual-team worklist). Generated assets are PROJECT-OWNED (`public/assets/`), never the linked kit (placeholders must not propagate). Naming follows the iconography taxonomy so each maps 1:1 to its real DLS icon. Resolution order is now copy → Figma → generate (generate is the third fallback, not the first move).
+
+3. **Artifacts.** New `references/reference_slice_asset_generation.md` (spec + procedure + templates + manifest format). Amended SKILL.md asset-reuse rule + the "Need an icon"/"Need an illustration" table rows; amended `reference_dls_iconography.md` ban to scope it to product/post-handoff. Proof icon shipped: `proto/public/assets/icons/gen_bell.svg` (filled, currentColor, rounded — pending visual verify in the running proto).
+
+Source: R24 cont-33, 2026-05-30.

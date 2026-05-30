@@ -12,6 +12,12 @@ Why slice doesn't: hand-drawn glyphs never match the DLS weight/geometry — the
 Do instead: for EVERY icon use the canonical asset/path — grep `references/dls-cache/COMPONENT_INDEX.md` (General/*, Interface/*, Status/*) or copy the proto's `public/assets/icons/*` (`profile_close.svg`, `dls_chevron.svg`, the filled `ChevronBack`, etc.). If it isn't cached, export it from Figma. NEVER approximate a glyph.
 Source: cal:2026-05-30 R24 cont-31 ✅
 
+### ❌ Swapping art without checking subject + style against the canonical slot
+Looks like: replacing a card's rich/colourful 3D ILLUSTRATION (e.g. the invite-card magnet) with a flat single-colour line GLYPH — or swapping in whatever a pasted Figma node renders, without first confirming it's the right art for THAT slot.
+Why slice doesn't: illustration ≠ icon. Bento/feature cards (Rewards=spark, Spends=pie, Health=shield, Invite=magnet) carry rich multicolour illustrations; a flat mono glyph beside them reads instantly wrong. A node the user pastes is a HINT, not proof it's the correct art (node 6572:60179 was a "Cashback/Friends" mono glyph, not the invite magnet).
+Do instead: before swapping any illustration/icon, screenshot the CANONICAL frame for that exact slot and match BOTH subject (what it depicts) and style (rich illustration vs line glyph). "make it a themeable SVG" applies to MONO icons (inline SVG + token/`currentColor` fill); a multicolour illustration that needs dark mode gets a dark-variant asset, never a single-fill recolor.
+Source: cal:2026-05-30 R24 cont-32 — user: "wrong illustration for this place" ✅
+
 ### ❌ Card shadow heavy enough to read as a grey wash
 Looks like: card `box-shadow: 0 4px 24px rgba(0,0,0,0.08)` (or heavier). Fine on one card, but on a card-DENSE screen (stacked selection cards, a summary list) the overlapping soft shadows turn the white page greyish — which reads as a grey background (a hard no in slice).
 Why slice doesn't: the canonical float shadow is the SUBTLE `0px 2px 32px 0px rgba(0,0,0,0.05)`; anything heavier breaks the "shadow-on-white IS the float, never grey" rule.
