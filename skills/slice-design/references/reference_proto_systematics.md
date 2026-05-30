@@ -375,15 +375,15 @@ the user until every box is genuinely checked — that's the self-audit (SKILL.m
 non-negotiable #2).
 
 **Before writing code:**
-- [ ] **Compose from cache, then LINK THE KIT.** Scaffold by copying
-      `references/proto-snapshot/` (Vite + react + `agentation@^3.0.2` +
-      `<Agentation/>` already wired). Then run `proto/scripts/link-kit.sh link
-      <project>` so the design-system layer (`components/ icons/ utils/ tokens.js
-      index.css`) is SYMLINKED to the skill proto — a skill fix then propagates to
-      every project automatically (cont-32). Add the skill path to vite
-      `server.fs.allow`. Project-owned = `App.jsx main.jsx pods/ public/assets/`.
-      Do NOT re-hand-build chrome from memory, and do NOT fork the kit by copying
-      it (that reintroduces drift). See `reference_web_proto.md` § "Shared kit".
+- [ ] **Scaffold BORN KIT-LINKED — one command.** Run `proto/scripts/new-proto.sh
+      <name>` (NOT a hand copy). It clones the canonical app (project-owned:
+      `App.jsx main.jsx pods/ public/assets/` + configs + `agentation@^3.0.2` +
+      `<Agentation/>`) and SYMLINKS the design-system layer (`components/ icons/
+      utils/ tokens.js index.css`) to the skill proto, with vite `server.fs.allow`
+      set — so a skill fix propagates to every project automatically (cont-32). Add
+      your feature pod under `src/pods/`; NEVER edit the linked kit locally and
+      NEVER fork it by copying (that reintroduces drift). For an EXISTING project,
+      `link-kit.sh link <project>`. See `reference_web_proto.md` § "Shared kit".
 - [ ] **Agentation present.** `package.json` lists `agentation`; `main.jsx`
       renders `<Agentation/>` as a sibling of `<App/>`. (cont-29)
 - [ ] **Fonts will load AND inherit.** Rubik 400/500/600 linked in `index.html`;

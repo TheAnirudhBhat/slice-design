@@ -53,7 +53,17 @@ inherently per-feature, so they stay local. Assets are copied (a project adds it
 own); shared new assets are synced additively, never live-linked (a symlinked
 `public/assets` would force project-specific art to live in the skill).
 
-**Setup (the scaffold does this automatically; the tool is idempotent):**
+**Starting a NEW project — born kit-linked (the default, do this every time):**
+```bash
+# scaffolds a copy of the canonical app + symlinks the kit + sets vite fs.allow
+~/.claude/skills/slice-design/proto/scripts/new-proto.sh <name> [dest-parent] [port]
+# → cd <dest>/<name> && npm install --cache "$TMPDIR/npm-cache-<name>" && npm run dev
+```
+A fresh project is then identical to the skill app, with the kit live-linked from
+the start — no divergence, ever. Add your feature pod under `src/pods/` and wire
+its entry point; never edit the linked kit files locally.
+
+**Linking an EXISTING project (or repairing links), idempotent:**
 ```bash
 # from the skill: link a project's kit layer to the canonical proto
 ~/.claude/skills/slice-design/proto/scripts/link-kit.sh link  /abs/path/to/project

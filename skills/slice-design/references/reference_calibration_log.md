@@ -1756,4 +1756,10 @@ User direction: "whenever a new project is made from this skill, when the skill 
 
 Lesson: "diverged file" ≠ "customized file." Most divergence is staleness; diff before assuming a project intentionally forked, then reconcile toward the canonical kit. Documented in `reference_web_proto.md` § "Shared kit" + the pre-flight "Compose from cache, then LINK THE KIT" gate.
 
+5. **Born-linked scaffold (`proto/scripts/new-proto.sh`).** Per "set this up from the start in every new project," a one-command scaffolder now clones the canonical app (project-owned layer) and symlinks the kit + sets vite `fs.allow` in one shot — a fresh project is identical to the skill app and kit-linked from minute one, so it can never start out drifted. The pre-flight gate now leads with `new-proto.sh` instead of a hand copy.
+
+Also this round (folded in as cont-32 work):
+- **"Today" is banned copy.** Activity TxnRow rendered a literal "today"/"Today, 9:41 am". slice never writes relative day labels — use the real date (`25 Jan '26`). Fixed in both proto copies + new anti-pattern (pods are project-owned, so the same fix had to land in each copy — a reminder that pod-level fixes don't propagate via the kit; only the design-system layer does).
+- **Invite & earn = themeable inline SVG.** Replaced `invite_magnet.png` (a raster that couldn't recolor) with `icons/InviteEarnIcon.jsx` — the DLS "Cashback/Friends" glyph (node 6572:60179) inlined with `fill={color}`, driven by `var(--text-primary)`. Verified it flips rgba(0,0,0,0.9) (light) → #fff (dark). Lives in the LINKED `icons/`, so the icon itself propagates to every project even though its usage site (the Explore pod) is per-project. General rule: an icon that must theme is an inline SVG with a token/`currentColor` fill, never a PNG.
+
 Source: R24 cont-32, 2026-05-30.

@@ -74,7 +74,7 @@ const COLORS = {
 // ───────────────── mock transactions ─────────────────
 // type: 'sent' | 'received' | 'failed' | 'pending'
 const TXNS = [
-  { id: 't1',  name: 'Aman Saxena',     subtitle: 'today',       amount: 250,    type: 'sent',     initial: 'A' },
+  { id: 't1',  name: 'Aman Saxena',     subtitle: '25 Jan ‘26',  amount: 250,    type: 'sent',     initial: 'A' },
   { id: 't2',  name: 'Zomato',          subtitle: '24 Jan ‘26',  amount: 419,    type: 'sent',     initial: 'Z' },
   { id: 't3',  name: 'Riya Mehta',      subtitle: '24 Jan ‘26',  amount: 1200,   type: 'received', initial: 'R' },
   { id: 't4',  name: 'BluSmart',        subtitle: '23 Jan ‘26',  amount: 387,    type: 'failed',   initial: 'B' },
@@ -448,7 +448,7 @@ export default function ActivityL0({ onScrollChange }) {
                       txn.type === 'pending' ? `request to ${txn.name} pending` :
                       `sent to ${txn.name}`,
                     fromLabel: txn.type === 'received' ? `From ${txn.name}` : `To ${txn.name}`,
-                    timestamp: txn.subtitle === 'today' ? "Today, 9:41 am" : `${txn.subtitle}, 9:41 am`,
+                    timestamp: `${txn.subtitle}, 9:41 am`,
                     txnId: `Ax${Date.now().toString().slice(-10)}${Math.floor(Math.random() * 1e9).toString(16)}`,
                     sourceLabel: 'From slice savings',
                     sourceValue: 'xxx1234',

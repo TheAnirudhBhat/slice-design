@@ -23,6 +23,8 @@ import { AppBar, usePageScroll } from '../../components/AppBar.jsx';
 import BottomFade from '../../components/BottomFade.jsx';
 import { useL1 } from '../../components/L1Stack.jsx';
 import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, OUTLINE_SUBTLE, BLUE_500, SLATE_10, SURFACE } from '../../tokens.js';
+import { CreditCardIcon, ElectricityIcon, MobileIcon, MoreIcon } from '../../icons/BillIcons.jsx';
+import { InviteEarnIcon } from '../../icons/InviteEarnIcon.jsx';
 
 // ---- Tokens ----
 const CARD_BG = SURFACE;
@@ -78,6 +80,9 @@ function TagInfo({ children }) {
 }
 
 // ---- 48×48 bill avatar (slate-10 tinted, no stroke) — proto-calibrated size ----
+// `color: TEXT_SECONDARY` themes the inline-SVG glyph's `currentColor` to the
+// canonical bill-icon tone (black 0.7 in light, white 0.7 in dark) so the
+// glyphs never vanish on the dark page.
 function BillAvatar({ children }) {
   return (
     <div
@@ -86,6 +91,7 @@ function BillAvatar({ children }) {
         height: 48,
         borderRadius: 100,
         background: SLATE_10,
+        color: TEXT_SECONDARY,
         display: 'grid',
         placeItems: 'center',
         flexShrink: 0,
@@ -96,12 +102,12 @@ function BillAvatar({ children }) {
   );
 }
 
-// ---- BILL_ICONS — mirrors explore-base BILL_ICONS exactly ----
+// ---- BILL_ICONS — inline SVG glyphs (theme-safe currentColor + V-500 accent) ----
 const BILL_ICONS = [
-  { src: '/assets/bill_v2_credit.png', t: 'Credit\ncard' },
-  { src: '/assets/bill_v2_electric.png', t: 'Electricity\nbill' },
-  { src: '/assets/bill_v2_mobile.png', t: 'Mobile\nrecharge' },
-  { src: '/assets/bill_v2_more.png', t: 'View\nmore' },
+  { Icon: CreditCardIcon, t: 'Credit\ncard' },
+  { Icon: ElectricityIcon, t: 'Electricity\nbill' },
+  { Icon: MobileIcon, t: 'Mobile\nrecharge' },
+  { Icon: MoreIcon, t: 'View\nmore' },
 ];
 
 // ---- Recharge & bills composite card ----
@@ -145,13 +151,7 @@ function BillsCompositeCard() {
             }}
           >
             <BillAvatar>
-              <img
-                src={b.src}
-                width={24}
-                height={24}
-                alt=""
-                style={{ display: 'block' }}
-              />
+              <b.Icon size={24} />
             </BillAvatar>
             <div
               style={{
@@ -348,15 +348,7 @@ export default function ExploreL0({ onScrollChange }) {
             <ExploreMedium
               subtext="Invite"
               title="Earn ₹150"
-              icon={
-                <img
-                  src="/assets/invite_magnet.png"
-                  width={54}
-                  height={54}
-                  alt=""
-                  style={{ display: 'block' }}
-                />
-              }
+              icon={<InviteEarnIcon size={54} color={TEXT_PRIMARY} />}
             />
             <div style={{ display: 'flex', flexDirection: 'column', gap: CARD_GAP }}>
               <ExploreSmall subtext="Credit score" title="785" />

@@ -54,6 +54,12 @@ Looks like: "20th November, 2025"
 Do instead: `20 Nov '25` in Caption type style
 Source: slice-dls L359
 
+### ❌ Relative day labels — "Today" / "Yesterday"
+Looks like: a transaction row, timestamp, or section header reading "Today", "today", or "Yesterday".
+Why slice doesn't: "in slice we don't write today." slice timestamps use the actual date, always — it reads precise and ages correctly (a screenshot taken weeks later still makes sense).
+Do instead: the real date in the Caption style — `25 Jan '26` (list subtitle) / `25 Jan '26, 9:41 am` (detail timestamp). No "Today"/"Yesterday" branch.
+Source: cal:2026-05-30 R24 cont-32 — user on Activity TxnRow ✅
+
 ### ❌ Leading illustration on the LEFT of a card
 Looks like: a card / product-entry with a 3D illustration or image in the LEFT (leading) slot, text to its right
 Why slice doesn't: slice cards lead with TEXT; illustrations bleed on the RIGHT (canonical L0 Medium / atom entry card = trailing mascot bleed). A left-side illustration reads as a BANNER, which this isn't.
