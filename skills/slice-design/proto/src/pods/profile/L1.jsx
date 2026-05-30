@@ -27,6 +27,7 @@
 import React, { useRef } from 'react';
 import { AppBar, usePageScroll } from '../../components/AppBar.jsx';
 import Avatar from '../../components/Avatar.jsx';
+import { useL1 } from '../../components/L1Stack.jsx';
 import { V_500, TEXT_PRIMARY, TEXT_TERTIARY, PAGE_BG } from '../../tokens.js';
 
 const PAGE_PAD = 24;
@@ -150,6 +151,7 @@ const MENU = [
 export default function ProfileL1({ onClose }) {
   const scrollRef = useRef(null);
   const scrolled = usePageScroll(scrollRef);
+  const { push } = useL1();
 
   return (
     <div
@@ -278,6 +280,7 @@ export default function ProfileL1({ onClose }) {
                 iconW={item.iconW}
                 iconH={item.iconH}
                 label={item.label}
+                onTap={item.id === 'app-settings' ? () => push('appSettings') : undefined}
               />
             ))}
           </div>

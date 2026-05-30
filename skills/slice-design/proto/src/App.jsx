@@ -18,7 +18,9 @@ import ExploreL0 from './pods/explore/L0.jsx';
 import CreditL0 from './pods/credit/L0.jsx';
 import ProfileL1 from './pods/profile/L1.jsx';
 import TxnDetailL1 from './pods/activity/TxnDetailL1.jsx';
+import AppSettingsL1 from './pods/profile/AppSettingsL1.jsx';
 import L1Stack from './components/L1Stack.jsx';
+import { ThemeContext } from './theme-context.js';
 
 // L1 registry — name → component or { Component, slideFrom }. Each L0 calls
 // `useL1().push(name, props)` to open an L1; L1 components receive `onClose`
@@ -27,6 +29,7 @@ import L1Stack from './components/L1Stack.jsx';
 const L1_REGISTRY = {
   profile: { Component: ProfileL1, slideFrom: 'bottom' },
   txnDetail: { Component: TxnDetailL1, slideFrom: 'right' },
+  appSettings: { Component: AppSettingsL1, slideFrom: 'right' },
 };
 
 const PODS = ['banking', 'explore', 'pay', 'credit', 'activity'];
@@ -354,6 +357,9 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
         }}
       >
         <PhoneFrame>
+          {/* ThemeContext lets L1 screens (App Settings "Dark mode" switch) trigger
+             the same theme-switch transition as the dev toggle. */}
+          <ThemeContext.Provider value={{ theme, toggleTheme: handleThemeToggle }}>
           {/* L1Stack provides useL1() to all descendants. L1 overlays render
              above the L0 pager via AnimatePresence + slide-in motion. */}
           <L1Stack registry={{ ...L1_REGISTRY, ...extraL1 }} onOpenChange={setL1Open}>
@@ -501,6 +507,7 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
               )}
             </AnimatePresence>
           </L1Stack>
+          </ThemeContext.Provider>
         </PhoneFrame>
       </div>
       <ThemeToggle theme={theme} onToggle={handleThemeToggle} />
