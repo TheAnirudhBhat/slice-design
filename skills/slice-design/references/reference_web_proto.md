@@ -80,6 +80,17 @@ directly); the project's `pods/` holds ONLY its feature pod. Assets are copied +
 synced from the skill (the inherited shell + base pods reference them); a symlinked
 `public/assets` would force project art into the skill, so copy, don't link.
 
+**Working rule — the skill proto is upstream + READ-ONLY during project work (cont-36):**
+Everything in a project stays linked to the skill ("main") by default. While
+building or exploring a project you do NOT edit the skill proto — a project-specific
+change goes in the PROJECT. To diverge a shared component for an exploration, UNLINK
+just that one: `link-kit.sh materialize <project> src/<path>` copies the skill's
+current file in so the project owns its copy; the skill proto stays untouched and
+every other project keeps inheriting the original. The skill proto changes ONLY via
+deliberate skill maintenance (a universal DLS truth, with a calibration-log entry),
+never as a side-effect of a project. (Full statement: SKILL.md § "HARD RULE —
+projects INHERIT the skill proto…".)
+
 **Starting a NEW project — born kit-linked (the default, do this every time):**
 ```bash
 # scaffolds a copy of the canonical app + symlinks the kit + sets vite fs.allow

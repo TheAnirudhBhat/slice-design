@@ -75,12 +75,26 @@ case "$cmd" in
     done
     ;;
   materialize)
-    PROJ="$(cd "${2:?usage: link-kit.sh materialize /abs/path/to/project}" && pwd)"
-    for p in "${KIT_PATHS[@]}"; do
-      link="$PROJ/src/$p"
-      if [ -L "$link" ]; then real="$(readlink "$link")"; rm "$link"; cp -R "$real" "$link"; echo "copied src/$p (now standalone)"; fi
-    done
-    echo "Project is now standalone — kit updates will NO LONGER propagate."
+    # materialize <project> [relpath]
+    #   relpath given → UNLINK just that one path so the project can EXPLORE/diverge
+    #     it (e.g. `src/components` or `src/AppBase.jsx`). The skill proto is NEVER
+    #     edited — we copy its CURRENT file into the project; the project owns the copy.
+    #   no relpath → make the whole kit standalone (portable export).
+    PROJ="$(cd "${2:?usage: link-kit.sh materialize /abs/path/to/project [relpath-to-unlink]}" && pwd)"
+    TARGET="${3:-}"
+    if [ -n "$TARGET" ]; then
+      link="$PROJ/$TARGET"
+      [ -L "$link" ] || { echo "ERROR: $TARGET is not a symlink (already local, or wrong path)"; exit 1; }
+      real="$(readlink "$link")"; rm "$link"; cp -R "$real" "$link"
+      echo "UNLINKED $TARGET → now project-owned; explore freely. Skill proto UNTOUCHED."
+      echo "(To re-inherit later: rm it + re-run \`link\` / \`relink-all\`.)"
+    else
+      for p in "${KIT_PATHS[@]}"; do
+        link="$PROJ/src/$p"
+        if [ -L "$link" ]; then real="$(readlink "$link")"; rm "$link"; cp -R "$real" "$link"; echo "copied src/$p (now standalone)"; fi
+      done
+      echo "Project fully standalone — kit updates will NO LONGER propagate."
+    fi
     ;;
   list) [ -f "$REGISTRY" ] && cat "$REGISTRY" || echo "(registry empty)";;
   *) sed -n '2,30p' "$0"; exit 1 ;;

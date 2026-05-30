@@ -1805,3 +1805,19 @@ Converted insurance-flow as proof: deleted its forked App + all base-pod copies;
 Lesson: "inherit the design system" wasn't what the user meant by "keep everything the same" — they meant inherit the whole APP. For a proto family where projects = app + one feature, the right unit of inheritance is the entire base app via an injection seam; only genuinely-additive feature code is project-owned.
 
 Source: R24 cont-35, 2026-05-30.
+
+### 2026-05-30 · R24 cont-36 (governance: inherit-by-default, skill proto is upstream + read-only during project work)
+
+User, confirming the seam as the permanent model: "this should auto happen always — it should basically inherit that proto and build on it; everything in the proto is still linked to the main thing till the user explicitly asks to explore something, where some components might need to be unlinked from the main to explore — but the skill proto should NOT be updated ever in the process; the project should inherit it though."
+
+**Promoted to a HARD working-mode rule (SKILL.md § "HARD RULE — projects INHERIT the skill proto…"):**
+1. **Inherit-by-default.** Every project is born fully inheriting the skill proto (extension seam) and builds on top. Linked, not forked.
+2. **Skill proto is READ-ONLY during project work.** A project-specific change goes in the PROJECT. Never edit the skill proto to satisfy one project — that's upstream churn that hits every project.
+3. **Unlink-to-explore.** To diverge a shared component for an exploration, unlink just that one: `link-kit.sh materialize <project> src/<path>` (now supports a single-path target) copies the skill's current file into the project; the project owns the copy, the skill proto is untouched, every other project keeps inheriting the original.
+4. **The skill proto changes ONLY via deliberate skill maintenance** — a confirmed universal DLS truth, with a calibration-log entry — never as a side-effect of building a project. When unsure if a change is universal vs project-specific: assume project-specific.
+
+Meta-note on THIS session: several edits I made to the skill proto (bill-icon size, "today" copy, L1 pacing) WERE universal DLS truths and belong upstream — but going forward they should be made deliberately as skill maintenance, not silently while fixing a project. The default for project-fix work is now: change the project; promote upstream only on a confirmed slice-wide rule.
+
+Also (small, same round): **selection/chooser card UNSELECTED state gets the 1px hairline too** — `1px solid rgba(0,0,0,0.05)` + the canonical shadow, matching the Explore cards ("the unselected cards should also have an outline like the explore cards to get that slice look"). Refines cont-32g (which left the unselected border transparent). Selected stays 2px V-500; with `box-sizing:border-box` the 1↔2px swap doesn't shift the list. Fix made in the PROJECT (insurance pod), per rule 2.
+
+Source: R24 cont-36, 2026-05-30.

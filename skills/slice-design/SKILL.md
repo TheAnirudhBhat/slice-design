@@ -93,6 +93,18 @@ If you're starting a new slice proto, scaffolding a new L0, or building any cros
 
 It also has a Pre-build Checklist and Post-build Verification list. Run both. The whole point of `reference_proto_systematics.md` is that future proto builds ship-ready in one round, not seven.
 
+### HARD RULE — projects INHERIT the skill proto; the skill proto is upstream and READ-ONLY during project work (R24 cont-35/36)
+
+The skill proto (`~/.claude/skills/slice-design/proto/`) is the **single upstream source of truth — the "main".** Every project is a thin wrapper that **inherits the whole proto by default and builds on top of it**, staying live-linked so skill-proto improvements flow down automatically (see `reference_web_proto.md` § "Shared kit + extension seam"). Non-negotiables:
+
+1. **Default = inherit everything, build on top.** A new project (`proto/scripts/new-proto.sh`) is born as `App.jsx` (thin wrapper) + `AppBase.jsx` (symlink → skill `App.jsx`) + linked kit + its feature pod(s). Shell, theme, status bar, nav, all base pods, Explore — all inherited live. The project adds its feature via the seam (`extraL1` / `exploreExtraCards` / `initialPod`), never by forking.
+
+2. **NEVER edit the skill proto to satisfy a project.** While building or exploring a project, the skill proto is **read-only**. A project-specific change goes in the PROJECT. If a project needs to diverge a shared component, **UNLINK just that component into the project** — `link-kit.sh materialize <project> src/<path>` (e.g. `src/components` or `src/AppBase.jsx`) — which copies the skill's current file in so the project owns its copy. The skill proto is untouched; every other project keeps inheriting the original. Everything stays linked to main until the user explicitly asks to explore something.
+
+3. **The skill proto changes ONLY via deliberate skill maintenance** — a universal DLS truth (e.g. a canonical token, a fixed chrome bug, a motion-pacing rule) promoted on purpose, with a `reference_calibration_log.md` entry. That is a SEPARATE act from building a project, never an incidental side-effect of it. When in doubt whether a change is universal or project-specific: assume project-specific (edit the project), and only promote to the skill proto when it's clearly a slice-wide rule the user has confirmed.
+
+Why: a project's copied files silently drift from the evolving skill app → the "legacy view" (cont-35). Inherit-by-default + unlink-only-to-explore keeps every project current and the design system consistent, while protecting the upstream from project churn.
+
 ### Two non-negotiables before you write any proto code
 
 These are the two process rules that, when skipped, produce "kinda mid" output that then takes 20 correction rounds to fix (root cause of R24 cont-25→29). Do these every time, no exceptions:
@@ -146,8 +158,11 @@ Re-snapshot script: re-run the file-copy commands documented in `INTEGRATION_PLA
 
 ## R23 calibrated rules (operational must-do)
 
-### Asset reuse — copy, don't generate
+### Asset reuse — copy first; generate a flagged placeholder only when truly missing
 - **Before generating any icon, image, or illustration**, check `/Users/anirudhbhat/claude/slice/projects/explore-base/public/assets/` (87 canonical assets including: spark / fire / monies / invite-magnet / bill tiles / brand logos / category icons / 3D illustrations / rewards cards). Copy directly via `cp explore-base/public/assets/<file> slice-app-proto/public/assets/`. Never inline-SVG-generate a glyph if a real one exists locally.
+- **ICONS — official ONLY; if missing, a DUMMY placeholder. NEVER hand-draw, trace, or generate an icon.** (User-directed HARD rule, 2026-05-30, stated repeatedly and angrily: *"only use official icons, if you don't have use dummy icons"*, *"no don't trace wtf, just use the image i gave you"*.) The official slice icon library is **Figma DLS 2.0 Copy node `582:257`** — and **most icons are already in the proto `public/assets/` + `public/assets/icons/`**, so check there first. To theme a monochrome official icon (light/dark), inline its EXACT Figma path and swap `fill`→`currentColor` (that is still "official" — same geometry). If the icon genuinely isn't available, drop in a clear neutral DUMMY (e.g. a rounded-box placeholder) and tell the user where to put the real file — do NOT approximate the real mark. This SUPERSEDES "generate icons via SVG few-shot" for icons.
+  - A user-PASTED inline image is shown to the agent visually but is **NOT written to disk** — you cannot read its bytes. To use a user's exact image, it must live as a repo file; point the `<img>` at a known path (e.g. `public/assets/upi_pill.png`) and have the user drop the file there. Never trace/redraw it from the preview.
+- **ILLUSTRATIONS genuinely missing everywhere (big 3D/brand art, not on disk, not a known Figma node)?** AUTO-GENERATE a high-fidelity, slice-accurate, FLAGGED placeholder per **`references/reference_slice_asset_generation.md`** (Gemini/Nano-Banana, free tier) — a dull box makes a hero read as broken in review. The flag (`gen_` prefix + `GENERATED_ASSETS.md` entry) is mandatory; the visual team redraws every flagged asset. Generated assets are PROJECT-OWNED (`public/assets/`), never the linked kit. **This generation path is for illustrations, NOT icons** (see the icon rule above). Copy/Figma still win when the asset exists; generation is the last fallback.
 - Canonical L0 pages reference: file `PNUz3Dr9KSlFJSnsXsC0nL` node `885:19528` — overview of Banking, Explore, Credit, Activity, Profile L0s in one frame. Pull screenshots from here when building or auditing L0 pages.
 
 ### No gray backgrounds in slice (re-affirmed, R23 fix-it-2 2026-05-29)
@@ -278,13 +293,14 @@ Don't load all references at once. Read on demand based on the task. **Per-pod a
 | Task | Read |
 |---|---|
 | **Building in Figma** (any `use_figma` call) | `references/reference_figma_build.md` (component registry, scripts, hard rules, token cheatsheet) |
-| Need an icon | `references/reference_dls_iconography.md` (taxonomy). The local SVG library at `slice-design-suite/icons/` is **not currently shipped with the skill** — when working in code/proto, either pull from DLS Figma directly or ask the user. Don't generate icon SVGs. |
-| Need an illustration | `slice-design-suite/illustrations/` (10 PNGs extracted, 12+ pending) + `references/reference_dls_illustrations.md` (catalog + usage patterns). **If asset NOT on disk: dummy + flag.** Convention: **circle** for big center heroes (~120-200px), V-100 (`#F4E5F8`) fill; any reasonable shape for smaller spots (trailing-bleed / inline / list-row), sized to canonical. Always flag with `<!-- ILLUSTRATION-MISSING: name -->`. Never generate, never swap in generic SVG. |
+| Need an icon | `references/reference_dls_iconography.md` (taxonomy). Resolution order: copy local → pull from DLS Figma → **if truly missing, generate a flagged SVG placeholder** per `references/reference_slice_asset_generation.md` (proto context only; product builds still never generate). |
+| Need an illustration | `slice-design-suite/illustrations/` (10 PNGs extracted, 12+ pending) + `references/reference_dls_illustrations.md` (catalog + usage patterns). **If asset NOT on disk: generate a flagged raster placeholder** via Gemini/Nano-Banana (free tier) per `references/reference_slice_asset_generation.md` (proto context only). Convention: **circle** for big center heroes (~120-200px), V-100 (`#F4E5F8`) fill; any reasonable shape for smaller spots, sized to canonical. Always `gen_`-prefix + log in `GENERATED_ASSETS.md`. If Gemini is unavailable, fall back to dull dummy + `<!-- ILLUSTRATION-MISSING: name -->` and say so. Product builds: never generate. |
 | Composing a screen layout (full recipe with anti-patterns) | `references/reference_dls_screen_layouts.md` (every L0/L1/L2/empty/error recipe, ~1100 lines) |
 | Anti-pattern check before shipping | `references/reference_anti_patterns.md` |
 | Specific component spec (anatomy, sizes, states) | `references/reference_dls_<component>.md` (30 files — appbar, avatar, buttons, button_group, cards, chips, accordion, badge, bottom_nav, bottomsheet, carousel, controls, corner_radius, colors, dialer, dividers, dot_indicator, elevation, error_states, file_upload, footer_header, iconography, input_field, list_items, pills, pin_field, progress, search, section_header, slider, snackbar, spacing, tabs, tags, tooltip, top_header, user_action_banners) |
 | Specific token (color / spacing / radius / elevation) | `references/reference_dls_<topic>.md` |
 | Motion vocabulary (durations, easings, choreographies) | `references/reference_motion.md` |
+| Dark mode / theming (dark tokens, icon-vs-illustration theme-safety, CSS-var mechanism, Figma dark refs) | `references/reference_dark_mode.md` |
 | Performance constraints | `references/reference_performance.md` |
 | Accessibility rules | `references/reference_accessibility.md` |
 | Exploration techniques (clip-path, blur, momentum, springs) | `references/reference_exploration_patterns.md` |
@@ -350,6 +366,10 @@ If you're about to write any of these in slice UI, rewrite the element different
 - **Banking home as a separate L0 with quick-action grid + accounts list** — Banking home IS the Savings/Balance L1 screen.
 - **Coloured-card hero on Credit L0** — Credit L0 is a **white L0 Large card** with spends total + recent txn rows + blue-subtle in-card callout, plus a Medium card promo (super card mascot illustration). App bar L0 with "Credit" + photo Avatar trailing. The chevron-back + pie-chart-icon + centred-hero pattern is a downstream analytics surface, not L0. See `reference_dls_screen_layouts.md` § L0 pod home recipes.
 - **Brand-gradient "Pay anyone" banner as Payments L0 hero** — Payments L0 is the **full-bleed Valentino-500 dialer takeover** (solid V-500 fill, "Check balance" pill top-left, voice + Avatar trailing, massive centred ₹0, UPI ID chip, slice custom keypad, Request + Transfer Tertiary pills bottom). Solid V-500, NOT a gradient. The Standard app bar + form rows + QUICK PAY circles pattern is the downstream Pay flow (L1/L2), not L0. See `reference_dls_screen_layouts.md` § L0 pod home recipes.
+
+- **PNG icon when a vector exists** — slice icons are SVGs. Inline the SVG with `currentColor` so it themes (light/dark) for free. A PNG icon can't recolour and breaks in dark mode. Check the icon library / Figma vector export before ever using a raster icon. (See `reference_dark_mode.md`.)
+- **Hand-drawn / traced / approximated icon** — NEVER invent an icon. Use the official DLS icon (library Figma node `582:257`; most are already in `public/assets/` + `public/assets/icons/`), or a clear DUMMY placeholder if truly missing. Tracing a logo from a screenshot, drawing polygons to mimic a mark, or few-shot-generating a UI glyph are ALL banned. Inlining an official Figma path and swapping `fill`→`currentColor` for theming is fine (same geometry). (Hard, user-directed 2026-05-30 — stated angrily, multiple times.)
+- **Illustration with a baked-in background** — illustrations must be transparent-bg. A white/light baked background shows as a white box on dark surfaces. slice splits assets light/dark in Figma; use the dark variant or a transparent export on a themed tile. (See `reference_dark_mode.md`.)
 
 Source for every entry: `references/reference_anti_patterns.md` + `reference_calibrated_digest.md` (calibrated through 2026-05-17 round 11).
 
