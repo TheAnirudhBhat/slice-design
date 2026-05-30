@@ -32,3 +32,6 @@ data/attachments/
 .env.*
 *.pem
 *.key
+
+# Local-only: which projects are kit-linked on THIS machine
+proto-registry.txt

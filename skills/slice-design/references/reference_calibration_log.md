@@ -1741,3 +1741,19 @@ g. **Never lead a data block with a divider.** The flush success rows opened wit
 **Honest meta-root-cause (the whole of cont-31).** ~15 correction rounds for one 3-screen flow. The cause was NOT missing knowledge — every fix above was already in a reference file, the cache, or visible in a 10-second self-screenshot. The cause was process: I shipped first drafts WITHOUT running the NEW-SCREEN PRE-FLIGHT CHECKLIST, then treated each piece of feedback as a one-off patch instead of as a checklist gate to internalize. The durable remedy is not more rules — it's running the existing checklist end-to-end before showing, every single time, and adding a same-day stale-server/cache check before re-editing code that's already correct.
 
 Source: R24 cont-31 (rebuild + visual-polish arc), 2026-05-30.
+
+### 2026-05-30 · R24 cont-32 (shared kit — skill-proto updates propagate to all projects)
+
+User direction: "whenever a new project is made from this skill, when the skill proto updates, those updates should be reflected in all projects derived from it, which is gonna be all of it." The copy-and-diverge model (each project a full COPY of the base app) meant a fix to the shared AppBar/StatusBar/nav/tokens never reached existing projects. Established a **shared-kit-by-reference** architecture:
+
+1. **Mechanism = symlink, recommended over sync/package for THIS context.** Asked the user (live-link vs one-command sync vs versioned package); recommended live-link for scale + design consistency because it makes drift *impossible* (one copy on disk) rather than merely manageable. Sync/package both PERMIT drift (forget to sync; pin an old version). Portability + blast-radius objections are minor for local design protos and are covered by a `materialize` escape hatch + git revert + the kit being continuously exercised in the live proto.
+
+2. **The boundary is the design-system layer.** KIT (linked, propagates): `src/components src/icons src/utils src/tokens.js src/index.css`. PROJECT-OWNED (copied, local): `src/App.jsx src/main.jsx src/pods/ public/assets/`. Rationale: chrome + icons + shared hooks + tokens + base CSS define "looks like slice" and must stay identical; pods/wiring are per-feature; assets are copied + additively synced (a symlinked `public/assets` would force project art into the skill).
+
+3. **Tool**: `proto/scripts/link-kit.sh` with `link / doctor / relink-all / materialize / list`; registry at `proto/proto-registry.txt`. `relink-all` re-links every registered project after the kit gains a NEW file. Two wiring requirements: vite `server.fs.allow` must include the skill path (else 403 through the symlink); leave `resolve.preserveSymlinks` false so a linked file's relative imports resolve against the canonical skill proto.
+
+4. **First conversion = insurance-flow (proof).** Its `tokens.js`/`index.css`/several components had DIVERGED — but not by customization: they were a STALE fork (hardcoded literals) predating the kit's CSS-variable refactor. The skill versions were a clean superset (same export names + the `:root` var block + dark-theme). Diffed first, confirmed superset, linked. Preserved the one genuine project-local bit (black phone-stage surround) via a tiny `src/local.css` imported after the linked `index.css`. Build clean; screenshot identical to pre-link → zero regression, and the project now inherits skill-proto fixes live.
+
+Lesson: "diverged file" ≠ "customized file." Most divergence is staleness; diff before assuming a project intentionally forked, then reconcile toward the canonical kit. Documented in `reference_web_proto.md` § "Shared kit" + the pre-flight "Compose from cache, then LINK THE KIT" gate.
+
+Source: R24 cont-32, 2026-05-30.

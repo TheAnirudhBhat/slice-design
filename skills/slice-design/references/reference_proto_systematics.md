@@ -375,10 +375,15 @@ the user until every box is genuinely checked — that's the self-audit (SKILL.m
 non-negotiable #2).
 
 **Before writing code:**
-- [ ] **Compose from cache.** Scaffold by copying `references/proto-snapshot/`
-      (Vite + react + `agentation@^3.0.2` + `<Agentation/>` already wired). Copy
-      StatusBar / AppBar / Avatar / phone shell / tokens / Primary button from
-      `proto-snapshot/code/`. Do NOT re-hand-build chrome from memory.
+- [ ] **Compose from cache, then LINK THE KIT.** Scaffold by copying
+      `references/proto-snapshot/` (Vite + react + `agentation@^3.0.2` +
+      `<Agentation/>` already wired). Then run `proto/scripts/link-kit.sh link
+      <project>` so the design-system layer (`components/ icons/ utils/ tokens.js
+      index.css`) is SYMLINKED to the skill proto — a skill fix then propagates to
+      every project automatically (cont-32). Add the skill path to vite
+      `server.fs.allow`. Project-owned = `App.jsx main.jsx pods/ public/assets/`.
+      Do NOT re-hand-build chrome from memory, and do NOT fork the kit by copying
+      it (that reintroduces drift). See `reference_web_proto.md` § "Shared kit".
 - [ ] **Agentation present.** `package.json` lists `agentation`; `main.jsx`
       renders `<Agentation/>` as a sibling of `<App/>`. (cont-29)
 - [ ] **Fonts will load AND inherit.** Rubik 400/500/600 linked in `index.html`;

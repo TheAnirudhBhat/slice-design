@@ -31,6 +31,67 @@ Source: explore-base (`~/claude/slice/projects/explore-base/`), explore-react (`
     sections/             (per-section split when App.jsx exceeds ~600 lines)
 ```
 
+## Shared kit — design-system layer propagates by REFERENCE (R24 cont-32)
+
+**Every project derived from this skill links the design-system layer back to the
+skill proto, so a fix made once in the skill appears in ALL projects on the next
+reload — zero per-project sync.** This is the single source of truth for design
+consistency at scale. (User direction, cont-32: "whenever the skill proto updates,
+those updates should be reflected in all projects derived from it.")
+
+**The boundary (what's shared vs project-owned):**
+
+| Layer | Paths | How |
+|---|---|---|
+| **KIT** — design-system, must stay consistent | `src/components/` `src/icons/` `src/utils/` `src/tokens.js` `src/index.css` | **symlinked** into the skill proto (`~/.claude/skills/slice-design/proto/src/…`) → live-linked, propagates |
+| **Project-owned** — feature content | `src/App.jsx` `src/main.jsx` `src/pods/` `public/assets/` | real files, copied at scaffold, never auto-touched |
+
+Why this exact split: chrome (status bar, app bar, bottom nav, fades), icons,
+shared hooks (`useTapGuard`), tokens, and base CSS are what define "looks like
+slice" — they MUST stay identical across projects. Pods and App wiring are
+inherently per-feature, so they stay local. Assets are copied (a project adds its
+own); shared new assets are synced additively, never live-linked (a symlinked
+`public/assets` would force project-specific art to live in the skill).
+
+**Setup (the scaffold does this automatically; the tool is idempotent):**
+```bash
+# from the skill: link a project's kit layer to the canonical proto
+~/.claude/skills/slice-design/proto/scripts/link-kit.sh link  /abs/path/to/project
+~/.claude/skills/slice-design/proto/scripts/link-kit.sh doctor /abs/path/to/project   # report link status
+~/.claude/skills/slice-design/proto/scripts/link-kit.sh relink-all                     # re-link EVERY registered project (run after the kit gains a NEW file)
+~/.claude/skills/slice-design/proto/scripts/link-kit.sh materialize /abs/path/to/project  # symlinks → real copies (portable standalone export)
+```
+Registered projects are tracked in `proto/proto-registry.txt` (one abs path per line).
+
+**Two required wiring steps after `link`:**
+1. `vite.config.js` → `server: { fs: { allow: ['.', '<skill-proto-abs-path>'] } }`
+   — Vite must be allowed to serve the real files outside the project root through
+   the symlinks (otherwise a 403 and the app won't load).
+2. Vite default `resolve.preserveSymlinks: false` resolves a linked file's relative
+   imports against its REAL location (the skill proto), so a linked `AppBar.jsx`
+   that imports `../tokens.js` correctly gets the skill's `tokens.js`. Don't enable
+   `preserveSymlinks`.
+
+**Diverging from the kit (rare, opt-in):**
+- A tiny per-project base-CSS override → `src/local.css`, imported in `main.jsx`
+  AFTER `./index.css`. Keep it minimal (e.g. a black phone-stage surround when the
+  kit default is white). Unlayered rules there beat the kit's `@layer base`.
+- Need a genuinely custom shared component for ONE project → `materialize` that
+  project (cuts the live links to copies). Discouraged — it forfeits propagation
+  and reintroduces drift.
+
+**`tokens.js` + `index.css` move together.** Themed tokens are `var(--x)`; their
+values live in `index.css :root`. Link BOTH or neither — linking one and keeping
+the other local means a new kit token resolves to nothing. (They're adjacent in the
+kit for this reason.)
+
+**Reconciling an OLDER project before linking:** if a project predates a kit
+refactor (e.g. hardcoded values vs the kit's CSS variables), the kit version is
+canonical — diff first (`diff`), confirm the kit is a superset (same export names /
+same rules + additions), then link. insurance-flow was the first conversion: its
+hardcoded `tokens.js`/`index.css` were a stale fork of the var-backed kit; linking
+upgraded it with zero render change (verified by screenshot).
+
 ## Phone shell
 
 Outer device frame: **380×800**, 38px radius, with status bar (44px) and gesture nav (20px) baked in.
