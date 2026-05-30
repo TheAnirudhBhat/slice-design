@@ -218,8 +218,11 @@ function PhoneFrame({ children }) {
 function useFitScale(targetWidth, targetHeight, padding = 8) {
   const compute = () => {
     if (typeof window === 'undefined') return 1;
-    const w = Math.max(1, window.innerWidth - padding * 2);
-    const h = Math.max(1, window.innerHeight - padding * 2);
+    // Prefer visualViewport (the truly-visible area on iOS, shrinks/grows with the
+    // Safari toolbar) so the phone always fits without the bottom being clipped.
+    const vv = window.visualViewport;
+    const w = Math.max(1, (vv?.width ?? window.innerWidth) - padding * 2);
+    const h = Math.max(1, (vv?.height ?? window.innerHeight) - padding * 2);
     const s = Math.min(1, w / targetWidth, h / targetHeight);
     return s > 0.05 ? s : 1;
   };
@@ -327,7 +330,11 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
         position: 'fixed',
         inset: 0,
         width: '100vw',
-        height: '100vh',
+        // dvh = the VISIBLE viewport on iOS. 100vh is the larger "toolbar-hidden"
+        // height, so on a real iPhone the phone's bottom (nav + home indicator) got
+        // pushed behind the Safari toolbar and looked cut off. dvh tracks what's
+        // actually visible. (cont-38: iPhone bottom-safe-area cutoff fix.)
+        height: '100dvh',
         background: '#FFFFFF',
         overflow: 'hidden',
         display: 'flex',
