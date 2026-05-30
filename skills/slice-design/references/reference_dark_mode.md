@@ -91,7 +91,10 @@ Bottom nav dark (Figma): Primary nav bg `#ffffff33`, container gradient
   area 54pt / top safe-area 59pt on Dynamic Island iPhones. Canonical DLS Status
   Bar (node `6566:58784`): time inset **40px** from left, icons **30px** from right.
 - **Status-bar content vertically centers on the Dynamic Island**, not the 54px
-  band — center the time/icons row on the island's vertical center.
+  band — center the time/icons row on the island's vertical center. Measured from
+  the bezel PNG: the island spans screen-y ~14–50, **center ≈ 32** (NOT 20 — an
+  earlier value left the icons ~12px too high). Implement as status-row height 64
+  + `alignItems:center` so content lands at y≈32.
 - **Device frame** = the iPhone 17 Pro Silver bezel PNG from Figma (file
   `cMITYopAqGfe4JC6gIkrIE`, node `8402:7`): 450×920 art with a TRANSPARENT screen
   cut-out (~402×874, inset ~24px L/R, ~23px T/B, measured from PNG alpha). Layer
@@ -234,7 +237,10 @@ live pager needs the fill on the PAGE side, not the nav. (I added a nav gradient
   opaque white box in dark. Use the ILLUSTRATION layer ONLY (transparent): the
   `imgLayerN` SVG asset, or `get_screenshot` the illustration sub-node with
   `contentsOnly:true`. Render `objectFit:contain` at a small inset so it reads as a
-  corner accent, not a full tile.
+  corner accent, not a full tile. Figma corner = a 96×96 box flush to the
+  top-right with the art inset ~25–32%, so the art resolves to: **FD mascot ≈43×37
+  @ top 30 / right 28**, **monies cluster ≈40×43 @ top 25 / right 27** from the
+  card corner.
 - **App-bar action glyphs** (eye / hide-balance): were 100%-opaque PNGs → white box
   in dark. Inline the official SVG with `currentColor`, and theme the WRAPPER
   (`ActionSlot { color: var(--text-tertiary) }`) — not a hardcoded `black` +
