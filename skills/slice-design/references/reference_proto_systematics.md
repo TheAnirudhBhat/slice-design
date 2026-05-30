@@ -674,17 +674,24 @@ stage `height:100dvh` (dynamic viewport height) and make `useFitScale` read
 `window.visualViewport` (the truly-visible area, which tracks the toolbar) rather than
 `window.innerHeight`. `index.html` viewport meta already needs `viewport-fit=cover`.
 
-## "Device mode" — full-bleed for on-phone (PLANNED, shared, reusable)
-To let a derived project run on a phone (PWA "Add to Home Screen" or an Expo Go +
-react-native-webview shell), add a **device mode** to the shared App (so every project
-inherits it): a flag (`?device=1` / auto-detect `window.ReactNativeWebView` or a
-phone-sized touch viewport) that DROPS the bezel + white stage and renders the active
-app **full-bleed `100dvh`**, **removes the custom StatusBar** (pad the top with
-`env(safe-area-inset-top)` so the real OS status bar sits over empty space), and keeps
-the **bottom safe area transparent** (`env(safe-area-inset-bottom)`, nav gesture strip
-transparent so the system home indicator shows). Note: a WebView wrapper buys little
-over a PWA for a proto (both render the same web app); true-native is an RN rewrite.
-Status: pending the user's PWA-vs-Expo decision.
+## "Device mode" — full-bleed for on-phone (IMPLEMENTED cont-38, shared)
+The shared App auto-enters device mode on a phone-sized viewport OR an installed PWA:
+`useIsMobile()` = `matchMedia('(max-width:600px), (display-mode:standalone)')`. In
+device mode it renders **bezel-less, full-bleed**: `PhoneFrame bare` drops the bezel +
+inset, the 402×874 screen is **scaled to COVER** the viewport (`useFitScale(…, cover=
+true)` = `max(vw/w, vh/h)`; the aspect is ~0.46 both ways so the scale is ~0.97 —
+imperceptible), and the **custom StatusBar is hidden** so the real OS status bar shows
+over the screen's top reserve. Desktop keeps the bezel + contain-fit.
+- **Decision (2026-05-30): PWA, not Expo.** A react-native-webview wrapper buys nothing
+  over a PWA for a proto (both render the same web app); true-native is an RN rewrite.
+- **PWA bits** (so "Add to Home Screen" launches chrome-less): `public/manifest.webmanifest`
+  (`display:standalone`) + `<meta apple-mobile-web-app-capable>` + `viewport-fit=cover`.
+- **Deploy:** Vercel → Root Directory `skills/slice-design/proto`, framework preset Vite.
+- **iOS reality:** plain mobile Safari can't be made chrome-less — true edge-to-edge needs
+  "Add to Home Screen" (standalone). `100dvh` keeps Safari from clipping the bottom regardless.
+- **Option A vs B:** this is option A (scale-to-cover) — low risk, keeps all internal 402
+  logic. A future option B threads a dynamic screen width through Pager + BottomNav for
+  pixel-true responsive reflow (like explore-base, whose content is CSS-fluid).
 
 ## App Settings screen + theme toggle wiring (cont-38)
 - **App Settings L1** (canonical Figma "App visual fix" `4594:10703`; built at

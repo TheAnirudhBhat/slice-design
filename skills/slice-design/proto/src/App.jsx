@@ -173,7 +173,26 @@ const SCREEN_INSET_LEFT = 24; // rim+bezel thickness L/R (from PNG alpha)
 const SCREEN_INSET_TOP = 23; // rim+bezel thickness T/B
 const SCREEN_RADIUS = 50; // screen corner radius
 
-function PhoneFrame({ children }) {
+function PhoneFrame({ children, bare = false }) {
+  // bare = full-bleed device mode (mobile / installed PWA): no bezel, no inset or
+  // corner radius — this 402×874 screen IS the viewport (the wrapper scales it to
+  // COVER the device), and the real OS status bar + home indicator show over it.
+  if (bare) {
+    return (
+      <div
+        style={{
+          position: 'relative',
+          width: PHONE_WIDTH,
+          height: PHONE_HEIGHT,
+          overflow: 'hidden',
+          background: 'var(--page-bg)',
+          flexShrink: 0,
+        }}
+      >
+        {children}
+      </div>
+    );
+  }
   return (
     <div style={{ position: 'relative', width: PHONE_OUTER_WIDTH, height: PHONE_OUTER_HEIGHT, flexShrink: 0 }}>
       {/* Screen content sits in the transparent cut-out, BEHIND the bezel art. */}
@@ -220,7 +239,7 @@ function PhoneFrame({ children }) {
 // position:fixed inset:0. Phone scales DOWN to fit if browser is smaller; at
 // browser ≥ 440×952 the phone renders at native and the black stage extends
 // to all four edges around it.
-function useFitScale(targetWidth, targetHeight, padding = 8) {
+function useFitScale(targetWidth, targetHeight, padding = 8, cover = false) {
   const compute = () => {
     if (typeof window === 'undefined') return 1;
     // Prefer visualViewport (the truly-visible area on iOS, shrinks/grows with the
@@ -228,7 +247,11 @@ function useFitScale(targetWidth, targetHeight, padding = 8) {
     const vv = window.visualViewport;
     const w = Math.max(1, (vv?.width ?? window.innerWidth) - padding * 2);
     const h = Math.max(1, (vv?.height ?? window.innerHeight) - padding * 2);
-    const s = Math.min(1, w / targetWidth, h / targetHeight);
+    // cover = FILL the viewport (full-bleed mobile, may exceed 1); contain = fit
+    // the phone inside the stage (desktop shell, capped at 1 so it never upscales).
+    const s = cover
+      ? Math.max(w / targetWidth, h / targetHeight)
+      : Math.min(1, w / targetWidth, h / targetHeight);
     return s > 0.05 ? s : 1;
   };
   const [scale, setScale] = useState(compute);
@@ -250,8 +273,28 @@ function useFitScale(targetWidth, targetHeight, padding = 8) {
       window.removeEventListener('resize', update);
       if (ro) ro.disconnect();
     };
-  }, [targetWidth, targetHeight, padding]);
+  }, [targetWidth, targetHeight, padding, cover]);
   return scale;
+}
+
+// Full-bleed device mode: true on a phone-sized viewport OR when launched as an
+// installed PWA (Add to Home Screen → display-mode: standalone). Drives the
+// bezel-less, OS-chrome render in App.
+function useIsMobile() {
+  const query = '(max-width: 600px), (display-mode: standalone)';
+  const get = () => typeof window !== 'undefined' && window.matchMedia(query).matches;
+  const [mobile, setMobile] = useState(get);
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const on = () => setMobile(get());
+    mq.addEventListener?.('change', on);
+    window.addEventListener('resize', on);
+    return () => {
+      mq.removeEventListener?.('change', on);
+      window.removeEventListener('resize', on);
+    };
+  }, []);
+  return mobile;
 }
 
 const PAGES_META = PODS.map((pod) => ({ pod, variant: STATUS_VARIANT[pod] }));
@@ -265,6 +308,8 @@ const PAGES_META = PODS.map((pod) => ({ pod, variant: STATUS_VARIANT[pod] }));
 //   • initialPod         — landing pod (default 'pay' = Valentino home)
 // Usage (project App.jsx): <App extraL1={{insurance:{Component,slideFrom:'right'}}}
 //   exploreExtraCards={[<InsuranceEntryCard/>]} initialPod="explore" />
+// NOTE: to OWN a whole pod (swap its L0), a project does that in ITS OWN wrapper by
+// materialising/unlinking the component — NOT via a prop on the upstream skill proto.
 export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod = 'pay' } = {}) {
   const [active, setActive] = useState(initialPod);
   const [visuallyActive, setVisuallyActive] = useState(initialPod);
@@ -295,6 +340,12 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
   // (light icons + white-alpha nav medallions) across all slots.
   const pagesMeta = theme === 'dark' ? PODS.map((p) => ({ pod: p, variant: 'dark' })) : PAGES_META;
   const fitScale = useFitScale(PHONE_OUTER_WIDTH, PHONE_OUTER_HEIGHT);
+  // Full-bleed device mode (phone viewport / installed PWA): scale the 402×874
+  // SCREEN to COVER the viewport (no bezel, no white stage) so the proto runs
+  // edge-to-edge with the real OS status bar + home indicator. Desktop keeps the
+  // bezel + contain-fit. (cont-38)
+  const isMobile = useIsMobile();
+  const coverScale = useFitScale(PHONE_WIDTH, PHONE_HEIGHT, 0, true);
 
   const handlePageIndexChange = (idx) => {
     const newPod = PODS[idx];
@@ -340,7 +391,9 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
         // pushed behind the Safari toolbar and looked cut off. dvh tracks what's
         // actually visible. (cont-38: iPhone bottom-safe-area cutoff fix.)
         height: '100dvh',
-        background: '#FFFFFF',
+        // Desktop stage = white (phone floats on it). Full-bleed mobile = page bg,
+        // so the cover-scaled screen blends edge-to-edge (no white sliver).
+        background: isMobile ? 'var(--page-bg)' : '#FFFFFF',
         overflow: 'hidden',
         display: 'flex',
         justifyContent: 'center',
@@ -349,14 +402,14 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
     >
       <div
         style={{
-          width: PHONE_OUTER_WIDTH,
-          height: PHONE_OUTER_HEIGHT,
-          transform: `scale(${fitScale})`,
+          width: isMobile ? PHONE_WIDTH : PHONE_OUTER_WIDTH,
+          height: isMobile ? PHONE_HEIGHT : PHONE_OUTER_HEIGHT,
+          transform: `scale(${isMobile ? coverScale : fitScale})`,
           transformOrigin: 'center center',
           flexShrink: 0,
         }}
       >
-        <PhoneFrame>
+        <PhoneFrame bare={isMobile}>
           {/* ThemeContext lets L1 screens (App Settings "Dark mode" switch) trigger
              the same theme-switch transition as the dev toggle. */}
           <ThemeContext.Provider value={{ theme, toggleTheme: handleThemeToggle }}>
@@ -431,13 +484,16 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
             </div>
 
             {/* Fixed status bar overlay — text/icons stay put, recolor per-element
-               based on which page is under each element. */}
-            <MotionStatusBar
-              pagerX={pagerX}
-              pages={pagesMeta}
-              pageWidth={PHONE_WIDTH}
-              forceVariant={theme === 'dark' ? 'dark' : l1Open ? 'light' : null}
-            />
+               based on which page is under each element. HIDDEN in full-bleed device
+               mode: the real OS status bar shows over the screen's top reserve. */}
+            {!isMobile && (
+              <MotionStatusBar
+                pagerX={pagerX}
+                pages={pagesMeta}
+                pageWidth={PHONE_WIDTH}
+                forceVariant={theme === 'dark' ? 'dark' : l1Open ? 'light' : null}
+              />
+            )}
 
             {/* Bottom nav floats above pager — pagerX + pages shared so each
                nav slot can compute its own variant based on what's under it */}

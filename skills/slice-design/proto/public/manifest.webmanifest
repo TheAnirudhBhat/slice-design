@@ -1,0 +1,11 @@
+{
+  "name": "slice",
+  "short_name": "slice",
+  "description": "slice app proto",
+  "display": "standalone",
+  "orientation": "portrait",
+  "start_url": "/",
+  "scope": "/",
+  "background_color": "#FFFFFF",
+  "theme_color": "#D30AD7"
+}

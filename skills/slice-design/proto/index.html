@@ -4,6 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#FAFAFA" />
+    <!-- PWA / iOS standalone: "Add to Home Screen" launches chrome-less (no Safari
+         toolbars) → real OS status bar + home indicator only = true full-bleed.
+         The app's mobile/device mode (App.jsx useIsMobile) renders bezel-less to match. -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="slice" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <title>slice app proto</title>
     <!-- Rubik is self-hosted via @fontsource (imported in main.jsx). No Google
          Fonts CDN link — it falls back on slice's corporate network. (R24 cont-31) -->
