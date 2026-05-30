@@ -15,8 +15,6 @@ import React from 'react';
 // fully obscure scrolling content behind the floating nav (transactions in
 // Activity were peeking through the gap above the dock).
 export default function BottomFade({ color = 'var(--page-bg)', height = 200, bottom = 0 }) {
-  // Build the start/end gradient stops by stripping alpha at start.
-  const transparent = colorWithAlpha(color, 0);
   return (
     <div
       style={{
@@ -27,23 +25,16 @@ export default function BottomFade({ color = 'var(--page-bg)', height = 200, bot
         // white L0s so it sits a touch above the floating nav).
         bottom,
         height,
-        background: `linear-gradient(to bottom, ${transparent} 0%, ${color} 60%)`,
+        // `transparent` start stop works for BOTH hex and var(--token) colors, in
+        // light AND dark (modern browsers interpolate transparent→color in
+        // premultiplied space — no grey midpoint). The old colorWithAlpha() only
+        // parsed #RRGGBB and silently fell back to white-transparent, which broke
+        // the fade on var(--page-bg) / dark bg (cal:2026-05-30 cont-37 code review).
+        background: `linear-gradient(to bottom, transparent 0%, ${color} 60%)`,
         pointerEvents: 'none',
         zIndex: 5,
       }}
       aria-hidden="true"
     />
   );
-}
-
-function colorWithAlpha(hex, alpha) {
-  // Accepts "#RRGGBB". Returns "rgba(r,g,b,alpha)".
-  if (!hex.startsWith('#') || hex.length !== 7) {
-    // Fall back: emit a transparent value for the start stop.
-    return 'rgba(255,255,255,0)';
-  }
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r},${g},${b},${alpha})`;
 }

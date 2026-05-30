@@ -1840,3 +1840,21 @@ Meta-note on THIS session: several edits I made to the skill proto (bill-icon si
 Also (small, same round): **selection/chooser card UNSELECTED state gets the 1px hairline too** — `1px solid rgba(0,0,0,0.05)` + the canonical shadow, matching the Explore cards ("the unselected cards should also have an outline like the explore cards to get that slice look"). Refines cont-32g (which left the unselected border transparent). Selected stays 2px V-500; with `box-sizing:border-box` the 1↔2px swap doesn't shift the list. Fix made in the PROJECT (insurance pod), per rule 2.
 
 Source: R24 cont-36, 2026-05-30.
+
+### 2026-05-30 · R24 cont-37 (cleanup + code-review of the skill + proto)
+
+User: "clean up any mess… any project we don't need anymore, anything redundant, /code-review slice design skill and proto."
+
+**Workspace cleanup (destructive, but verified safe first):**
+- Deleted `projects/insurance-flow` (throwaway test; not git-tracked; only linked OUTWARD to the skill, so the skill was untouched; its learnings already captured in the skill). GOTCHA: orphaned `vite`+`esbuild` dev servers (from earlier `preview_start`) kept recreating a `.vite` cache after `rm`, so the dir "came back" — had to `pkill -9 -f "<proj>/node_modules"` first, then delete. (Same trap bit `slice-app-proto`.)
+- Deleted `projects/slice-app-proto` — an empty husk (0 src files, just a stale `.vite` cache) left behind when the proto moved INTO the skill (`~/.claude/skills/slice-design/proto`).
+- KEPT (verified load-bearing, NOT redundant): `explore-base` (asset source the skill's reuse rule points to), `dls-calibration` (the calibrate web app), `slice-design-suite` (git mirror), `slice-dls-share`.
+- **`~/.claude/skills/slice-design/slice-design-suite/` is NOT a stray** despite the confusing name (collides with the mirror project). 6 reference files point to `slice-design-suite/icons/` + `slice-design-suite/illustrations/` as the skill's canonical on-disk asset cache, and 10 illustrations (atom mascots, fd_mascot, dls_success_tick…) live ONLY there. Checking references BEFORE deleting saved a real loss — "looks like a mistake" ≠ "is unused."
+
+**Code-review of the proto (subagent) — fixed 5, deferred 2:**
+- FIXED: (a) `BottomNav` local `PHONE_WIDTH=393` had drifted from `App.jsx`'s 402 (iPhone-17 bezel) → off-by-9 nav centering + per-slot variant lookup; corrected to 402 with a "keep in lockstep" comment. (b) `TxnRow` had a duplicated inline tap-guard → migrated to the shared `useTapGuard` hook (which was originally extracted from it). (c) `BottomFade.colorWithAlpha` only parsed `#RRGGBB` and silently fell back to white-transparent for `var(--page-bg)` → broke the fade in dark mode; replaced with a `transparent` start-stop (works for hex AND tokens, light AND dark) and deleted the helper. (d) Deleted dead `pods/profile/V3.jsx` (unimported, hardcoded tokens). (e) Removed dead `DynamicIsland` export from `StatusBar.jsx` + fixed the stale L1Stack z-index comment (the iPhone-17 bezel PNG bakes the island in).
+- DEFERRED: Credit L0 missing a `BottomFade` (real inconsistency — needs a position:relative wrapper + visual verify); Activity L0's `COLORS` re-key map (cosmetic, high-churn — skipped to avoid risk on the canonical proto).
+
+Lesson: a code review on the canonical proto is high-leverage — every derived project inherits these files, so a drifted constant or a dark-mode-broken util multiplies across projects. Fix the provably-safe findings (dead code, contained bugs); defer structural/cosmetic ones that need visual verification rather than risk the upstream.
+
+Source: R24 cont-37, 2026-05-30.

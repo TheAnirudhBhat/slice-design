@@ -59,8 +59,11 @@ const PAY_SPECIAL_W = 72; // Pay-active-committed ring
 // R23 fix-it-2-cont-8: GAP 20 → 24 per user direction. Matches the canonical
 // Banking dock spacing (gap-24 in Figma).
 const GAP = 24;            // edge-to-edge gap between adjacent items
-// R24 cont-9: matches App.jsx PHONE_WIDTH (iPhone 16 Pro screen, 393 CSS px).
-const PHONE_WIDTH = 393;
+// MUST match App.jsx PHONE_WIDTH (the phone screen cut-out width). App moved to
+// the iPhone-17 bezel (402 CSS px); this had drifted at 393 (old iPhone-16),
+// throwing the active-item centering + per-slot variant lookup off by 9px
+// (cal:2026-05-30 cont-37 code review). Keep these two in lockstep.
+const PHONE_WIDTH = 402;
 const CONTAINER_CENTER = PHONE_WIDTH / 2;
 
 // Compute item widths + center positions for a given "visually active" pod

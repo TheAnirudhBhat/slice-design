@@ -91,7 +91,7 @@ export default function L1Stack({ registry, children, onOpenChange }) {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                zIndex: 200, // above BottomNav (z=100) + DynamicIsland (z=70)
+                zIndex: 200, // above BottomNav (z=100); below the status bar (z=250)
                 background: 'var(--page-bg)',
               }}
             >

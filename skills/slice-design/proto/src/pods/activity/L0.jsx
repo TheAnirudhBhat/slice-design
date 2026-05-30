@@ -30,6 +30,7 @@ import { useL1 } from '../../components/L1Stack.jsx';
 import Avatar from '../../components/Avatar.jsx';
 import { TrendUpIcon, RecurringIcon } from '../../icons/ActivityIcons.jsx';
 import formatINR from '../../utils/formatINR.js';
+import useTapGuard from '../../utils/useTapGuard.js';
 import {
   WHITE, PAGE_BG, TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, OUTLINE_SUBTLE,
   V_500, V_100, V_50, POSITIVE, POSITIVE_50, NEGATIVE, NEGATIVE_50,
@@ -215,36 +216,13 @@ function TxnRow({ txn, onTap }) {
   const a = AMOUNT_STATE[txn.type] || AMOUNT_STATE.sent;
   const subtitleText = `${txn.date} · UPI`;
 
-  // R24 cont-6: track pointermove distance between pointerdown and click,
-  // suppress the click if the pointer moved more than ~10px. Why: when the
-  // user drags the L0 pager (Activity → Credit/Pay) but releases before the
-  // page-snap midpoint, the Pager animates back to Activity. The synthetic
-  // click that fires at release would otherwise open the txn detail under
-  // their finger. We use the native onClick (so programmatic clicks +
-  // keyboard activation still work) but cancel it when our pointer-move ref
-  // says the user was actually dragging.
-  const downRef = useRef(null);
-  const handlePointerDown = (e) => {
-    downRef.current = { x: e.clientX, y: e.clientY, dragged: false };
-  };
-  const handlePointerMove = (e) => {
-    const d = downRef.current;
-    if (!d || d.dragged) return;
-    if (Math.hypot(e.clientX - d.x, e.clientY - d.y) >= 10) {
-      d.dragged = true;
-    }
-  };
-  const handleClick = () => {
-    const d = downRef.current;
-    downRef.current = null;
-    if (d?.dragged) return;
-    onTap && onTap(txn);
-  };
+  // Tap-vs-drag guard: rows sit on the L0 pager, so a swipe must NOT fire a tap
+  // and open the txn detail. Shared hook (was a duplicated inline guard — cont-37
+  // code-review dedupe; the hook was originally extracted FROM this row).
+  const tap = useTapGuard(() => onTap && onTap(txn));
   return (
     <button
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onClick={handleClick}
+      {...tap}
       style={{
         width: '100%',
         // R24 cont-19: padding from the actual published variant — pulled

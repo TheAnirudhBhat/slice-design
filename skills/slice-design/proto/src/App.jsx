@@ -55,20 +55,18 @@ const STATUS_VARIANT = {
 // holds briefly so it reads, then slides off in the reveal direction (up = dark
 // fills from the bottom; down = light fills from the top). Gradient stops + caption
 // type + the two SVGs are pulled verbatim from the canonical transition frames.
-// Valentino glow rises from the SAME edge (bottom) for BOTH modes — the fade
-// direction is constant; only the base colour (black → dark, white → light) and
-// the icon/caption differ. Stops are the canonical values (#9341FF→#621FFF→
-// #FF55BA), oriented so the opaque magenta sits at the bottom and fades UP to
-// reveal the destination base colour.
-const REVEAL_GRADIENT =
-  'linear-gradient(to top, #FF55BA 0%, rgba(98,31,255,0.34) 47%, rgba(147,65,255,0) 99%)';
-const REVEAL_BG = {
-  toDark: `${REVEAL_GRADIENT}, #090B0C`,
-  toLight: `${REVEAL_GRADIENT}, #FFFFFF`,
-};
+// Theme-switch reveal — canonical feel from Figma node 3309:13267, refined per
+// user 2026-05-30: a full-screen cover travels CURRENT colour → Valentino bridge
+// → TARGET colour (white⇄valentino⇄black), resolving to a FULL solid target. The
+// destination illustration + caption rise from the bottom and exit toward the top.
+// Same choreography both ways — only the from/to colours + the icon differ.
+const REVEAL_FROM = { toDark: '#FFFFFF', toLight: '#090B0C' }; // current theme colour
+const REVEAL_TO = { toDark: '#090B0C', toLight: '#FFFFFF' };   // target theme colour
+// Opaque Valentino brand gradient = the mid "bridge". It blooms over the colour
+// swap so the base never passes through a banned grey, and gives the brand moment.
+const VALENTINO_BRIDGE = 'linear-gradient(180deg, #9341FF 0%, #621FFF 50%, #FF55BA 100%)';
 const REVEAL_ICON = { toDark: '/assets/theme_moon.svg', toLight: '/assets/theme_sun.svg' };
 const REVEAL_LABEL = { toDark: 'Switching to dark mode', toLight: 'Switching to light mode' };
-const REVEAL_TEXT = { toDark: 'rgba(255,255,255,0.9)', toLight: 'rgba(0,0,0,0.9)' };
 
 // R24 cont-13: map from pod → component constructor (not pre-instantiated JSX)
 // so we can hand each L0 a per-pod `onScrollChange` callback at render time.
@@ -270,10 +268,10 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
     if (themeAnim) return; // ignore taps while a switch is mid-flight
     const goingDark = theme !== 'dark';
     setThemeAnim({ dir: goingDark ? 'toDark' : 'toLight', id: Date.now() });
-    // Flip the mode BEHIND the fully-opaque cover (after the fade-in), so the
-    // swap is hidden and the fade-OUT reveals the new theme — no flash of the
-    // new mode during the fade-in.
-    window.setTimeout(() => setTheme(goingDark ? 'dark' : 'light'), 520);
+    // Flip the mode at the MIDPOINT, behind the opaque Valentino bridge, so the
+    // current→target colour swap (and the theme flip) are hidden — the cover then
+    // resolves onto the new theme. ~half of the 1.6s run.
+    window.setTimeout(() => setTheme(goingDark ? 'dark' : 'light'), 800);
   };
 
   // R23 fix-it-2-cont-10: simplified to 2-div scaffold. Outer is the App
@@ -399,59 +397,71 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
               pages={pagesMeta}
             />
 
-            {/* Theme-switch reveal (canonical Figma 3309:13267) — a FULL-PAGE
-               Valentino-gradient cover carrying the destination illustration
-               (moon → dark / sun → light) + caption. It FADES in over the current
-               screen, HOLDS while you read it, then FADES out to reveal the new
-               mode. The data-theme flip happens behind the fully-opaque cover (no
-               flash). The gradient is maintained through the fade, and the fade is
-               IDENTICAL for both directions — opacity only, never a slide. */}
+            {/* Theme-switch reveal (canonical Figma 3309:13267, refined). Three
+               stacked layers fill the screen: (1) a solid BASE that swaps the
+               current theme colour → target theme colour behind (2) an opaque
+               Valentino BRIDGE gradient that blooms 0→1→0 (so the swap reads as
+               white→valentino→black, never grey) while (3) the destination
+               illustration + caption RISE from the bottom and EXIT toward the top.
+               data-theme flips at the midpoint, hidden under the bridge; the cover
+               resolves onto the full target colour. Same choreography both ways. */}
             <AnimatePresence>
               {themeAnim && (
                 <motion.div
                   key={themeAnim.id}
-                  initial={{ opacity: 0 }}
-                  // fade IN (0→1) · HOLD (1) · fade OUT (1→0). The hold is the
-                  // "Switching to…" beat the user wanted time to appreciate.
-                  animate={{ opacity: [0, 1, 1, 0] }}
-                  transition={{ duration: 1.5, times: [0, 0.22, 0.68, 1], ease: 'easeInOut' }}
-                  onAnimationComplete={() => setThemeAnim(null)}
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    zIndex: 999,
-                    pointerEvents: 'none',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 24,
-                    background: REVEAL_BG[themeAnim.dir],
-                  }}
+                  style={{ position: 'absolute', inset: 0, zIndex: 999, pointerEvents: 'none', overflow: 'hidden' }}
                 >
-                  <motion.img
-                    src={REVEAL_ICON[themeAnim.dir]}
-                    alt=""
-                    aria-hidden="true"
-                    initial={{ scale: 0.88 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                    style={{ width: 80, height: 80, objectFit: 'contain', display: 'block' }}
+                  {/* (1) base: current theme colour → target theme colour */}
+                  <motion.div
+                    initial={{ backgroundColor: REVEAL_FROM[themeAnim.dir] }}
+                    animate={{ backgroundColor: [REVEAL_FROM[themeAnim.dir], REVEAL_FROM[themeAnim.dir], REVEAL_TO[themeAnim.dir], REVEAL_TO[themeAnim.dir]] }}
+                    transition={{ duration: 1.6, times: [0, 0.46, 0.56, 1], ease: 'linear' }}
+                    onAnimationComplete={() => setThemeAnim(null)}
+                    style={{ position: 'absolute', inset: 0 }}
                   />
-                  <div
+                  {/* (2) Valentino bridge — opaque brand gradient blooms over the swap */}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: [0, 1, 1, 0] }}
+                    transition={{ duration: 1.6, times: [0, 0.3, 0.6, 0.92], ease: 'easeInOut' }}
+                    style={{ position: 'absolute', inset: 0, background: VALENTINO_BRIDGE }}
+                  />
+                  {/* (3) illustration + caption rise from the bottom, exit the top */}
+                  <motion.div
+                    initial={{ y: 64, opacity: 0 }}
+                    animate={{ y: [64, 0, 0, -64], opacity: [0, 1, 1, 0] }}
+                    transition={{ duration: 1.6, times: [0, 0.3, 0.62, 0.96], ease: 'easeInOut' }}
                     style={{
-                      fontFamily: 'Rubik, sans-serif',
-                      fontWeight: 400,
-                      fontSize: 16,
-                      lineHeight: '24px',
-                      letterSpacing: '0.32px',
-                      textAlign: 'center',
-                      width: 200,
-                      color: REVEAL_TEXT[themeAnim.dir],
+                      position: 'absolute',
+                      inset: 0,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 24,
                     }}
                   >
-                    {REVEAL_LABEL[themeAnim.dir]}
-                  </div>
+                    <img
+                      src={REVEAL_ICON[themeAnim.dir]}
+                      alt=""
+                      aria-hidden="true"
+                      style={{ width: 80, height: 80, objectFit: 'contain', display: 'block' }}
+                    />
+                    <div
+                      style={{
+                        fontFamily: 'Rubik, sans-serif',
+                        fontWeight: 400,
+                        fontSize: 16,
+                        lineHeight: '24px',
+                        letterSpacing: '0.32px',
+                        textAlign: 'center',
+                        width: 200,
+                        color: 'rgba(255,255,255,0.95)',
+                      }}
+                    >
+                      {REVEAL_LABEL[themeAnim.dir]}
+                    </div>
+                  </motion.div>
                 </motion.div>
               )}
             </AnimatePresence>

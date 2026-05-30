@@ -181,24 +181,7 @@ export default function MotionStatusBar({ pagerX, pages, pageWidth, time = '9:41
   );
 }
 
-// Standalone dynamic island — hardware chrome, fixed at top center.
-// R24 cont-2: z-index raised to 260 so it stays above L1 overlays (z=200) +
-// the status bar text (z=250).
-export function DynamicIsland() {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        top: 11,
-        left: '50%',
-        transform: 'translateX(-50%)',
-        width: 126,
-        height: 37,
-        background: '#000',
-        borderRadius: 19,
-        zIndex: 260,
-        pointerEvents: 'none',
-      }}
-    />
-  );
-}
+// (Removed the standalone DynamicIsland export — cal:2026-05-30 cont-37 code
+// review: the current PhoneFrame uses iphone17_bezel.png with the Dynamic Island
+// baked into the art, so a separate SVG island would double it. Unused after the
+// bezel-PNG migration.)
