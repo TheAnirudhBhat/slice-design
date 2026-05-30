@@ -55,16 +55,18 @@ const STATUS_VARIANT = {
 // holds briefly so it reads, then slides off in the reveal direction (up = dark
 // fills from the bottom; down = light fills from the top). Gradient stops + caption
 // type + the two SVGs are pulled verbatim from the canonical transition frames.
-// Theme-switch reveal (canonical Figma 4586:10407 / 3315:7279). A TALL gradient
-// overlay (3× screen) SLIDES top→bottom: a transparent trailing edge → SOLID
-// target-colour middle → Valentino glow leading (bottom) edge. It slides in until
-// the solid middle fully covers the screen, PAUSES there (destination icon +
-// type-on caption shown, data-theme flips behind it), then eases on down and exits
-// off the bottom, revealing the new theme. Same direction both ways; only the base
-// colour + icon differ. First gradient stop is 0% opacity (soft edge, per user).
+// Theme-switch reveal — EXACT canonical gradient (Figma 4586:10407). A TALL
+// gradient rectangle (3× screen) SLIDES top→bottom. BOTH ends are 0 OPACITY: the
+// leading (bottom) end is the blue-violet Valentino #9341FF at 0 opacity → #621FFF
+// (semi) → SOLID target colour through the middle → 0-opacity target at the
+// trailing (top) end. The glow is blue-violet (NOT magenta/pink) and ramps
+// GRADUALLY, so there is NO hard edge and the slide reads very smooth (user-
+// directed). It slides until the solid middle covers the screen and PAUSES
+// (all-target-colour; destination icon + type-on caption shown; data-theme flips
+// behind it), then eases on down and exits. Same direction both ways.
 const REVEAL_SLIDE = {
-  toDark: 'linear-gradient(to bottom, rgba(9,11,12,0) 0%, #090B0C 26%, #090B0C 72%, #621FFF 88%, #FF55BA 100%)',
-  toLight: 'linear-gradient(to bottom, rgba(255,255,255,0) 0%, #FFFFFF 26%, #FFFFFF 72%, #9341FF 88%, #FF55BA 100%)',
+  toDark: 'linear-gradient(to top, rgba(147,65,255,0) 2%, rgba(98,31,255,0.4) 18%, #090B0C 30%, #090B0C 70%, rgba(9,11,12,0) 96%)',
+  toLight: 'linear-gradient(to top, rgba(147,65,255,0) 2%, rgba(98,31,255,0.4) 18%, #FFFFFF 30%, #FFFFFF 70%, rgba(255,255,255,0) 96%)',
 };
 const REVEAL_ICON = { toDark: '/assets/theme_moon.svg', toLight: '/assets/theme_sun.svg' };
 const REVEAL_LABEL = { toDark: 'Switching to dark mode', toLight: 'Switching to light mode' };
@@ -469,11 +471,6 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
                       top: 0,
                       height: '300%',
                       background: REVEAL_SLIDE[themeAnim.dir],
-                      // Frosted "blur" phase: where the gradient is transparent (the
-                      // leading/trailing edges), the app behind shows BLURRED, so the
-                      // sweep reads fade → blur → solid → fade (user-directed).
-                      backdropFilter: 'blur(16px)',
-                      WebkitBackdropFilter: 'blur(16px)',
                     }}
                   />
                   {/* centre destination icon (no morph) + type-on caption — shown
