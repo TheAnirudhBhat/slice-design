@@ -27,15 +27,16 @@ user-invocable: true
 
 DLS 2.0 components/tokens (Figma execution), motion, web-proto defaults, anti-patterns, and calibrated judgments. Calibrated overrides win over any baseline rule in this file.
 
-## Canonical-first — fetch the spec before you build or iterate (HARD)
+## Canonical-first — references for built screens, fetch Figma for the rest (HARD)
 
-The single biggest time-sink is **guessing**. Before implementing or changing any spec'd value — a colour, a component state, a layout/margin number, an icon, a token:
+The single biggest time-sink is **guessing**. For any spec'd value (colour, component state, layout/margin, icon, token), resolve it in this order — never eyeball a screenshot or iterate on terse feedback:
 
-1. **Pull the canonical Figma values** with `get_variable_defs` / `get_design_context` on the **specific frame node-id** — not a screenshot, not memory, not a terse chat description. For a dark value, pass a **dark** frame (variables resolve in the frame's mode).
-2. **Disambiguate terse feedback before acting.** "Make it black in dark" is ambiguous — confirm *which element* (chip vs glyph vs background) and remember colours are **per-mode** (light and dark are SEPARATE values; never apply one to both).
-3. **Verify both states before claiming done** — toggle light/dark and read the computed values. Gotchas: `setAttribute('data-theme')` re-themes CSS but does NOT recompute React-driven state (e.g. nav slot variants); `getComputedStyle` is live — read it immediately, never after mutating the same node.
+1. **Check the proto + topical `reference_*.md` FIRST.** For a screen/component that already exists in the proto, the built code + its reference ARE the calibrated canonical — that's the whole point of the skill. Don't re-fetch Figma for what's already captured; reuse it.
+2. **Fetch the canonical from Figma when** (a) it's a **NEW screen/component** that exists in Figma but not yet in the proto/references, (b) the reference is **missing / ambiguous / contested**, or (c) the user points you at a node. Use `get_variable_defs` / `get_design_context` on the **specific frame node-id** (dark value → pass a dark frame; variables resolve in the frame's mode). Then **promote** what you fetched into the topical reference so the next person reuses it. This is the **proto-expansion path**: a new screen is built from scratch against the fetched canonical, then captured as a reference and wired into the proto — that's how the proto grows beyond the screens it already has.
+3. **Disambiguate terse feedback before acting.** "Make it black in dark" is ambiguous — confirm *which element* (chip vs glyph vs background) and remember colours are **per-mode** (light and dark are SEPARATE values; never apply one to both).
+4. **Verify both states before claiming done** — toggle light/dark and read the computed values. Gotchas: `setAttribute('data-theme')` re-themes CSS but does NOT recompute React-driven state (e.g. nav slot variants); `getComputedStyle` is live — read it immediately, never after mutating the same node.
 
-Why this is HARD: the 2026-05-30 dark-mode build burned ~10 rounds on bottom-nav colours alone by iterating on terse feedback instead of pulling `get_variable_defs` on the canonical node (`6591:60485`). Fetch-first is faster than guess-and-correct.
+Why HARD: the 2026-05-30 dark-mode build burned ~10 rounds on bottom-nav colours — a built screen whose reference row was *stale*. The fix wasn't "always re-fetch", it was: trust the reference, but when it's contested, pull `get_variable_defs` on the canonical node (`6591:60485`) instead of iterating on terse feedback — then correct the reference.
 
 ## Be flow-aware, not just surface-aware
 
