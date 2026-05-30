@@ -90,7 +90,7 @@ export default function L1Stack({ registry, children, onOpenChange }) {
                 right: 0,
                 bottom: 0,
                 zIndex: 200, // above BottomNav (z=100) + DynamicIsland (z=70)
-                background: '#FFFFFF',
+                background: 'var(--page-bg)',
               }}
             >
               <Component {...entry.props} onClose={pop} />

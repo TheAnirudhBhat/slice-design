@@ -33,11 +33,11 @@ const PODS = ['banking', 'explore', 'pay', 'credit', 'activity'];
 // Page bgs. Pure WHITE for every non-immersive pod — slice has no gray surfaces.
 // Pay alone is the V-500 immersive surface.
 const PAGE_BG = {
-  banking: '#FFFFFF',
-  explore: '#FFFFFF',
-  pay: '#D30AD7',
-  credit: '#FFFFFF',
-  activity: '#FFFFFF',
+  banking: 'var(--page-bg)',
+  explore: 'var(--page-bg)',
+  pay: '#D30AD7', // Valentino immersive — stays V-500 (dark-Pay treatment TBD)
+  credit: 'var(--page-bg)',
+  activity: 'var(--page-bg)',
 };
 
 const STATUS_VARIANT = {
@@ -60,12 +60,51 @@ const PAGES_BY_POD = {
   activity: ActivityL0,
 };
 
-// R24 cont-9: dropped from Pro-Max (440×952) to real iPhone 16 Pro logical
-// dimensions per user direction "make it light smaller like a real iPhone 16
-// Pro". Apple's iPhone 16 Pro screen is 393×852 CSS px (6.3" display, 3x);
-// outer chassis ≈ 402×874 once you account for the rounded bezel.
-const PHONE_OUTER_WIDTH = 402;
-const PHONE_OUTER_HEIGHT = 874;
+// Dev control: small bottom-left toggle that flips the proto between light/dark
+// by setting data-theme on the stage. Neutral contrast glyph (slice has no theme
+// icon yet) — swap for a slice glyph if one lands in the DLS.
+function ThemeToggle({ theme, onToggle }) {
+  const dark = theme === 'dark';
+  return (
+    <button
+      onClick={onToggle}
+      aria-label={dark ? 'switch to light mode' : 'switch to dark mode'}
+      style={{
+        position: 'fixed',
+        left: 16,
+        bottom: 16,
+        zIndex: 100,
+        width: 40,
+        height: 40,
+        borderRadius: 100,
+        background: dark ? '#1B1B1F' : '#FFFFFF',
+        border: `1px solid ${dark ? 'rgba(255,255,255,0.16)' : 'rgba(0,0,0,0.1)'}`,
+        boxShadow: '0 2px 12px rgba(0,0,0,0.25)',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 0,
+        WebkitTapHighlightColor: 'transparent',
+      }}
+    >
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <circle cx="10" cy="10" r="7" stroke={dark ? '#FFFFFF' : '#171A1F'} strokeWidth="1.6" />
+        <path d="M10 3a7 7 0 010 14z" fill={dark ? '#FFFFFF' : '#171A1F'} />
+      </svg>
+    </button>
+  );
+}
+
+// R24 cont-9: real iPhone 16 Pro logical dims — screen 393×852 CSS px.
+// R24 cont-31 FIX: the OUTER chassis MUST equal screen + 2×(total bezel padding),
+// or the fixed-393 screen is wider than the chassis "hole" and the white screen
+// pokes past the black bezel ("screen width bigger than the phone"). Old 402×874
+// with 6+4=10px padding gave a 382-wide hole < 393. Now: FRAME pad 4 + BLACK pad 2
+// = 6px each side → OUTER = 393+12 × 852+12 = 405×864, screen fits exactly with an
+// even 6px bezel.
+const PHONE_OUTER_WIDTH = 405;
+const PHONE_OUTER_HEIGHT = 864;
 const PHONE_WIDTH = 393;
 const PHONE_HEIGHT = 852;
 
@@ -85,7 +124,7 @@ function PhoneFrame({ children }) {
           inset: 0,
           borderRadius: 62,
           background: 'linear-gradient(135deg, #2A2D31 0%, #16181B 45%, #1F2125 100%)',
-          padding: 6,
+          padding: 4,
         }}
       >
         <div
@@ -94,7 +133,7 @@ function PhoneFrame({ children }) {
             height: '100%',
             borderRadius: 56,
             background: '#000',
-            padding: 4,
+            padding: 2,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -107,7 +146,7 @@ function PhoneFrame({ children }) {
               borderRadius: 52,
               overflow: 'hidden',
               position: 'relative',
-              background: 'white',
+              background: 'var(--page-bg)',
             }}
           >
             {children}
@@ -178,6 +217,7 @@ const PAGES_META = PODS.map((pod) => ({ pod, variant: STATUS_VARIANT[pod] }));
 export default function App() {
   const [active, setActive] = useState('pay');
   const [visuallyActive, setVisuallyActive] = useState('pay');
+  const [theme, setTheme] = useState('light'); // light | dark — flips data-theme on the stage
   const [l1Open, setL1Open] = useState(false);
   // R24 cont-13: per-pod scroll state lifted up so the 54px status reserve
   // (sitting OUTSIDE each L0 in App.jsx) can paint white when that L0 is
@@ -196,6 +236,9 @@ export default function App() {
   const pagerX = useMotionValue(-PODS.indexOf('pay') * PHONE_WIDTH);
 
   const activeIndex = PODS.indexOf(active);
+  // In dark theme every pod surface is dark → force the "dark" status/nav variant
+  // (light icons + white-alpha nav medallions) across all slots.
+  const pagesMeta = theme === 'dark' ? PODS.map((p) => ({ pod: p, variant: 'dark' })) : PAGES_META;
   const fitScale = useFitScale(PHONE_OUTER_WIDTH, PHONE_OUTER_HEIGHT);
 
   const handlePageIndexChange = (idx) => {
@@ -224,6 +267,7 @@ export default function App() {
 
   return (
     <div
+      data-theme={theme}
       style={{
         position: 'fixed',
         inset: 0,
@@ -280,7 +324,7 @@ export default function App() {
                     pod === 'pay'
                       ? 'transparent'
                       : podScrolled
-                      ? '#FFFFFF'
+                      ? 'var(--page-bg)'
                       : 'transparent';
                   return (
                     <div
@@ -317,9 +361,9 @@ export default function App() {
                based on which page is under each element. */}
             <MotionStatusBar
               pagerX={pagerX}
-              pages={PAGES_META}
+              pages={pagesMeta}
               pageWidth={PHONE_WIDTH}
-              forceVariant={l1Open ? 'light' : null}
+              forceVariant={theme === 'dark' ? 'dark' : l1Open ? 'light' : null}
             />
 
             {/* Hardware dynamic island */}
@@ -334,11 +378,12 @@ export default function App() {
               onVisualChange={handleNavVisualChange}
               balance="₹3K"
               pagerX={pagerX}
-              pages={PAGES_META}
+              pages={pagesMeta}
             />
           </L1Stack>
         </PhoneFrame>
       </div>
+      <ThemeToggle theme={theme} onToggle={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))} />
     </div>
   );
 }

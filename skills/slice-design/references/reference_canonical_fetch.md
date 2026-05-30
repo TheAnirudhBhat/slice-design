@@ -1,8 +1,19 @@
-# Canonical-fetch-first (R24 meta-rule)
+# Source-of-truth order — local-first, Figma on a miss (R24 meta-rule, corrected R24 cont-25)
 
-**The rule**: before you write a `padding`, `fontSize`, `lineHeight`, `fontWeight`, `gap`, `borderRadius`, `color`, an icon path, or any other "this matches DLS" value, you must have fetched the published value from Figma in the same turn. No eyeball estimates from screenshots, no guesses from memory, no "I'll match the canonical" without actually pulling it.
+**The skill IS the source of truth.** The references + the proto are a *read-through cache* of Figma. Figma is the origin you sync from on a cache miss — NOT a place you round-trip to every time. The whole point of building this skill was so routine work doesn't need Figma.
 
-This rule exists because R24's session burned multiple rounds where I told the user "this matches canonical" and was wrong. Every one of those wrong claims would have been correct on the first try if I'd called the Figma MCP first.
+**Lookup order (top wins):**
+
+1. **Proto** (`proto/src`) — if the component is already built correctly, COPY it. Highest trust: real, calibrated, working code. (e.g. AppBar, Avatar, BottomNav, TxnRow, the L0 pods.)
+2. **References** (`reference_dls_*.md`, this file's siblings) — if the spec/token/recipe is written down, USE it and trust it.
+3. **Figma** (published library `ncGqxiE6wUOqgOURwHx6Hp`) — only on a cache miss (proto + refs don't have it) OR a specific reason to suspect drift (designer updated the component, the ref is marked stale/⚠️, or a value demonstrably looks wrong). **When you do fetch, WRITE IT BACK** into the refs (and proto if it's a component) so the next lookup is local. A fetch that isn't cached back is a wasted round-trip.
+
+**The two real failure modes (both happened in R24 — neither is "didn't go to Figma"):**
+
+- **Cache bypass** — guessing a value from memory without reading the proto OR the ref at all. This is the cardinal sin. (R24: amount-weight Medium-vs-Regular, chevron style, copy icon — all were guessable-wrong because I never checked the local cache.) Fix: always read tier 1→2 before writing a spec.
+- **Cache miss** — the exact value genuinely isn't in the proto/refs yet. (R24: the precise Activity-row padding, the whole Feature PDP pitch recipe.) These legitimately need a Figma fetch — then a write-back so they become tier-2 hits forever after.
+
+So: **never guess from memory; check the cache; fetch Figma only on a true miss; always write the fetch back.** As the cache fills (every sweep, every write-back), the share of tasks needing Figma trends toward zero. A mature skill almost never touches Figma.
 
 ---
 
@@ -103,3 +114,39 @@ Anti-pattern: writing your own `<svg>` of a copy icon. Canonical has specific co
 ---
 
 Source: R24 cont-2 through cont-23, 2026-05-29.
+
+---
+
+## Images: EXPORT them from Figma, never redraw (R24 cont-28)
+
+When you fetch a screen via `get_design_context`, every node is typed —
+`data-name`/structure tells you whether it's an **IMAGE / illustration**, a
+**COMPONENT**, or a **vector/text element**, and the response hands you asset
+URLs (`const imgX = "https://www.figma.com/api/mcp/asset/…"`) for the raster /
+illustration nodes.
+
+Rule: for anything that's an image or illustration, **download the asset URL
+(or `figma_get_component_image` the node) and use the real file.** Do NOT
+hand-build an inline-SVG approximation, a CSS gradient, or a "close enough"
+stand-in.
+
+R24 cont-28 example — the success screen: I rendered a halo-tick from two
+divs + a stroke check instead of exporting the canonical **Transaction status
+/ Success** illustration (file `ncGqxiE6wUOqgOURwHx6Hp`, node `884:16442`, key
+`bd790e976212e4ad272c97c6ad60f52a3dda8841`). It's a grainy-gradient
+(`feTurbulence`) green circle — impossible to fake convincingly by hand. The
+user had to supply the file. That whole round was avoidable: the Figma
+response would have flagged it as an illustration, and exporting it would
+have been one fetch.
+
+Classification quick-guide from a `get_design_context` payload:
+- node has an `imgXxx` asset URL + `data-name` like "Image"/an illustration
+  name → **export the asset, use as `<img>`**.
+- node resolves to a published COMPONENT (button, list item, app bar) →
+  rebuild from the component spec / copy the proto component.
+- node is a simple vector icon with a clean path (chevron, search) → the
+  published icon SVG is fine to inline (still prefer the DLS icon export).
+
+When in doubt: if it has gradients, grain, photographic content, or 3D — it's
+an image, export it. If it's flat geometry you could redraw identically — it's
+an icon, but still prefer the canonical export.

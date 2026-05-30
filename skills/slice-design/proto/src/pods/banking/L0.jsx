@@ -24,25 +24,19 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AppBar, EyeOpenGlyph, EyeClosedGlyph, usePageScroll } from '../../components/AppBar.jsx';
 import BottomFade from '../../components/BottomFade.jsx';
 import { useL1 } from '../../components/L1Stack.jsx';
+import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, OUTLINE_SUBTLE, V_500, POSITIVE, SURFACE } from '../../tokens.js';
 
 // ---- Tokens ----
-const CARD_BG = '#FFFFFF';
+const CARD_BG = SURFACE;
 const CARD_SHADOW = '0px 4px 24px 0px rgba(0,0,0,0.08)';
 const CARD_RADIUS = 16;
 const PAGE_PAD = 24;
 const CARD_PAD = 24;
 const CARD_GAP = 16;
-const TEXT_PRIMARY = 'rgba(0,0,0,0.9)';
-const TEXT_SECONDARY = 'rgba(0,0,0,0.7)';
-const TEXT_TERTIARY = 'rgba(0,0,0,0.5)';
-const OUTLINE_SUBTLE = 'rgba(0,0,0,0.05)';
-const V_500 = '#D30AD7';
-const GREEN_500 = '#00A63E';
-const SLATE_10 = '#F6F9FC';
 const NAV_INSET = 140; // floating nav reserve
 
 // ---- Inline glyphs ----
-function ArrowUpIcon({ size = 16, color = GREEN_500 }) {
+function ArrowUpIcon({ size = 16, color = POSITIVE }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true">
       <path
@@ -123,14 +117,14 @@ function SavingsHero({ balanceHidden }) {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, minHeight: 24 }}>
-            <ArrowUpIcon size={16} color={GREEN_500} />
+            <ArrowUpIcon size={16} color={POSITIVE} />
             <span
               style={{
                 fontFamily: 'Rubik, sans-serif',
                 fontSize: 14,
                 lineHeight: '20px',
                 letterSpacing: '0.28px',
-                color: GREEN_500,
+                color: POSITIVE,
                 fontWeight: 500,
               }}
             >
@@ -252,14 +246,14 @@ function FixedDepositsCard({ balanceHidden }) {
           {balanceHidden ? '₹•••' : '₹0'}
         </span>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, minHeight: 24 }}>
-          <ArrowUpIcon size={16} color={GREEN_500} />
+          <ArrowUpIcon size={16} color={POSITIVE} />
           <span
             style={{
               fontFamily: 'Rubik, sans-serif',
               fontSize: 14,
               lineHeight: '20px',
               letterSpacing: '0.28px',
-              color: GREEN_500,
+              color: POSITIVE,
               fontWeight: 500,
             }}
           >
@@ -450,7 +444,7 @@ export default function BankingL0({ onScrollChange }) {
           <MoniesCard balanceHidden={balanceHidden} />
         </div>
       </div>
-      <BottomFade color="#FFFFFF" height={200} />
+      <BottomFade color="var(--page-bg)" height={200} />
     </div>
   );
 }

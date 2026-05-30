@@ -172,7 +172,14 @@ Callback-only mode is the default (logs to console). To sync with a local server
 body, html, #root { font-family: "Rubik", system-ui; font-weight: 400; }
 ```
 
-Load Rubik from `https://fonts.googleapis.com/css2?family=Rubik:wght@400;500&display=swap` in `index.html` — never use `next/font/google` in protos (sandbox blocks build-time CSS fetch, see mem:feedback_next_build_fonts_sandbox).
+**Self-host Rubik — NEVER the Google Fonts CDN.** `npm i @fontsource/rubik`, then in `main.jsx`:
+```js
+import '@fontsource/rubik/400.css';
+import '@fontsource/rubik/500.css';
+import '@fontsource/rubik/600.css';
+import '@fontsource/rubik/700.css';
+```
+Do NOT add a `fonts.googleapis.com` `<link>` in `index.html`, and never use `next/font/google`. WHY (R24 cont-31): slice's corporate network throttles/blocks `fonts.gstatic.com`, so the CDN silently falls back to a system font — and it fails per-weight, so Medium (500) headings render non-Rubik while 400 body text looks fine (a confusing, hard-to-spot bug: computed `font-family` still says "Rubik"). Bundling guarantees every weight loads offline. Verify after scaffold: `performance.getEntriesByType('resource')` shows zero `gstatic`/`googleapis` requests and Rubik served from `node_modules/@fontsource/`.
 
 ## DLS primitives (`src/dls/primitives.jsx`)
 

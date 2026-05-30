@@ -93,6 +93,16 @@ If you're starting a new slice proto, scaffolding a new L0, or building any cros
 
 It also has a Pre-build Checklist and Post-build Verification list. Run both. The whole point of `reference_proto_systematics.md` is that future proto builds ship-ready in one round, not seven.
 
+### Two non-negotiables before you write any proto code
+
+These are the two process rules that, when skipped, produce "kinda mid" output that then takes 20 correction rounds to fix (root cause of R24 cont-25→29). Do these every time, no exceptions:
+
+1. **Compose from cache — don't rebuild chrome.** The proto + `references/proto-snapshot/` are a read-through cache of the canonical app. For ANY new screen or flow, COPY the StatusBar / AppBar / Avatar / phone shell / tokens / Primary button from `proto-snapshot/code/` and `proto-snapshot/assets/`. Do not re-hand-build them from memory — that's how you reintroduce already-fixed bugs (cropped wifi, wrong chevron, 52px button, lowercase CTA). If you catch yourself typing `<svg>` for a glyph or `borderRadius` for a button that already exists in the snapshot, STOP and copy instead. Re-deriving = you will get a detail wrong.
+
+2. **Self-audit before you show.** The loop is: fetch canonical → build → **screenshot your own output → compare against canonical side-by-side → fix the diffs → THEN show the user.** The most expensive failures this session were all things a 10-second self-screenshot would have caught (font not inheriting, double header, off button height). Never hand the user the first build as if it's done. If the browser/Playwright is genuinely unavailable, say so explicitly and fall back to `npm run build` + a careful manual diff against the snapshot spec — don't silently skip the audit.
+
+When you skip these, you are outsourcing QA to the user, one screenshot at a time. That is the "death by a thousand corrections" anti-pattern. The new-screen pre-flight checklist in `reference_proto_systematics.md` operationalizes both.
+
 ## LIVE proto + snapshot (both inside this skill)
 
 The slice-app-proto LIVES INSIDE the skill:
@@ -317,7 +327,7 @@ Why: catches recipe mismatches (wrong L0 vs L1, wrong app bar type, wrong CTA an
 
 If you're about to write any of these in slice UI, rewrite the element differently. These are calibrated bans — they were tested and rejected.
 
-- **Capital-S "Slice"** — always lowercase, even sentence-initial
+- **Capital-S "Slice"** — always lowercase, even sentence-initial. BUT lowercase is for PRODUCT/BRAND NAMES ONLY (slice, spark, monies, slice atom, slice health cover) — even mid-sentence. Everything else is SENTENCE CASE (capital first letter): headings, titles, questions, CTAs, list labels, settings rows — "Choose your cover", "You're covered", "Recharge & bills", "All settings", "Add money". Do NOT lowercase the whole UI. (R24 cont-31 — verified across L0 pods + Core PDP in Figma.)
 - **Emoji as Avatar glyph or in CTA leading-icon slot** — slice line icons only
 - **Red-fill Primary button** for destructive actions — use a dialog with neutral Primary, or Tertiary with red text
 - **Right-chevron `›` in non-row contexts** (column headers, rows that already have a CTA / switch). Valid: tap-the-whole-row callouts. Invalid: redundant trailing affordance.

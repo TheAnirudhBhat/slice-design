@@ -22,21 +22,16 @@ import React, { useEffect, useRef } from 'react';
 import { AppBar, usePageScroll } from '../../components/AppBar.jsx';
 import BottomFade from '../../components/BottomFade.jsx';
 import { useL1 } from '../../components/L1Stack.jsx';
+import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, OUTLINE_SUBTLE, BLUE_500, SLATE_10, SURFACE } from '../../tokens.js';
 
 // ---- Tokens ----
-const CARD_BG = '#FFFFFF';
+const CARD_BG = SURFACE;
 const CARD_SHADOW = '0px 4px 24px 0px rgba(0,0,0,0.08)';
 const CARD_BORDER = '1px solid rgba(0,0,0,0.05)';
 const CARD_RADIUS = 16;
 const PAGE_PAD = 24;
 const CARD_PAD = 24;
 const CARD_GAP = 16;
-const TEXT_PRIMARY = 'rgba(0,0,0,0.9)';
-const TEXT_SECONDARY = 'rgba(0,0,0,0.7)';
-const TEXT_TERTIARY = 'rgba(0,0,0,0.5)';
-const OUTLINE_SUBTLE = 'rgba(0,0,0,0.05)';
-const BLUE_500 = '#2B6ACF';
-const SLATE_10 = '#F6F9FC';
 const NAV_INSET = 140;
 
 // ---- Type tokens — calibrated for slice-app-proto viewport (R23 fix-it-2) ----
@@ -370,7 +365,7 @@ export default function ExploreL0({ onScrollChange }) {
           </div>
         </div>
       </div>
-      <BottomFade color="#FFFFFF" height={200} />
+      <BottomFade color="var(--page-bg)" height={200} />
     </div>
   );
 }

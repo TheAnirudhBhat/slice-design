@@ -1625,4 +1625,101 @@ structural fix; the canonical-fetch-first rule (cont-2 §A) is the spec-
 accuracy fix. Together they're the two highest-leverage process changes
 coming out of R24.
 
+
+---
+
+### 2026-05-30 · R24 cont-25→30 (insurance flow generalization test + the "why it was mid" post-mortem)
+
+**What happened**: User asked whether the skill could build a genuinely NEW
+feature (not a pod we'd already cached) — a slice insurance pitch flow — as a
+SEPARATE exploration project, not in the skill proto. Built a 3-screen flow
+(pitch / cover / success). It worked, but the user's verdict was: "the output
+still was kinda mid." Then: "take the feedback from this conversation and
+implement them back in the skill… so that the skill remains self-improving."
+
+**The corrections the user had to make, one at a time** (each = a thing the
+skill should have prevented):
+1. Continue button used the wrong font — native `<button>` doesn't inherit
+   `font-family`; needed `button { font-family: inherit }` in CSS.
+2. Button was 52px tall with no font set → corrected to canonical 48px (12/24
+   padding) + explicit Rubik.
+3. CTA read "continue" (lowercase) → "Confirm" / "Proceed" (Capital-first CTA
+   exception to lowercase-slice voice).
+4. Double header: app-bar title + a redundant left-aligned heading + a helper
+   that restated the title → collapsed to clean app-bar copy only.
+5. "You pay … ₹X" was two hand-aligned divs → should be a list item.
+6. Success state used a hand-drawn halo placeholder → user supplied the real
+   Success Icon.svg; should have EXPORTED it from Figma (DLS node 884:16442).
+7. Exploration assets leaked into the skill proto → "no exploration in the
+   original proto unless explicitly asked."
+8. Built as single-file CDN with no agentation → "every proto should have
+   agentation by default."
+
+**ROOT CAUSE (the honest one)**: none of these were hard problems. Every one
+was either (a) already solved and sitting in `references/proto-snapshot/` — I
+rebuilt the button, the chrome, the tick from memory instead of COPYING the
+cached known-good version, so I reintroduced bugs we'd already fixed earlier
+the same session; or (b) immediately visible in a screenshot — I handed the
+user the first build without ever looking at my own output. So the user became
+my QA, correction by correction. That's why it felt "mid": not one big failure,
+a dozen small re-derivations of things the cache already had right, plus a
+skipped self-audit. (The Playwright browser being locked all session made the
+self-audit harder, but the correct response is to SAY that and fall back to a
+manual spec diff — not to ship unaudited.)
+
+**Fixes implemented back into the skill (this entry's whole point)**:
+- SKILL.md "Building a slice proto — READ FIRST" now opens with **two
+  non-negotiables**: (1) compose from cache / don't rebuild chrome, (2)
+  self-audit before showing. These are stated as the direct antidote to the two
+  root causes above.
+- `reference_proto_systematics.md` gains a **NEW SCREEN / FLOW PRE-FLIGHT
+  CHECKLIST (cont-30)** that bundles every scattered per-detail rule into one
+  TodoWrite gate: compose-from-cache, agentation wired, font-family inherit,
+  export-images-from-Figma, canonical 48px Primary button, Capital-first CTA,
+  no double-header, label+value = list item, build-clean + self-screenshot diff.
+- The per-detail rules were ALSO recorded individually across cont-25→29 in
+  `reference_canonical_fetch.md` (local-first cache + export-images),
+  `reference_anti_patterns.md` (double-header + Capital-first CTA),
+  `reference_proto_systematics.md` (no-exploration-in-proto + agentation),
+  `reference_dls_illustrations.md` (canonical success tick). cont-30
+  consolidates them so future builds hit ONE checklist, not twelve buried notes.
+
+**Meta-meta-learning**: the skill's value isn't the rules — it's whether the
+rules get APPLIED at build time. Scattered rules don't get applied; a single
+pre-flight checklist run as TodoWrite does. The failure mode to watch for next
+time is treating "I recorded the rule" as equal to "the build follows the
+rule." Compose-from-cache + self-audit are process habits, not lookups — they
+have to fire automatically on every new-screen request, which is why they're
+now at the TOP of the READ-FIRST section, not buried in a reference file.
+
+Source: R24 cont-25 through cont-30, 2026-05-29 → 2026-05-30.
+
 Source: R24 cont-24, 2026-05-29.
+
+
+---
+
+### 2026-05-30 · R24 cont-31 (insurance Core PDP rebuild + DLS cache + corporate-font fix)
+
+Rebuilt the insurance exploration as a feature wired INTO the app (Explore entry card → L1 flow → back to Explore). Seven durable learnings:
+
+1. **Core PDP vs Feature PDP — insurance is a CORE product.** The DLS has TWO product-detail templates (file ncGqxiE6wUOqgOURwHx6Hp):
+   - **Core PDP** — component_set node `2061:86829` (variants Type=Default `2061:86696`, Type=Big title `2061:86830`). CENTERED layout: 256px illustration → gradient Valentino→Blue heading (H2 24/32/0.48, bg-clip-text) → tertiary Body subtitle (16/24) → dot indicator (it's a carousel) → FAB bottom-right (56px V-500 + arrow). Chevron-only app bar. **Use for CORE bank products** (insurance, savings, core onboarding).
+   - **Feature PDP** — standalone COMPONENT node `2063:87946`. LEFT-aligned: illustration → green "Feature highlight" eyebrow (lock) → bold product name → subtitle → 3 green-tick feature rows → FAB. **Use for features / sub-products** (Atom).
+   Recipe added to `reference_dls_screen_layouts.md`.
+
+2. **figma-console beats official search for ENUMERATION.** Official `search_design_system("PDP")` returned only Feature PDP and I concluded Core PDP didn't exist. figma-console `figma_get_library_components` (paginated, libraryFileKey ncGqxiE6wUOqgOURwHx6Hp) returned BOTH + the full 380-component inventory. LESSON: to learn WHAT components exist, paginate `figma_get_library_components`; official search is for targeted lookups, not completeness.
+
+3. **Copy capitalization — SENTENCE CASE, not all-lowercase.** I had over-applied lowercase to headings ("choose your cover", "you're covered"). Verified across Core PDP placeholders + all 6 L0 pods + Profile in Figma: headings, titles, questions, CTAs, list labels, settings rows are SENTENCE CASE (capital first) — "Explore", "Recharge & bills", "All settings", "Choose your cover", "You're covered". ONLY product/brand names stay lowercase, even mid-sentence — "slice", "spark", "monies", "slice health cover", "slice super card", "slice atom". The lowercase-"slice" rule is about the BRAND TOKEN, not the whole UI. Recorded in SKILL.md + `reference_anti_patterns.md`.
+
+4. **Back chevron is FILLED, not a thin stroke.** DLS Interface/Chevron left (node `582:580`) is a FILLED glyph (natural viewBox 10×16, fill black 0.9), not a strokeWidth-2 "V" (which read "too thin"). `ChevronBack.jsx` now uses the filled path centered in 24×24 via `translate(17 4) scale(-1 1)`.
+
+5. **No leading illustration on cards (banner-only).** I put the insurance entry-card illustration on the LEFT. slice cards NEVER lead with an illustration — text leads, the illustration bleeds on the RIGHT (canonical L0 Medium / atom entry card). Left-illustration is a BANNER-only treatment. Fixed + recorded in `reference_anti_patterns.md`.
+
+6. **Self-host fonts — NEVER the Google Fonts CDN.** On slice's corporate network fonts.gstatic.com is throttled/blocked. The CDN `<link>` silently fell back to a system font specifically on Medium (500) weight, so card HEADINGS looked "not Rubik" while 400 body stayed correct — and computed `font-family` still said "Rubik", so it was invisible without inspecting `document.fonts` + network. Fix: bundle via `@fontsource/rubik` (import 400/500/600/700 in main.jsx) + delete the CDN `<link>`. Verified: zero gstatic requests. Applied to the live proto, the insurance exploration, the proto-snapshot (package.json/main.jsx/index.html), AND the scaffold rule in `reference_web_proto.md` so new protos inherit it. This is now the scaffold default.
+
+7. **Tiered DLS cache** at `references/dls-cache/`: Tier 1 = COMPONENT_INDEX.md (every component's existence + nodeId + key + variants, all 380); Tier 2 = full specs in reference_dls_*.md for common components (work WITHOUT Figma); Tier 3 = fetch-on-miss for the long tail (index gives the nodeId → fetch → write back). Built because I didn't know Core PDP existed — the skill must KNOW every component exists even when rarely used, and only hit Figma on a true miss.
+
+Process note: every one of these was caught by actually running the proto (Claude Preview) + screenshotting + inspecting computed styles — the "wrong font" was invisible in screenshots and only `document.fonts`/network inspection revealed the CDN dependency. Reinforces the self-audit rule: screenshot AND inspect computed styles before showing.
+
+Source: R24 cont-31, 2026-05-30.

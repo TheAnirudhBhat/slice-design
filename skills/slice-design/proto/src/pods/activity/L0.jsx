@@ -27,6 +27,13 @@ import React, { useEffect, useRef } from 'react';
 import { AppBar, usePageScroll } from '../../components/AppBar.jsx';
 import BottomFade from '../../components/BottomFade.jsx';
 import { useL1 } from '../../components/L1Stack.jsx';
+import Avatar from '../../components/Avatar.jsx';
+import formatINR from '../../utils/formatINR.js';
+import {
+  WHITE, PAGE_BG, TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, OUTLINE_SUBTLE,
+  V_500, V_100, V_50, POSITIVE, POSITIVE_50, NEGATIVE, NEGATIVE_50,
+  AMBER, AMBER_50, AMBER_700, SLATE_10, SLATE_30, SLATE_100, SLATE_400, SLATE_900,
+} from '../../tokens.js';
 
 function PhotoAvatar() {
   return (
@@ -41,28 +48,27 @@ function PhotoAvatar() {
 
 // ───────────────── tokens ─────────────────
 const COLORS = {
-  pageBg: '#FFFFFF',
-  textPrimary: 'rgba(0,0,0,0.9)',
-  textSecondary: 'rgba(0,0,0,0.7)',
-  textTertiary: 'rgba(0,0,0,0.5)',
-  outlineSubtle: 'rgba(0,0,0,0.05)',
-  outlineBold: 'rgba(0,0,0,0.1)',
-  v500: '#D30AD7',
-  v100: '#F4E5F8',
-  v50: '#FAE2FA',
-  positive: '#00A63E',
-  positive50: '#E0F4E8',
-  negative: '#CE1D26',
-  negative50: '#F9E4E5',
-  amber: '#FF9A17',
-  amber50: '#FFF3E3',
-  amber700: '#C27511',
-  slate10: '#F6F9FC',
-  slate30: '#F0F4F7',
-  slate100: '#CDD0D4',
-  slate400: '#78808B',
-  slate900: '#171A1F',
-  white: '#FFFFFF',
+  pageBg: PAGE_BG,
+  textPrimary: TEXT_PRIMARY,
+  textSecondary: TEXT_SECONDARY,
+  textTertiary: TEXT_TERTIARY,
+  outlineSubtle: OUTLINE_SUBTLE,
+  v500: V_500,
+  v100: V_100,
+  v50: V_50,
+  positive: POSITIVE,
+  positive50: POSITIVE_50,
+  negative: NEGATIVE,
+  negative50: NEGATIVE_50,
+  amber: AMBER,
+  amber50: AMBER_50,
+  amber700: AMBER_700,
+  slate10: SLATE_10,
+  slate30: SLATE_30,
+  slate100: SLATE_100,
+  slate400: SLATE_400,
+  slate900: SLATE_900,
+  white: WHITE,
 };
 
 // ───────────────── mock transactions ─────────────────
@@ -233,55 +239,8 @@ function SearchBarRow() {
   );
 }
 
-// ───────────────── avatar by txn type ─────────────────
-// R24 cont-6: rebuilt to match canonical Activity (Figma node 885:20122).
-// Canonical avatars are OUTLINED circles (1.5px border, no fill) with letter
-// centered. Received/cashback variants use a thin green border + green letter.
-// Failed/pending DON'T get avatar badges — their state is communicated by the
-// red/amber subtitle text below the name (see TxnRow subtitle logic).
-function TxnAvatar({ type, initial }) {
-  const isReceived = type === 'received';
-  const borderColor = isReceived ? COLORS.positive : COLORS.outlineBold;
-  const letterColor = isReceived ? COLORS.positive : COLORS.textPrimary;
-  return (
-    <div
-      style={{
-        width: 40,
-        height: 40,
-        borderRadius: 100,
-        // R24 cont-10: thinner 1px border to match DLS canonical (was 1.5px which
-        // read too bold next to the canonical's delicate outlines).
-        border: `1px solid ${borderColor}`,
-        background: COLORS.pageBg,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontFamily: 'Rubik, sans-serif',
-        fontSize: 16,
-        lineHeight: '20px',
-        fontWeight: 500,
-        letterSpacing: '0.32px',
-        color: letterColor,
-        flexShrink: 0,
-      }}
-      aria-hidden="true"
-    >
-      {initial}
-    </div>
-  );
-}
-
 // ───────────────── transaction row ─────────────────
 function TxnRow({ txn, onTap }) {
-  const formatAmount = (n) => {
-    const s = n.toString();
-    const lastThree = s.slice(-3);
-    const rest = s.slice(0, -3);
-    if (rest === '') return lastThree;
-    const grouped = rest.replace(/\B(?=(\d{2})+(?!\d))/g, ',');
-    return `${grouped},${lastThree}`;
-  };
-
   let amountColor = COLORS.textPrimary;
   let amountPrefix = '₹';
 
@@ -358,7 +317,11 @@ function TxnRow({ txn, onTap }) {
       }}
       aria-label={`transaction ${txn.name}`}
     >
-      <TxnAvatar type={txn.type} initial={txn.initial} />
+      <Avatar
+        size={40}
+        initial={txn.initial}
+        tone={txn.type === 'received' ? 'received' : 'outlined'}
+      />
       {/* R24 cont-7: DLS canonical (node 3:41 → List item / Sanjay S. variant)
           puts the right amount on the SAME baseline as the title, with the
           subtitle stacked underneath the title. Previous version had everything
@@ -380,7 +343,7 @@ function TxnRow({ txn, onTap }) {
               fontFamily: 'Rubik, sans-serif',
               fontSize: 16,
               lineHeight: '24px',
-              fontWeight: 500,
+              fontWeight: 400,
               letterSpacing: '0.32px',
               color: COLORS.textPrimary,
               overflow: 'hidden',
@@ -408,7 +371,7 @@ function TxnRow({ txn, onTap }) {
             }}
           >
             {amountPrefix}
-            {formatAmount(txn.amount)}
+            {formatINR(txn.amount)}
           </div>
         </div>
         <div
@@ -461,7 +424,7 @@ export default function ActivityL0({ onScrollChange }) {
           title="Activity"
           avatar={<PhotoAvatar />}
           onAvatarTap={() => push('profile')}
-          background="#FFFFFF"
+          background="var(--page-bg)"
         />
         <SearchBarRow />
         <div style={{ paddingBottom: 140 }}>

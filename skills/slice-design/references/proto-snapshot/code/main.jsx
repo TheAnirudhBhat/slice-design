@@ -1,6 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Agentation } from 'agentation';
+// Self-hosted Rubik (bundled via @fontsource) — NEVER the Google Fonts CDN.
+// fonts.gstatic.com is throttled/blocked on slice's corporate network, so the
+// CDN <link> silently falls back to a system font on Medium (500) weight →
+// card headings look "not Rubik" while 400 body text stays fine. (R24 cont-31)
+import '@fontsource/rubik/400.css';
+import '@fontsource/rubik/500.css';
+import '@fontsource/rubik/600.css';
+import '@fontsource/rubik/700.css';
 import App from './App.jsx';
 import './index.css';
 

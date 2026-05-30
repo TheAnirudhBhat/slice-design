@@ -12,6 +12,12 @@ Why slice doesn't: lowercase "slice" is core to the brand — never capitalise, 
 Do instead: always `slice` lowercase, even at the start of a sentence
 Source: slice-dls L378, mem:CLAUDE.md, ✅
 
+### ❌ Lowercasing headings, titles, questions & CTAs
+Looks like: "choose your cover", "you're covered", "how much cover?" — lowercasing the whole UI because "slice is lowercase"
+Why slice doesn't: the lowercase rule is for PRODUCT/BRAND NAMES ONLY (slice, spark, monies, slice atom, slice health cover) — even mid-sentence. Everything else is SENTENCE CASE (capital first letter).
+Do instead: "Choose your cover", "You're covered", "Recharge & bills", "All settings". Product names stay lowercase inside the sentence: "Meet your slice super card".
+Source: cal:2026-05-30 R24 cont-31 — verified across L0 pods + Core PDP in Figma ✅
+
 ### ❌ Using "Submit", "NEXT", "OK", "CONTINUE" as button labels
 Looks like: full-caps generic verbs as CTAs
 Why slice doesn't: copy must be specific and friendly. Verb-first, 1–2 words, sentence case.
@@ -27,6 +33,12 @@ Source: slice-dls L358
 Looks like: "20th November, 2025"
 Do instead: `20 Nov '25` in Caption type style
 Source: slice-dls L359
+
+### ❌ Leading illustration on the LEFT of a card
+Looks like: a card / product-entry with a 3D illustration or image in the LEFT (leading) slot, text to its right
+Why slice doesn't: slice cards lead with TEXT; illustrations bleed on the RIGHT (canonical L0 Medium / atom entry card = trailing mascot bleed). A left-side illustration reads as a BANNER, which this isn't.
+Do instead: title + subtitle left, illustration absolute-positioned bleeding the RIGHT edge. A leading visual on the left is OK only for (a) list-item AVATARS (small circular) and (b) full-width banners.
+Source: cal:2026-05-30 R24 cont-31 ✅
 
 ## Colour
 
@@ -554,3 +566,55 @@ The fix-it pass shipped THREE wrong inversions inside 24 hours. Pattern:
 
 **Standing rule (R23 fix-it-2 onward):** when a craft problem surfaces during user review, the first move is "what does canonical Figma do here?" — NOT "what's a clever workaround?". Approximations, fallbacks, and "smart" algorithms are how the proto drifts off-canonical.
 
+
+---
+
+## Anti-pattern (R24 cont-26): redundant / double-header copy under a titled app bar
+
+Two linked rules, both about keeping the top of a screen clean:
+
+1. **No left-aligned text line directly below a TITLED app bar.** The app-bar
+   title sits on the app bar's gutter (12px) and a body line sits on the
+   content gutter (24px) — the mismatched left margins read as two competing
+   headers stacked on top of each other. This only applies when the app bar
+   HAS a title; a chevron-only app bar (e.g. Feature PDP) is fine to follow
+   with a heading. If you need intro context under a titled bar: fold it into
+   the title, OR put a real content element (card, illustration, hero) between,
+   OR drop it.
+
+2. **Never echo the app-bar copy in the body.** slice copy is simple — say it
+   once. "choose your cover" (title) + "how much cover do you want?" (helper)
+   is the same question twice. Cut the echo. The app-bar title should be
+   great, clean, straightforward, and carry the screen's intent on its own.
+
+Why it matters: the doubled header + repeated question is an instant "AI made
+this" tell — it fails the slice-slop test. Real slice screens lead with one
+clean title and go straight to content.
+
+Source: R24 cont-26, 2026-05-30 (insurance-flow exploration — "choose your
+cover" app bar had a redundant "how much cover do you want?" line beneath it).
+
+---
+
+## Rule (R24 cont-27): CTA labels are Capital-first — the exception to lowercase copy
+
+slice's lowercase rule governs the **brand name** ("slice", never "Slice") and
+general body / UX copy. It does **NOT** apply to CTA button labels.
+
+- **CTA labels use a Capital first letter** (sentence case): "Confirm",
+  "Proceed", "Done", "Add money", "Invite & earn", "Share", "Contact us".
+  A lowercase CTA ("continue", "done") looks wrong / unfinished.
+- Confirmed by every CTA already in the proto (Profile "Invite & earn",
+  Banking "Add money", TxnDetail "Share" / "Contact us").
+- **Preferred forward verbs**: "Proceed" or "Confirm" over "Continue".
+- Everything else stays lowercase per brand voice (titles, captions, helper
+  text, the "slice" name).
+
+Related (same fix round): a **label + value summary row** (e.g. "you pay …
+₹549/month") is a DLS **List item** — label left, value right, **vertically
+center-aligned**. Don't hand-build it with `align-items: baseline` across
+different font sizes; the baselines of a 14px label and a 20px value read
+crooked. Use the list-item value pattern: both Body 16/24, center-aligned.
+
+Source: R24 cont-27, 2026-05-30 (insurance-flow "continue"/"done" lowercase
+CTAs + baseline-misaligned "you pay" row).

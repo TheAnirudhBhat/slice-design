@@ -248,3 +248,25 @@ Available illustration assets on disk live in `slice-design-suite/illustrations/
 ## Source
 
 cal:2026-05-28 R19 — Icons + illustrations sweep across Atom, Credit Card 2026, AVC, Payment OS 26, DLS reference frames. 12 illustrations cataloged (10 new + 2 reverified). Usage patterns extracted from cross-file observations.
+
+---
+
+## Transaction status / Success tick (R24 cont-28)
+
+The canonical slice success glyph — used for transaction status + confirmation
+success screens. **Grainy-gradient** green circle (feTurbulence noise + green
+linear gradient #59C36A→#34FF55 + radial blue/white accents) with a white
+check. NOT a flat green circle + stroke check — the grain is the slice
+signature, impossible to fake by hand. Export it.
+
+- File: `ncGqxiE6wUOqgOURwHx6Hp` · component set "Transaction status - Small"
+  node `7821:3955`, 8 variants: Success/Failed/Pending/Refunded/Reversed/
+  Requested/Expired/Rejected.
+- Success variant: node `884:16442`, key `bd790e976212e4ad272c97c6ad60f52a3dda8841`.
+- Lives in the DLS **Illustrations** page ("Icon states" frame `884:16447`).
+- Cached SVG: `slice-design-suite/illustrations/dls_success_tick.svg`.
+- Anti-pattern (already in reference_anti_patterns.md): confirmation success
+  uses this textured tick, never an Avatar-with-✓ or a flat halo placeholder.
+
+Source: R24 cont-28, 2026-05-30 — verified user-supplied "Success Icon.svg"
+against DLS node 884:16442.

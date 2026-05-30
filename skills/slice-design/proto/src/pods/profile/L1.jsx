@@ -26,13 +26,10 @@
 
 import React, { useRef } from 'react';
 import { AppBar, usePageScroll } from '../../components/AppBar.jsx';
+import Avatar from '../../components/Avatar.jsx';
+import { V_500, TEXT_PRIMARY, TEXT_TERTIARY, PAGE_BG } from '../../tokens.js';
 
 const PAGE_PAD = 24;
-const V_500 = '#D30AD7';
-const TEXT_PRIMARY = 'rgba(0,0,0,0.9)';
-const TEXT_TERTIARY = 'rgba(0,0,0,0.5)';
-const OUTLINE_SUBTLE = 'rgba(0,0,0,0.05)';
-const OUTLINE_BOLD = 'rgba(0,0,0,0.1)';
 
 function CloseGlyph() {
   // Canonical glyph is 14×14 inside a 24×24 hit-area. Wrapper centers the
@@ -140,7 +137,7 @@ export default function ProfileL1({ onClose }) {
         width: '100%',
         height: '100%',
         overflow: 'hidden',
-        background: '#FFFFFF',
+        background: PAGE_BG,
       }}
     >
       <div
@@ -189,23 +186,7 @@ export default function ProfileL1({ onClose }) {
               width: '100%',
             }}
           >
-            <div
-              style={{
-                width: 128,
-                height: 128,
-                borderRadius: '50%',
-                overflow: 'hidden',
-                border: `1px solid ${OUTLINE_SUBTLE}`,
-                flexShrink: 0,
-              }}
-            >
-              <img
-                src="/assets/avatar_only.png"
-                alt=""
-                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                aria-label="profile photo"
-              />
-            </div>
+            <Avatar size={128} photo="/assets/avatar_only.png" tone="subtle" ariaLabel="profile photo" />
             <div
               style={{
                 display: 'flex',

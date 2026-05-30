@@ -18,9 +18,9 @@
 import React, { useEffect, useRef } from 'react';
 import { AppBar, usePageScroll } from '../../components/AppBar.jsx';
 import { useL1 } from '../../components/L1Stack.jsx';
+import { SLATE_10, TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, PAGE_BG, SURFACE } from '../../tokens.js';
 
-const PAGE_BG = '#FFFFFF';
-const CARD_BG = '#FFFFFF';
+const CARD_BG = SURFACE;
 const CARD_SHADOW = '0px 4px 24px 0px rgba(0,0,0,0.08)';
 const CARD_BORDER = '1px solid rgba(0,0,0,0.05)';
 const CARD_RADIUS = 16;
@@ -28,10 +28,6 @@ const PAGE_PAD = 24;
 const CARD_PAD = 24;
 const CARD_GAP = 16;
 const NAV_INSET = 120;
-const SLATE_10 = '#F6F9FC';
-const TEXT_PRIMARY = 'rgba(0,0,0,0.9)';
-const TEXT_SECONDARY = 'rgba(0,0,0,0.7)';
-const TEXT_TERTIARY = 'rgba(0,0,0,0.5)';
 
 function PhotoAvatar() {
   return (

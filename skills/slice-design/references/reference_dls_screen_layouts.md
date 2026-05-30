@@ -823,6 +823,27 @@ Source: cal:2026-05-28 R19 — AVC `KXA1BbYZvzygD1XUOTIwUa` canvas `2410:22541` 
 
 ---
 
+### Product detail pages — Core PDP vs Feature PDP
+
+slice has TWO canonical product-intro templates (DLS 2.0 file `ncGqxiE6wUOqgOURwHx6Hp`). Pick by product weight:
+
+**Core PDP** — for CORE bank products (insurance, savings, flagship onboarding). Component set node `2061:86829` (variants Type=Default `2061:86696`, Type=Big title `2061:86830`).
+- App bar Standard, chevron-back only (no title)
+- CENTERED column (32px padding, gap 24): 256px illustration → **gradient heading** (Valentino→Blue, H2 24/32/0.48, bg-clip-text) → subtitle (Body 16/24 tertiary, centered) → **Dot indicator** (it's a swipe CAROUSEL)
+- **FAB** bottom-right (56px V-500 circle + white right-arrow) advances the carousel / proceeds
+- White bg, radius 16
+
+**Feature PDP** — for FEATURES / sub-products (Atom). Standalone COMPONENT node `2063:87946`.
+- App bar Standard chevron-back
+- LEFT-aligned: illustration (top-right) → green "Feature highlight" eyebrow (lock glyph) → bold product name → subtitle (tertiary) → 3 feature rows (green Status/Tick `2063:87912` + H4 title + caption subtitle)
+- FAB bottom-right
+
+WHY two: Core PDP's centered + gradient + carousel treatment signals a flagship product worth swiping through; Feature PDP's left-aligned feature list suits a single sub-product explainer. **Insurance = Core PDP** (a core bank product), NOT Feature PDP.
+
+Source: cal:2026-05-30 R24 cont-31 — Core PDP found via figma-console `figma_get_library_components`; official `search_design_system` missed it. ✅
+
+---
+
 ### Atom recipe suite (new sub-product inside Banking)
 
 `slice atom` is a new goal-based / habit-based savings sub-product living inside the Banking pod. Atoms = named savings goals (Emergency fund, Vacation, Daily saver, Round-ups, Custom). Contribution mechanisms: one-shot top-up, recurring schedule, UPI round-ups.

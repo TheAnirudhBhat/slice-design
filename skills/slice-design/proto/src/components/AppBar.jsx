@@ -31,6 +31,8 @@
 // (Pay/Valentino home keeps its own immersive app bar with white-alpha pills).
 
 import React, { useEffect, useRef, useState } from 'react';
+import Avatar from './Avatar.jsx';
+import { ChevronBackGlyph } from '../icons/ChevronBack.jsx';
 
 /**
  * usePageScroll — attach to a scrollable container ref, returns true once it has
@@ -73,7 +75,7 @@ export function AppBar({
   // with the status bar above it, right now it's transparent, so you can see
   // cards below it ... it cuts the card drop shadow". The card shadows now
   // get fully covered by the white AppBar fill once they slide under it.
-  const effectiveBg = scroll ? '#FFFFFF' : background;
+  const effectiveBg = scroll ? 'var(--page-bg)' : background;
   return (
     <div
       style={{
@@ -113,7 +115,7 @@ export function AppBar({
               fontSize: 24,
               lineHeight: '32px',
               letterSpacing: '0.48px',
-              color: 'rgba(0, 0, 0, 0.9)',
+              color: 'var(--text-primary)',
             }}
           >
             {title}
@@ -123,7 +125,11 @@ export function AppBar({
             <ActionSlot key={`a-${i}`}>{action}</ActionSlot>
           ))}
 
-          {avatar && <AvatarContainer onTap={onAvatarTap}>{avatar}</AvatarContainer>}
+          {avatar && (
+            <Avatar size={44} hit onTap={onAvatarTap}>
+              {avatar}
+            </Avatar>
+          )}
         </div>
       ) : (
         // Standard: chevron-back + title (left-after-chevron) + 0–2 trailing icons
@@ -152,7 +158,7 @@ export function AppBar({
               fontSize: 20,
               lineHeight: '24px',
               letterSpacing: '0.4px',
-              color: 'rgba(0, 0, 0, 0.9)',
+              color: 'var(--text-primary)',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -178,7 +184,7 @@ function IconButton({ children, onClick, ariaLabel, tone = 'primary' }) {
   // R24 cont-4: tone determines glyph color (via parent CSS color → SVG
   // currentColor). leading chevron/close = 'primary' (0.9); trailing actions
   // like 3-dot menu, eye, share = 'tertiary' (0.5).
-  const color = tone === 'tertiary' ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.9)';
+  const color = tone === 'tertiary' ? 'var(--text-tertiary)' : 'var(--text-primary)';
   return (
     <button
       onClick={onClick}
@@ -200,61 +206,6 @@ function IconButton({ children, onClick, ariaLabel, tone = 'primary' }) {
       }}
     >
       {children}
-    </button>
-  );
-}
-
-// R24 cont-5: tappable avatar opens Profile L1. The visual is still a clean
-// 40×40 photo (no outline / no ring per FX13), but the TAP TARGET is now 48×48
-// to meet DLS 2.0 minimum touch-target rules (44px on iOS, 48px slice DLS).
-// When `onTap` is provided, the container becomes a real <button>; otherwise
-// it stays a non-interactive 40×40 div (back-compat for L0s that don't yet
-// wire profile push).
-function AvatarContainer({ children, onTap }) {
-  if (!onTap) {
-    return (
-      <div
-        style={{
-          width: 44,
-          height: 44,
-          borderRadius: 9999,
-          overflow: 'hidden',
-          flexShrink: 0,
-        }}
-      >
-        {children}
-      </div>
-    );
-  }
-  return (
-    <button
-      onClick={onTap}
-      aria-label="open profile"
-      style={{
-        width: 48,
-        height: 48,
-        padding: 0,
-        background: 'transparent',
-        border: 'none',
-        outline: 'none',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexShrink: 0,
-        WebkitTapHighlightColor: 'transparent',
-      }}
-    >
-      <div
-        style={{
-          width: 44,
-          height: 44,
-          borderRadius: 9999,
-          overflow: 'hidden',
-        }}
-      >
-        {children}
-      </div>
     </button>
   );
 }
@@ -295,23 +246,6 @@ function ActionSlot({ children }) {
 }
 
 // ----- Glyphs (inline slice DLS line icons) -----
-
-function ChevronBackGlyph() {
-  // R24 cont-14: matches canonical AVC-2025 chevron-back exactly — clean
-  // STROKE V (two lines meeting at apex on the left). Strokewidth 2, round
-  // caps. Uses currentColor so it inherits primary-black from the IconButton.
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M15 6L9 12L15 18"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 // R23 fix-it-2-cont-6: eye open + closed glyphs now use the canonical slice DLS
 // PNGs fetched from Figma nodes 586:138 (open) and 586:132 (closed) — was inline

@@ -17,11 +17,10 @@
 
 import React, { useState } from 'react';
 import { useL1 } from '../../components/L1Stack.jsx';
+import Avatar from '../../components/Avatar.jsx';
+import formatINR from '../../utils/formatINR.js';
 
-const V_500 = '#D30AD7';
-const WHITE_10 = 'rgba(255,255,255,0.10)';
-const WHITE_20 = 'rgba(255,255,255,0.20)';
-const WHITE_30 = 'rgba(255,255,255,0.30)';
+import { V_500, WHITE_10, WHITE_20, WHITE_30 } from '../../tokens.js';
 
 const USER_AVATAR_URL = '/assets/avatar_only.png';
 const UPI_ID = 'rajan@sliceaxis';
@@ -32,17 +31,6 @@ const KEYPAD = [
   ['7', '8', '9'],
   ['.', '0', 'backspace'],
 ];
-
-function formatINR(amountStr) {
-  if (!amountStr) return '0';
-  const [intPart, decPart] = String(amountStr).split('.');
-  const lastThree = intPart.slice(-3);
-  const rest = intPart.slice(0, -3);
-  const grouped = rest
-    ? rest.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' + lastThree
-    : lastThree;
-  return decPart !== undefined ? `${grouped}.${decPart}` : grouped;
-}
 
 function fontSizeForAmount(amountStr) {
   const digits = String(amountStr).split('.')[0].replace(/\D/g, '').length;
@@ -124,41 +112,9 @@ function AppBar({ onAvatarTap }) {
           </div>
         </button>
 
-        {/* Avatar: 48 hit-area + 40 inner photo, NO outline ring. User: "the
-           image should be 40×40 this outline ring should not be there". Aligns
-           Valentino with the standard L0 avatar rule (FX13) — clean photo, no
-           border, no ring. Tap opens Profile L1. */}
-        <button
-          onClick={onAvatarTap}
-          style={{
-            width: 48,
-            height: 48,
-            padding: 0,
-            background: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            outline: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          aria-label="profile"
-        >
-          <div
-            style={{
-              width: 44,
-              height: 44,
-              borderRadius: '50%',
-              overflow: 'hidden',
-            }}
-          >
-            <img
-              src={USER_AVATAR_URL}
-              alt=""
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-            />
-          </div>
-        </button>
+        {/* Avatar: 48 hit-area + 44 inner photo, NO ring — shared Avatar at the
+           `plain` tone. Tap opens Profile L1. */}
+        <Avatar size={44} photo={USER_AVATAR_URL} hit onTap={onAvatarTap} ariaLabel="profile" />
       </div>
     </div>
   );

@@ -306,3 +306,123 @@ If any check fails → fix before claiming done, AND surface why the skill didn'
 ---
 
 Source: distilled 2026-05-29 from R23 calibration log + 7 fix-it rounds on `slice-app-proto`. Author: Claude (this conversation). For the round-by-round audit trail see `reference_calibration_log.md` § R23 fix-it-2 cont 1–8.
+
+---
+
+## RULE (R24 cont-25): explorations never touch the skill proto
+
+The skill proto (`~/.claude/skills/slice-design/proto/`) and its assets are the
+**canonical reference app**, not a scratchpad. Do NOT create exploration screens,
+test flows, one-off concept mocks, or their assets inside it — unless the user
+**explicitly** asks to update the skill proto.
+
+- New screen / flow / concept exploration → its own project under
+  `~/claude/slice/projects/<name>/` (or wherever the user points). Self-contained.
+- Reuse the design system by COPYING from `references/proto-snapshot/code/` +
+  `proto-snapshot/assets/` into the exploration project (that snapshot exists
+  exactly for "grab a component into another project"). Don't re-fetch Figma or
+  re-hand-build StatusBar / AppBar / Avatar / phone shell / tokens — they're cached.
+- The ONLY things that land in the skill proto are deliberate updates to the
+  canonical app, made on explicit request.
+
+Why: R24 cont-25 — built an insurance pitch exploration and leaked its assets
+(`pdp_hero_3d.png`, `pdp_lock/tick/arrow.svg`) into the skill proto. User:
+"no exploration should be created in the original proto unless explicitly asked
+to update the skill proto." Assets removed; rule recorded.
+
+---
+
+## RULE (R24 cont-29): agentation on by default — every proto, including explorations
+
+Every slice proto — the skill proto AND every standalone exploration — ships
+with agentation wired by default. It's the click-to-annotate feedback layer;
+without it the user can't point at elements and the iteration loop breaks.
+
+Implication for HOW to scaffold a standalone/exploration proto:
+- **Scaffold as a Vite app, copied from `references/proto-snapshot/`** (which
+  already has `agentation@^3.0.2` in package.json + `<Agentation />` rendered as
+  a sibling of `<App />` in `main.jsx`). Then drop the new screens in.
+- **Do NOT default to a single-file CDN `index.html`.** Agentation ships only
+  ESM/CJS (no UMD/global) and must share the app's React instance — a single-
+  file CDN proto can't host it without fragile import-map/two-React hacks.
+  Single-file CDN is only acceptable for a throwaway with the user's explicit OK
+  that it won't have agentation.
+
+Standard standalone-proto scaffold:
+```
+cp -R references/proto-snapshot/code  ~/claude/slice/projects/<name>/src-ish
+# keep package.json (has agentation, vite, react), main.jsx (<App/> + <Agentation/>)
+# replace pods/screens with the new work; npm install; npm run dev
+```
+
+Verify after scaffold: `package.json` lists `agentation`, `main.jsx` renders
+`<Agentation />` as a sibling of `<App />`, and the toolbar shows bottom-right
+in the browser.
+
+Why: R24 cont-29 — built the insurance-flow exploration as a single-file CDN
+proto for speed; it had no agentation, so the user couldn't annotate it. User:
+"every proto should have agentation enabled on it by default."
+
+---
+
+## NEW SCREEN / FLOW PRE-FLIGHT CHECKLIST (R24 cont-30)
+
+This is the single consolidated gate for building any NEW feature screen or
+flow (in an exploration project OR as a skill-proto update). It bundles every
+per-detail rule that, scattered, got missed one-at-a-time across R24 cont-25→29
+and produced "kinda mid" first drafts. Run it as a TodoWrite list. Don't show
+the user until every box is genuinely checked — that's the self-audit (SKILL.md
+non-negotiable #2).
+
+**Before writing code:**
+- [ ] **Compose from cache.** Scaffold by copying `references/proto-snapshot/`
+      (Vite + react + `agentation@^3.0.2` + `<Agentation/>` already wired). Copy
+      StatusBar / AppBar / Avatar / phone shell / tokens / Primary button from
+      `proto-snapshot/code/`. Do NOT re-hand-build chrome from memory.
+- [ ] **Agentation present.** `package.json` lists `agentation`; `main.jsx`
+      renders `<Agentation/>` as a sibling of `<App/>`. (cont-29)
+- [ ] **Fonts will load AND inherit.** Rubik 400/500/600 linked in `index.html`;
+      `index.css` has `button, input, select, textarea { font-family: inherit; }`
+      — native `<button>`/`<input>` do NOT inherit font-family, so without this
+      every CTA + field silently falls back to the UA font. (cont-27)
+- [ ] **Images come FROM Figma, never redrawn.** Any illustration / hero / icon
+      / success-state graphic is EXPORTED from the canonical Figma node and
+      dropped in `public/assets/`. Never approximate with hand-SVG or a halo
+      placeholder. The transaction success tick is the poster child — use the
+      real `dls_success_tick.svg` (DLS node 884:16442), don't draw a ring.
+      (cont-28)
+
+**While building (copy these exact specs, don't invent):**
+- [ ] **Primary button = canonical.** `width:100%; padding:12px 24px;
+      border-radius:100px; background:#D30AD7; color:#fff; Rubik 16/24 Medium;
+      letter-spacing:0.32px`. The 12/24 padding yields the canonical 48px height
+      — do NOT set an explicit `height:52` (that was the recurring button bug).
+- [ ] **CTA labels are Capital-first.** "Confirm", "Proceed", "Done", "Add
+      money" — NOT "confirm"/"continue". This is the ONE exception to the
+      lowercase-slice voice: brand + body copy stay lowercase, CTAs capitalize
+      the first letter. Prefer "Proceed"/"Confirm" over "Continue". (cont-27)
+- [ ] **No double-header.** A titled app bar already names the screen. Do NOT
+      add a second left-aligned heading right under it, and do NOT repeat the
+      same idea twice (title "choose your cover" + helper "how much cover do you
+      want?" = redundant). slice voice = the top app bar copy carries it, clean
+      and straightforward. Avoid stacking left-aligned text directly beneath the
+      app bar. (cont-26)
+- [ ] **A label + value pair is a LIST ITEM.** "You pay … ₹X" type rows are a
+      DLS list item (leading label, trailing value, center-aligned), not two
+      free-floating `<div>`s you align by hand. Reach for the list-item
+      component from the snapshot. (cont-26)
+
+**Before showing the user (the self-audit — SKILL.md #2):**
+- [ ] `npm run build` is clean (0 errors).
+- [ ] Screenshot your own output and diff it against the canonical Figma frame
+      (or the snapshot spec) side-by-side. Fix every diff you can see.
+- [ ] If the browser is unavailable, SAY SO and do a careful manual spec diff
+      instead — never silently ship the unaudited first build.
+
+Why this exists: R24 cont-25→29 shipped an insurance flow that "still was kinda
+mid." Root cause was never one big miss — it was a dozen small ones (button
+height, lowercase CTA, double header, font not inheriting, hand-drawn tick),
+each individually corrected by the user. Every single one was either already
+solved in the cache (compose-from-cache would've prevented it) or visible in a
+10-second self-screenshot (self-audit would've caught it). This checklist is the
+durable fix so the next new-screen build ships right the first time.

@@ -32,38 +32,11 @@
 
 import React, { useRef } from 'react';
 import { AppBar, usePageScroll } from '../../components/AppBar.jsx';
+import { ChevronBackGlyph } from '../../icons/ChevronBack.jsx';
+import formatINR from '../../utils/formatINR.js';
+import { TEXT_PRIMARY, TEXT_TERTIARY, OUTLINE_SUBTLE, V_500, POSITIVE, NEGATIVE, AMBER, SLATE_30, PAGE_BG } from '../../tokens.js';
 
 const PAGE_PAD = 24;
-const TEXT_PRIMARY = 'rgba(0,0,0,0.9)';
-const TEXT_SECONDARY = 'rgba(0,0,0,0.7)';
-const TEXT_TERTIARY = 'rgba(0,0,0,0.5)';
-const OUTLINE_SUBTLE = 'rgba(0,0,0,0.05)';
-const OUTLINE_BOLD = 'rgba(0,0,0,0.08)';
-const V_500 = '#D30AD7';
-const POSITIVE = '#00A63E';
-const NEGATIVE = '#CE1D26';
-const AMBER = '#FF9A17';
-const AMBER_700 = '#C27511';
-const SLATE_30 = '#F0F4F7';
-
-function ChevronBackGlyph() {
-  // R24 cont-14: matches canonical AVC-2025 chevron-back exactly — a clean
-  // STROKE V (not the filled "chunky" arrow I tried before). Per the user's
-  // canonical screenshot, the back glyph is two lines meeting at a sharp apex
-  // on the left, rendered in primary black. Strokewidth 2 + round caps reads
-  // as the canonical slice chevron-back.
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M15 6L9 12L15 18"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 function ChevronRightGlyph() {
   return (
@@ -238,15 +211,6 @@ function BoldDivider() {
   return <div style={{ height: 8, background: SLATE_30, width: '100%' }} />;
 }
 
-function formatINR(n) {
-  const s = String(n);
-  const lastThree = s.slice(-3);
-  const rest = s.slice(0, -3);
-  if (rest === '') return lastThree;
-  const grouped = rest.replace(/\B(?=(\d{2})+(?!\d))/g, ',');
-  return `${grouped},${lastThree}`;
-}
-
 export default function TxnDetailL1({ onClose, txn }) {
   const scrollRef = useRef(null);
   const scrolled = usePageScroll(scrollRef);
@@ -276,7 +240,7 @@ export default function TxnDetailL1({ onClose, txn }) {
   }
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: '#FFFFFF' }}>
+    <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: PAGE_BG }}>
       <div
         ref={scrollRef}
         style={{
@@ -298,7 +262,7 @@ export default function TxnDetailL1({ onClose, txn }) {
           leading={<ChevronBackGlyph />}
           onBack={onClose}
           actions={[]}
-          background="#FFFFFF"
+          background="var(--page-bg)"
         />
 
         {/* Hero — left-aligned amount + label + status badge top-right. R24
