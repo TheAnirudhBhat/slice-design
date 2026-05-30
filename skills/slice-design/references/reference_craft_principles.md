@@ -127,3 +127,20 @@ For slice specifically:
 - Bottom sheet: no handle bar. User doesn't notice it's missing; they just dismiss via scrim tap.
 
 Aim for "invisible correctness" — the UI does the right thing without announcing it.
+
+## Optically center, don't just mathematically center
+
+The eye reads a shape's center from its visual MASS, not its bounding box. An
+element with uneven weight — a rich/3D illustration, a ▶ play triangle, an icon
+heavier on one side — placed at a pure `50%` / `translate(-50%)` looks slightly
+OFF: top-heavy mass reads as sitting too low; side-heavy mass reads as shifted.
+
+Nudge it a few px so it LOOKS centered:
+- Top-heavy illustration in a card → `translateY(calc(-50% - 4px))` (up a touch).
+- ▶ glyph in a round button → shift right ~1–2px (the triangle's mass is left-of-center).
+- A glyph with a tail/descender → nudge against the tail.
+
+Magnitude: ~1–3% of the element / a few px — enough to balance, not enough to look
+misaligned. Squint test: the version that looks centered when blurred IS centered.
+(cal:2026-05-30 R24 cont-31 — insurance entry-card shield illustration nudged up 4px;
+user: "this is top heavy with the rich illustration, bias it slightly to the top.")

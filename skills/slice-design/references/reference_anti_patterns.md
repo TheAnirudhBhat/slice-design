@@ -14,9 +14,15 @@ Source: slice-dls L378, mem:CLAUDE.md, ✅
 
 ### ❌ Lowercasing headings, titles, questions & CTAs
 Looks like: "choose your cover", "you're covered", "how much cover?" — lowercasing the whole UI because "slice is lowercase"
-Why slice doesn't: the lowercase rule is for PRODUCT/BRAND NAMES ONLY (slice, spark, monies, slice atom, slice health cover) — even mid-sentence. Everything else is SENTENCE CASE (capital first letter).
+Why slice doesn't: the lowercase rule is for PRODUCT/BRAND NAMES ONLY (slice, spark, monies, slice atom, slice super card) — even mid-sentence. Everything else is SENTENCE CASE (capital first letter).
 Do instead: "Choose your cover", "You're covered", "Recharge & bills", "All settings". Product names stay lowercase inside the sentence: "Meet your slice super card".
 Source: cal:2026-05-30 R24 cont-31 — verified across L0 pods + Core PDP in Figma ✅
+
+### ❌ Repeating the "slice" brand prefix on in-app features
+Looks like: "slice health cover", "slice rewards", "slice recharge" as a feature / card title INSIDE the app
+Why slice doesn't: the user is already IN the slice app — prefixing every generic feature with the brand is redundant clutter. The brand is the container, not each label.
+Do instead: name the feature plainly — "Health cover", "Rewards", "Recharge & bills". KEEP the brand mark ONLY for named sub-products that carry their own identity: slice super card, slice in 3, slice atom, spark, monies. Rule of thumb: branded product with its own name → keep the mark; generic feature → drop "slice".
+Source: cal:2026-05-30 R24 cont-31 ✅
 
 ### ❌ Using "Submit", "NEXT", "OK", "CONTINUE" as button labels
 Looks like: full-caps generic verbs as CTAs
