@@ -65,7 +65,7 @@ Items beyond the viewport edge **clip naturally** via `overflow-x: clip` on the 
 - Pod: Pay active (the Valentino home)
 - Container bg: solid `#D30AD7` (full overlay; no gradient visible)
 - Inactive circles: `rgba(255,255,255,0.3)` bg, `rgba(255,255,255,0.7)` glyph
-- Pay-active: 72px white ring (see § Pay special)
+- Pay-active: 72px white ring (see Pay special)
 - Labels: HIDDEN entirely (immersive mode)
 - Gesture-nav bar: `rgba(255,255,255,0.6)` 128×4
 

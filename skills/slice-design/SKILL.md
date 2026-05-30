@@ -95,7 +95,7 @@ It also has a Pre-build Checklist and Post-build Verification list. Run both. Th
 
 ### HARD RULE — projects INHERIT the skill proto; the skill proto is upstream and READ-ONLY during project work (R24 cont-35/36)
 
-The skill proto (`~/.claude/skills/slice-design/proto/`) is the **single upstream source of truth — the "main".** Every project is a thin wrapper that **inherits the whole proto by default and builds on top of it**, staying live-linked so skill-proto improvements flow down automatically (see `reference_web_proto.md` § "Shared kit + extension seam"). Non-negotiables:
+The skill proto (`~/.claude/skills/slice-design/proto/`) is the **single upstream source of truth — the "main".** Every project is a thin wrapper that **inherits the whole proto by default and builds on top of it**, staying live-linked so skill-proto improvements flow down automatically (see `reference_web_proto.md` "Shared kit + extension seam"). Non-negotiables:
 
 1. **Default = inherit everything, build on top.** A new project (`proto/scripts/new-proto.sh`) is born as `App.jsx` (thin wrapper) + `AppBase.jsx` (symlink → skill `App.jsx`) + linked kit + its feature pod(s). Shell, theme, status bar, nav, all base pods, Explore — all inherited live. The project adds its feature via the seam (`extraL1` / `exploreExtraCards` / `initialPod`), never by forking.
 
@@ -173,7 +173,7 @@ Re-snapshot script: re-run the file-copy commands documented in `INTEGRATION_PLA
 - Cards: white bg + `box-shadow: 0 2px 32px rgba(0,0,0,0.05)`. The subtle shadow on white IS what gives the floating effect. If you can't see it in a screenshot, that's a screenshot fidelity problem, not a design problem — don't "fix" it by graying the page.
 - Inactive nav circles: `rgba(0,0,0,0.12)` bg + WHITE glyph.
 
-**Retraction (FX10–FX14, R23 fix-it-2)**: an earlier "R23 fix-it" pass introduced slate-10 page bgs for card-stacked pods to make shadows visible. **User overruled** — slice never has gray. The fix-it pass also introduced a span-overlap status-bar coloring algorithm (light if any overlap with V-500) and an inline-SVG fallback for missing Figma assets. **All three retracted.** See `reference_calibration_log.md` § "R23 fix-it-2" for the full retraction trail.
+**Retraction (FX10–FX14, R23 fix-it-2)**: an earlier "R23 fix-it" pass introduced slate-10 page bgs for card-stacked pods to make shadows visible. **User overruled** — slice never has gray. The fix-it pass also introduced a span-overlap status-bar coloring algorithm (light if any overlap with V-500) and an inline-SVG fallback for missing Figma assets. **All three retracted.** See `reference_calibration_log.md` "R23 fix-it-2" for the full retraction trail.
 
 ### App bar is fixed; content scrolls UNDER it
 - App bar uses `position: sticky; top: 0`. Content area scrolls beneath. App bar gets a subtle bottom shadow (`0 6px 8px rgba(0,0,0,0.05)`) once content has scrolled past 1px.
@@ -218,7 +218,7 @@ The global `data-variant=immersive` flag (tied to committed `active === 'pay'`) 
 
 **Explore bento — column heights must match.** The 2×2 grid's second row has INVITE (left, single 148px card) paired with stacked CREDIT SCORE + AUTOPAY (right). For the right column to align with the left, each ExploreSmall = `(148 - CARD_GAP)/2 = 66`. The `CARD_GAP` between stacked cards stays 16. Total right column = 66 + 16 + 66 = 148 ✓. Don't bump ExploreSmall above 66 — it breaks the bento alignment.
 
-**Phone shell fit-scale uses ResizeObserver + window.resize together.** Window resize alone misses container resizes (devtools toggle, browser zoom, parent-frame resize in embeds). Padding kept tight (8px) so the chassis always finds room to render at full or scaled. Initial `setState` reads window dims inline to avoid a flash-of-full-size on first paint. See `reference_proto_patterns.md` § "useFitScale hook" for the updated implementation.
+**Phone shell fit-scale uses ResizeObserver + window.resize together.** Window resize alone misses container resizes (devtools toggle, browser zoom, parent-frame resize in embeds). Padding kept tight (8px) so the chassis always finds room to render at full or scaled. Initial `setState` reads window dims inline to avoid a flash-of-full-size on first paint. See `reference_proto_patterns.md` "useFitScale hook" for the updated implementation.
 
 **Proto-calibrated type sizes (Explore L0).** Canonical Figma renders the Explore card titles at H4 (16/20M). At our proto's scaled-down browser viewport, that felt too small. Bumped one DLS step up to H3 (20/24M). Bill avatars 48×48 (was canonical 40), bill icons 24×24 (was canonical 20). This is a deliberate proto-only deviation, NOT a calibration of the canonical DLS — the DLS values stay 16/20M / 40 / 20 for product builds at native iOS scale.
 
@@ -253,7 +253,7 @@ Per-component recipes alone don't catch cross-cutting failures. Every L0 build /
 
 If any item fails → fix before claiming done, AND surface why the skill didn't catch it earlier (so this checklist gets a new line).
 
-See `reference_anti_patterns.md` § "R23 fix-it" and § "R23 fix-it-2 retractions" for the failure modes. See `reference_proto_patterns.md` § "R23 fix-it" for the patterns themselves.
+See `reference_anti_patterns.md` "R23 fix-it" and "R23 fix-it-2 retractions" for the failure modes. See `reference_proto_patterns.md` "R23 fix-it" for the patterns themselves.
 
 ## Defaults (token-efficient, slice brand voice)
 
@@ -364,8 +364,8 @@ If you're about to write any of these in slice UI, rewrite the element different
 - **Cancel button on a slice bottom sheet** — sheet dismisses via scrim tap. Bottom sheets carry the Primary action only.
 - **Tabs as a navigation / filter pattern** — use pills.
 - **Banking home as a separate L0 with quick-action grid + accounts list** — Banking home IS the Savings/Balance L1 screen.
-- **Coloured-card hero on Credit L0** — Credit L0 is a **white L0 Large card** with spends total + recent txn rows + blue-subtle in-card callout, plus a Medium card promo (super card mascot illustration). App bar L0 with "Credit" + photo Avatar trailing. The chevron-back + pie-chart-icon + centred-hero pattern is a downstream analytics surface, not L0. See `reference_dls_screen_layouts.md` § L0 pod home recipes.
-- **Brand-gradient "Pay anyone" banner as Payments L0 hero** — Payments L0 is the **full-bleed Valentino-500 dialer takeover** (solid V-500 fill, "Check balance" pill top-left, voice + Avatar trailing, massive centred ₹0, UPI ID chip, slice custom keypad, Request + Transfer Tertiary pills bottom). Solid V-500, NOT a gradient. The Standard app bar + form rows + QUICK PAY circles pattern is the downstream Pay flow (L1/L2), not L0. See `reference_dls_screen_layouts.md` § L0 pod home recipes.
+- **Coloured-card hero on Credit L0** — Credit L0 is a **white L0 Large card** with spends total + recent txn rows + blue-subtle in-card callout, plus a Medium card promo (super card mascot illustration). App bar L0 with "Credit" + photo Avatar trailing. The chevron-back + pie-chart-icon + centred-hero pattern is a downstream analytics surface, not L0. See `reference_dls_screen_layouts.md` L0 pod home recipes.
+- **Brand-gradient "Pay anyone" banner as Payments L0 hero** — Payments L0 is the **full-bleed Valentino-500 dialer takeover** (solid V-500 fill, "Check balance" pill top-left, voice + Avatar trailing, massive centred ₹0, UPI ID chip, slice custom keypad, Request + Transfer Tertiary pills bottom). Solid V-500, NOT a gradient. The Standard app bar + form rows + QUICK PAY circles pattern is the downstream Pay flow (L1/L2), not L0. See `reference_dls_screen_layouts.md` L0 pod home recipes.
 
 - **PNG icon when a vector exists** — slice icons are SVGs. Inline the SVG with `currentColor` so it themes (light/dark) for free. A PNG icon can't recolour and breaks in dark mode. Check the icon library / Figma vector export before ever using a raster icon. (See `reference_dark_mode.md`.)
 - **Hand-drawn / traced / approximated icon** — NEVER invent an icon. Use the official DLS icon (library Figma node `582:257`; most are already in `public/assets/` + `public/assets/icons/`), or a clear DUMMY placeholder if truly missing. Tracing a logo from a screenshot, drawing polygons to mimic a mark, or few-shot-generating a UI glyph are ALL banned. Inlining an official Figma path and swapping `fill`→`currentColor` for theming is fine (same geometry). (Hard, user-directed 2026-05-30 — stated angrily, multiple times.)

@@ -44,7 +44,7 @@ Cross-reference: `reference_dls_tabs.md` for the legacy tabs-component reference
 
 A distinct pill family used on the Payments L0 brand-immersive surface. **Not** segmented control.
 
-Full anatomy + spec in `reference_dls_screen_layouts.md` § Payments L0 — Action Pills row. Summary:
+Full anatomy + spec in `reference_dls_screen_layouts.md` Payments L0 — Action Pills row. Summary:
 - Translucent-white fill (~10-14% on V-500, ~22% highlighted)
 - 36px tall, Circle radius (18)
 - 3 width variants: compact 94, long 195, extra-long 214

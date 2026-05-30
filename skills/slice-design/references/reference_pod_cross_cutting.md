@@ -26,7 +26,7 @@ When judging existing work, hard rules are absolute; soft rules become "this dev
 
 ## HARD rules — never violate
 
-### Brand voice (from SKILL.md Defaults + reference_anti_patterns.md § Brand and copy)
+### Brand voice (from SKILL.md Defaults + reference_anti_patterns.md Brand and copy)
 
 - **Lowercase "slice"** always — never "Slice", "SLICE", or "Slice UPI", even sentence-initial. This is core to brand identity.
 - **Short, friendly, simple copy.** No corporate filler. No "Submit", "NEXT", "OK", "CONTINUE", "Proceed" as CTAs.
@@ -38,7 +38,7 @@ When judging existing work, hard rules are absolute; soft rules become "this dev
 - **Account masking**: last 4 digits only (`xx1234`); never full mask (`XXXX XXXX XXXX XXXX`).
 - **Pod title casing**: BOTH `Capitalised` and `lowercase` valid (cal:2026-05-28 R18 override of R14). Capitalised dominates on filled L0s (`Banking`, `Explore`, `Credit`, `Activity`); lowercase valid on empty/illustrative states. The lowercase rule on the **slice word itself** still stands.
 
-### Palette (from reference_dls_colors.md + reference_anti_patterns.md § Colour)
+### Palette (from reference_dls_colors.md + reference_anti_patterns.md Colour)
 
 **Valentino (brand purple) primitives**:
 - V-50: `#FAE2FA` (subtle-bg banners only)
@@ -71,7 +71,7 @@ When judging existing work, hard rules are absolute; soft rules become "this dev
 - Icons on brand gradient: **subtle V-50 white** `rgba(250,226,250,0.85)` — not pure `#FFFFFF` (cal:2026-05-21 R15)
 - Status caption on txn detail: caption text inherits status color (amber-700 / red-600 / blue-600), never greyed (cal:2026-05-28 R19)
 
-### Typography (from reference_anti_patterns.md § Typography)
+### Typography (from reference_anti_patterns.md Typography)
 
 - **Rubik only**, 2 weights: **Regular (400)** + **Medium (500)**. Never Inter, SF Pro, Roboto, system-ui. Never Bold (700+), never Light (300).
 - **Type scale** (from calibrated_digest):
@@ -380,7 +380,7 @@ These are the WHY behind every calibrated rule. Fall back to them when no rule c
 
 Profile is accessed via trailing Avatar tap on any L0. It's an **overlay**, not a flow. R21 fundamentally restructured it from R18.
 
-**Full V3 recipe lives in `reference_dls_screen_layouts.md` § Profile V3.** Summary:
+**Full V3 recipe lives in `reference_dls_screen_layouts.md` Profile V3.** Summary:
 - **X close top-left + bell top-right** (bell carries red badge dot for Action centre nudges)
 - **QR-as-identity hero card** (white card, dot-pattern UPI QR with photo Avatar overlaid centre + name + "Joined in..." + 3-column lifetime metrics strip Cashback/Interest/Payments)
 - **2-up action tile grid** below hero (`Get ₹150 Invite friends` + `View UPI Manage accounts`) — replaces R18's mid-screen full-width Primary

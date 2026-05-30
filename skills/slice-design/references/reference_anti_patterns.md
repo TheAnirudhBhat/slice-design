@@ -538,7 +538,7 @@ Failure modes from a live user-review of `slice/projects/slice-app-proto`. Each 
 
 ### ❌ Sticky-fade-in-non-flex hack
 **Activity L0 first pass:** placed bottom fade INSIDE the scroll container with `position:sticky; bottom:0; marginTop:-120; order:999`. Parent wasn't flex, so `order` was a no-op. The fade rendered between search row and txn list instead of at the bottom of the viewport.
-**Rule:** bottom fades are `position:absolute; left:0; right:0; bottom:0; height:140; pointer-events:none; zIndex:5` SIBLINGS of the scroll container, INSIDE a `position:relative` page wrapper. NEVER inside the scroll. See `reference_proto_patterns.md` § "BottomFade overlay".
+**Rule:** bottom fades are `position:absolute; left:0; right:0; bottom:0; height:140; pointer-events:none; zIndex:5` SIBLINGS of the scroll container, INSIDE a `position:relative` page wrapper. NEVER inside the scroll. See `reference_proto_patterns.md` "BottomFade overlay".
 
 ### ❌ Asset-extracted-but-not-verified
 **Banking L0 first pass:** curl'd `monies_glyph.png` from Figma node, shipped it at 21×36 as the inline brand mark. The PNG was 1.6KB — empty/transparent. Rendered invisible against white card. User: "monies logo missing."
@@ -550,11 +550,11 @@ Failure modes from a live user-review of `slice/projects/slice-app-proto`. Each 
 
 ### ❌ Hardcoded white page-bg on L0 component
 **Banking L0 first pass:** `App.jsx` set per-pod `PAGE_BG`, but the Banking L0's outermost div hardcoded `background:'#FFFFFF'` and overrode it. Card drop-shadows (`0px 2px 32px rgba(0,0,0,0.05)`) drew on pure white and were invisible.
-**Rule:** when App.jsx owns per-pod page bg, the L0 component's outermost div is `background:'transparent'`. ONE layer owns the bg. Both → override race → wrong layer wins. See `reference_proto_patterns.md` § "Page bg + status variant map".
+**Rule:** when App.jsx owns per-pod page bg, the L0 component's outermost div is `background:'transparent'`. ONE layer owns the bg. Both → override race → wrong layer wins. See `reference_proto_patterns.md` "Page bg + status variant map".
 
 ### ❌ Status-bar element coloring via center-point sampling
 **StatusBar.jsx first pass:** `Math.round((viewportX - currentX) / pageWidth - 0.5)` picked the page whose center was nearest each element's center. Mid-drag from white → Pay (V-500), icons stayed dark until past midpoint — dark icons on half-V-500 bg, unreadable.
-**Rule:** color decided by **span overlap**. Define `[elemL, elemR]`, check overlap with every page, return `LIGHT` if ANY overlapping page is `'dark'` variant. Bias toward immersive visibility. See `reference_proto_patterns.md` § "Status bar element coloring uses SPAN-OVERLAP".
+**Rule:** color decided by **span overlap**. Define `[elemL, elemR]`, check overlap with every page, return `LIGHT` if ANY overlapping page is `'dark'` variant. Bias toward immersive visibility. See `reference_proto_patterns.md` "Status bar element coloring uses SPAN-OVERLAP".
 
 ### ❌ Removed canonical chrome during refactor without screenshot diff
 **Activity L0 refactor:** a broken gradient overlay covered the SearchBarRow. The row rendered in DOM but was visually obscured. User: "you removed the search bar in the filter."
@@ -562,7 +562,7 @@ Failure modes from a live user-review of `slice/projects/slice-app-proto`. Each 
 
 ### ❌ Center-point flex centering with transform-scale
 **App.jsx earlier pass:** `display:flex; align-items:center; justify-content:center` on a 100vw/100vh root with a transformed phone chassis inside. The layout box (un-scaled) didn't match the visual box (scaled). Flex centered the layout box → visual chassis offset on certain aspect ratios.
-**Rule:** for "always centered, scales to viewport" phone shells, use `position:fixed; inset:0` + a child anchored at `top:50% left:50%; transform: translate(-50%,-50%)` sized to the SCALED dimensions, with the actual `scale()` on a grandchild sized to the UN-scaled dimensions. Three layers, NOT two. See `reference_proto_patterns.md` § "Centering pattern (R23 fix-it)".
+**Rule:** for "always centered, scales to viewport" phone shells, use `position:fixed; inset:0` + a child anchored at `top:50% left:50%; transform: translate(-50%,-50%)` sized to the SCALED dimensions, with the actual `scale()` on a grandchild sized to the UN-scaled dimensions. Three layers, NOT two. See `reference_proto_patterns.md` "Centering pattern (R23 fix-it)".
 
 ### ❌ Big-amount type tokens drift in both directions
 **Banking L0 first pass:** Savings hero amount at `32px` instead of canonical 48/56M -0.48px (Display Small). After fixing Banking to 48, Explore felt "smaller" because Explore was ALSO drifted off-canonical in the other direction — its medium-card titles were `T.h3` 20/24M instead of canonical 16/20M H4.
@@ -588,7 +588,7 @@ Within hours of promoting the R23 fix-it patterns above, a live user review surf
 ### 🔁 RETRACTED — "Status-bar coloring via center-point sampling" (anti-pattern)
 **The wrong rule was:** status icons should flip to LIGHT whenever ANY part of the element overlaps a `dark` (Valentino) page during drag. Center-point sampling was wrong because it "flips at midpoint".
 **Why retracted:** the span-overlap algorithm made the icons on the WHITE side become white prematurely — they vanished against the still-visible white half while only a sliver of Valentino had entered. User wanted: icons stay DARK while their CENTER is over white; flip to WHITE the moment their CENTER crosses onto Valentino.
-**Replacement rule:** center-point sampling IS the correct algorithm. Pick the page whose viewport span contains the element's center x-coordinate. Element color = that page's variant. Hard cut at the page boundary. See `reference_proto_patterns.md` § "Status bar element coloring uses CENTER-POINT".
+**Replacement rule:** center-point sampling IS the correct algorithm. Pick the page whose viewport span contains the element's center x-coordinate. Element color = that page's variant. Hard cut at the page boundary. See `reference_proto_patterns.md` "Status bar element coloring uses CENTER-POINT".
 
 ### 🔁 RETRACTED — "Asset-extracted-but-not-verified → inline SVG fallback" (rule)
 **The wrong rule was:** if a Figma asset extraction looks broken (empty PNG, transparent), inline an SVG approximation rather than ship a broken file.

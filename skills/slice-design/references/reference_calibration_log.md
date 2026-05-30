@@ -634,7 +634,7 @@ Direct extraction from DLS 2.0 working copy `PNUz3Dr9KSlFJSnsXsC0nL` L0 page (no
 - 2026-05-28 · floating_dock_pattern · 5 pods · promoted (semi-transparent slate circles + white-circle active state with V-500 glyph)
 - 2026-05-28 · l0_card_hero_in_card_cta · ref Banking · promoted (Primary Small CTA inside L0 Large hero card, right-aligned, paired with caption stack)
 
-**Promoted — dark mode token swap (to reference_dls_screen_layouts.md § Dark mode)**
+**Promoted — dark mode token swap (to reference_dls_screen_layouts.md Dark mode)**
 - 2026-05-28 · dark_mode_page_bg_pure_black · ref frame · promoted (#000000 not slate-950)
 - 2026-05-28 · dark_mode_card_no_shadow · ref frame · promoted (dark slate fill, no shadow; outline optional)
 - 2026-05-28 · dark_mode_brand_immersive_flattens_to_black · ref Payments L0 dark (1967:18266) · promoted (V-500 page fill → pure black; brand survives only as text + active-glyph accents)
@@ -710,7 +710,7 @@ Source: R23 calibration session 2026-05-29. Proto build from scratch. 117+ tasks
 
 Same day as the R23 build. User did a live walkthrough of the proto, surfaced multiple craft issues that had survived the build pass. This entry captures what was broken, what was fixed, and what was promoted to standing rules.
 
-**Failure modes discovered during review** (all now codified in `reference_anti_patterns.md` § "R23 fix-it pass"):
+**Failure modes discovered during review** (all now codified in `reference_anti_patterns.md` "R23 fix-it pass"):
 
 1. **Sticky-fade-in-non-flex hack** — bottom fade gradient placed inside scroll container with `position:sticky; bottom:0; order:999` on non-flex parent. Rendered mid-list instead of at bottom.
 2. **Asset-extracted-but-not-verified** — `monies_glyph.png` shipped at 1.6KB; rendered invisible against white card.
@@ -1621,7 +1621,7 @@ R24 batch. Findings + fixes:
 each pod inlines its own COLORS object, avatar, and glyphs. For a proto this
 is tolerable, but every cross-cutting change (avatar size, a color token)
 becomes an N-place find-replace. The shared-component consolidation is the
-structural fix; the canonical-fetch-first rule (cont-2 §A) is the spec-
+structural fix; the canonical-fetch-first rule (cont-2 A) is the spec-
 accuracy fix. Together they're the two highest-leverage process changes
 coming out of R24.
 
@@ -1754,7 +1754,7 @@ User direction: "whenever a new project is made from this skill, when the skill 
 
 4. **First conversion = insurance-flow (proof).** Its `tokens.js`/`index.css`/several components had DIVERGED — but not by customization: they were a STALE fork (hardcoded literals) predating the kit's CSS-variable refactor. The skill versions were a clean superset (same export names + the `:root` var block + dark-theme). Diffed first, confirmed superset, linked. Preserved the one genuine project-local bit (black phone-stage surround) via a tiny `src/local.css` imported after the linked `index.css`. Build clean; screenshot identical to pre-link → zero regression, and the project now inherits skill-proto fixes live.
 
-Lesson: "diverged file" ≠ "customized file." Most divergence is staleness; diff before assuming a project intentionally forked, then reconcile toward the canonical kit. Documented in `reference_web_proto.md` § "Shared kit" + the pre-flight "Compose from cache, then LINK THE KIT" gate.
+Lesson: "diverged file" ≠ "customized file." Most divergence is staleness; diff before assuming a project intentionally forked, then reconcile toward the canonical kit. Documented in `reference_web_proto.md` "Shared kit" + the pre-flight "Compose from cache, then LINK THE KIT" gate.
 
 5. **Born-linked scaffold (`proto/scripts/new-proto.sh`).** Per "set this up from the start in every new project," a one-command scaffolder now clones the canonical app (project-owned layer) and symlinks the kit + sets vite `fs.allow` in one shot — a fresh project is identical to the skill app and kit-linked from minute one, so it can never start out drifted. The pre-flight gate now leads with `new-proto.sh` instead of a hand copy.
 
@@ -1785,7 +1785,7 @@ Closed the feedback loop on the icon engine via a built stress-test harness (`ic
 1. **Icon engine validated — 10/12 nice first-pass**, across 6 concepts × {filled, outline}. Confirms the SVG few-shot approach reproduces slice icon DNA without any model. Two off, both fixed from the user's comments:
    - **calendar (filled): "too many shapes"** → dropped the 3 inner dots; clean solid-header/hollow-body in ONE evenodd path. New general rule: **minimize shape count** in filled icons.
    - **tag (outline): "the circle ring should be filled, it looks very tight"** → punch-hole is a FILLED dot, not a stroked ring, with breathing room. New general rule: **accent/punch holes are filled dots, never rings — even in outline icons.**
-   Both rules written into `reference_slice_asset_generation.md` § "Calibrated icon-craft rules".
+   Both rules written into `reference_slice_asset_generation.md` "Calibrated icon-craft rules".
 
 2. **Filled-vs-outline is context-driven** (user direction): find in the set first; if missing, generate; choose filled (slice default) vs outline by usage (inactive↔outline / active↔filled, hero-heavy↔outline); colour rules always apply (currentColor, slate 0.5 / strong 0.9 / V-500 active, inline SVG never PNG). Written into the reference as the canonical resolution rule.
 
@@ -1827,7 +1827,7 @@ Source: R24 cont-35, 2026-05-30.
 
 User, confirming the seam as the permanent model: "this should auto happen always — it should basically inherit that proto and build on it; everything in the proto is still linked to the main thing till the user explicitly asks to explore something, where some components might need to be unlinked from the main to explore — but the skill proto should NOT be updated ever in the process; the project should inherit it though."
 
-**Promoted to a HARD working-mode rule (SKILL.md § "HARD RULE — projects INHERIT the skill proto…"):**
+**Promoted to a HARD working-mode rule (SKILL.md "HARD RULE — projects INHERIT the skill proto…"):**
 1. **Inherit-by-default.** Every project is born fully inheriting the skill proto (extension seam) and builds on top. Linked, not forked.
 2. **Skill proto is READ-ONLY during project work.** A project-specific change goes in the PROJECT. Never edit the skill proto to satisfy one project — that's upstream churn that hits every project.
 3. **Unlink-to-explore.** To diverge a shared component for an exploration, unlink just that one: `link-kit.sh materialize <project> src/<path>` (now supports a single-path target) copies the skill's current file into the project; the project owns the copy, the skill proto is untouched, every other project keeps inheriting the original.

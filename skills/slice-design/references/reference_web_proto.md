@@ -88,7 +88,7 @@ just that one: `link-kit.sh materialize <project> src/<path>` copies the skill's
 current file in so the project owns its copy; the skill proto stays untouched and
 every other project keeps inheriting the original. The skill proto changes ONLY via
 deliberate skill maintenance (a universal DLS truth, with a calibration-log entry),
-never as a side-effect of a project. (Full statement: SKILL.md § "HARD RULE —
+never as a side-effect of a project. (Full statement: SKILL.md "HARD RULE —
 projects INHERIT the skill proto…".)
 
 **Starting a NEW project — born kit-linked (the default, do this every time):**

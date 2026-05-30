@@ -119,7 +119,7 @@ The 7 `reference_pod_*.md` files (`banking`, `payments`, `credit`, `explore`, `a
 - Recipe index — table of "screen → proto path"
 - Pod-specific hard rules (the ones unique to this pod)
 - Cross-pod handoff notes
-- Anti-patterns specific to this pod (per § Co-locate above)
+- Anti-patterns specific to this pod (per Co-locate above)
 
 `reference_pod_cross_cutting.md` stays larger — it's the hard-rules file, which we explicitly want to preserve.
 

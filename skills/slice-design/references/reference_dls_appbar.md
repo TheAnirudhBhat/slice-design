@@ -138,7 +138,7 @@ Canonical proto component: `slice/projects/slice-app-proto/src/components/AppBar
 
 ### L0 variant — operational specs
 - **Height: 64px** (status bar is OUTSIDE the AppBar — rendered as a global fixed overlay at the phone-shell level).
-- **Exception — Valentino-immersive Payments L0:** uses a thinner ~52px chrome with translucent pills, NOT the AppBar component. See `reference_pod_payments.md` § CANONICAL.
+- **Exception — Valentino-immersive Payments L0:** uses a thinner ~52px chrome with translucent pills, NOT the AppBar component. See `reference_pod_payments.md` CANONICAL.
 - **Padding:** `24px left, 20px right, 8px top/bottom`.
 - **Title:** Rubik Medium **24/32** with **0.48px letter-spacing**, color `rgba(0,0,0,0.9)`, `flex: 1 1 0` (left-aligned, takes remaining space).
 - **Trailing avatar:** `40×40` photo inside a `48×48` container with `1px solid rgba(0,0,0,0.05)` border, `border-radius: 9999`, `overflow: hidden`. Image: `width: 100%; height: 100%; object-fit: cover`.

@@ -75,7 +75,7 @@ Source: cal:2026-05-28 — L0-canonical-reference Activity (node `885:20122`) �
 - Source: cal:2026-05-17 — pairs 001 + 304 + 401, 3/3 100% ✅
 
 ### Avatar background rules in Activity context
-Subset of the 6 R19 Payment OS rules (`reference_dls_avatar.md` § Avatar background rules):
+Subset of the 6 R19 Payment OS rules (`reference_dls_avatar.md` Avatar background rules):
 
 | Row context | Avatar treatment |
 |---|---|
@@ -273,7 +273,7 @@ Source: cal:2026-05-27 — pair 1616 A ✅
 - New value: translateY -100% → 0 + opacity 0 → 1, **240ms `out`** easing
 - Old value: translateY 0 → 100% + opacity 1 → 0, 240ms `out` (same time, mask edges)
 
-Source: `reference_motion.md` § Value change
+Source: `reference_motion.md` Value change
 
 ### NO animation on filter pill taps / list navigation (high-frequency action)
 Filter pills, list rows, search-result interactions are **tens-of-times-per-day** actions for power users. Any animation makes them feel slow, delayed, and disconnected from the keystroke / tap. Frequency rule: remove or drastically reduce animation on hover effects, list navigation, filter pill taps.

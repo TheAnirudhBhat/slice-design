@@ -14,7 +14,7 @@ import './index.css';
 
 // Agentation: click any element → annotate → emit structured markdown the user
 // can paste back. Mandatory in every slice proto per slice-design skill rules
-// (`reference_web_proto.md` § "Agentation"). R23 fix-it-2-cont-10: rendered as
+// (`reference_web_proto.md` "Agentation"). R23 fix-it-2-cont-10: rendered as
 // a direct sibling of <App />, NO wrapper. The wrapper-with-pointer-events:
 // none experiment broke the toolbar's click handler. agentation's own UI uses
 // z-index 99994-100020 so it stacks above App's z-auto stage naturally.

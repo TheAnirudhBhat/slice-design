@@ -2,7 +2,7 @@
 
 A point-in-time snapshot of the working `slice-app-proto` after R23's 22 fix-it rounds and R24's L1 + canonical-fetch pass. Designed so anyone (future me, future agent, future PD) can grab a component / asset / pattern from here and have it work without re-discovering the calibrations.
 
-**What's new in R24**: Profile L1 + Transaction Detail L1 screens with full routing scaffold (`L1Stack`), iPhone 16 Pro phone size (393×852), white-on-scroll AppBar+status reserve, drag-vs-click discrimination on Activity rows, canonical avatars (44×44 visual / 48×48 hit) with no ring, halo-pattern StateBadge, and the canonical-fetch-first principle (see `reference_calibration_log.md` § R24 cont-2…23 § A).
+**What's new in R24**: Profile L1 + Transaction Detail L1 screens with full routing scaffold (`L1Stack`), iPhone 16 Pro phone size (393×852), white-on-scroll AppBar+status reserve, drag-vs-click discrimination on Activity rows, canonical avatars (44×44 visual / 48×48 hit) with no ring, halo-pattern StateBadge, and the canonical-fetch-first principle (see `reference_calibration_log.md` R24 cont-2…23 A).
 
 ## What's here
 
@@ -32,7 +32,7 @@ proto-snapshot/
 5. Add new pods / surfaces on top.
 
 ### Scenario C — borrow a single asset
-1. Open `manifests/assets.json` (or `INDEX.md` § Assets).
+1. Open `manifests/assets.json` (or `INDEX.md` Assets).
 2. Find the asset by purpose (e.g. "monies brand mark", "FD card corner illustration").
 3. Copy from `assets/<category>/<file>`.
 4. The manifest entry tells you the Figma node ID + canonical file in case you need to re-fetch.

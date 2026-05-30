@@ -109,7 +109,7 @@ How we know the skill is working. Measurable.
 - [ ] Build-from-scratch test (no Figma URL, prompt only)
 - [ ] External eval — independent reviewer (human or different model) judges output
 
-### shadcn adoption (NEW R23 — see § shadcn adoption below)
+### shadcn adoption (NEW R23 — see shadcn adoption below)
 - [ ] Identify shadcn primitives we'd benefit from but don't have in DLS
 - [ ] Adoption queue: command (palette), combobox, calendar, date picker, drawer, hover-card, menubar, navigation-menu, popover (we have tooltip but not popover), resizable, sheet (we have bottom sheet but no side sheet), skeleton, slider (we have but minimal), sonner-style toast, virtual table
 - [ ] For each: reimagine in slice DLS — V-500 tokens, Rubik, slice motion vocabulary

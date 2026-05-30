@@ -58,7 +58,7 @@ App bar L0 — "Explore" left + photo Avatar trailing
 - NO leading icon (anti-pattern: that's App bar Standard chrome for L1+)
 
 ### Hero — Recharge & bills white card
-See § "Recharge & bills card" below for full anatomy. Sits as the first content row beneath the App bar — it IS the content between App bar and the 2×2 grid (no list section header allowed in that gap, anti-pattern).
+See "Recharge & bills card" below for full anatomy. Sits as the first content row beneath the App bar — it IS the content between App bar and the 2×2 grid (no list section header allowed in that gap, anti-pattern).
 
 ### 2×2 small-card grid (mixed content)
 Four tiles in a 2×2 grid, 12px gap. Each tile is roughly square. Each carries an UPPERCASE Metadata category label + H4 value + (optional) trailing-bleed illustration.
@@ -77,7 +77,7 @@ Variant: card can stack as `Big Recharge card + 2×2 grid` OR `2×2 grid only`. 
 - **No big balance hero card.** Unlike Banking, Explore doesn't show a calculated single number at the top. The Recharge card + grid IS the structure.
 - **No List or Bold section header between card clusters.** Cards carry their own H4 titles — that's the section label (anti-pattern: `EXPLORE MORE` UPPERCASE List header between Recharge card and grid).
 - **No `View all` CTA on grid tiles.** Each tile is whole-row tappable.
-- **No quick-action V-500 fill avatar tiles** on the Recharge 4-up grid (that's the action-tile pattern leaking into content-grid — see § "Reward row" for the correct icon-grid treatment).
+- **No quick-action V-500 fill avatar tiles** on the Recharge 4-up grid (that's the action-tile pattern leaking into content-grid — see "Reward row" for the correct icon-grid treatment).
 
 Source: cal:2026-05-28 R18 — Explore L0 reference frame `885:19759` ✅
 
@@ -109,7 +109,7 @@ The signature Explore surface. White card on white page (shadow elevation), page
 - H4 title (16px Medium, 0.32px tracking)
 
 ### Solid-fill pill rule — ₹0 FEE blue
-The trailing "₹0 FEE" pill on the Recharge card header is a **solid Blue-500 fill pill UPPERCASE** (Metadata weight, ~10pt). NOT a Blue-50 subtle-bg pill. NOT V-500. The blue solid fill signals "system / utility / zero-cost" — a different brand register than V-500 (which is reserved for hot/winning/brand-moment surfaces, see § slice fire below).
+The trailing "₹0 FEE" pill on the Recharge card header is a **solid Blue-500 fill pill UPPERCASE** (Metadata weight, ~10pt). NOT a Blue-50 subtle-bg pill. NOT V-500. The blue solid fill signals "system / utility / zero-cost" — a different brand register than V-500 (which is reserved for hot/winning/brand-moment surfaces, see slice fire below).
 
 ### 4-up icon grid (Card / Electricity / Prepaid / More)
 Critical anatomy — easy to get wrong:

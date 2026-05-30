@@ -37,7 +37,7 @@ const PHONE_HEIGHT       = 925;  // visible screen height
    - Right power: `top: 175, height: 96`
    Each: `[side]: -2` (sliver protrudes 2px from the chassis edge).
 
-**Status bar is NOT in PhoneFrame.** It's a sibling overlay rendered INSIDE the 425×925 screen div, positioned `absolute top: 0`. See § Status bar overlay.
+**Status bar is NOT in PhoneFrame.** It's a sibling overlay rendered INSIDE the 425×925 screen div, positioned `absolute top: 0`. See Status bar overlay.
 
 ---
 
@@ -119,9 +119,9 @@ The status bar renders ONCE at the phone-shell level, inside the 425-wide screen
 - `pageWidth` — typically 425.
 - `time` — display string (default `'9:41'`).
 
-**Per-element color recolor:** `9:41` text reads the page under the LEFT side of the status bar; the signal/wifi/battery cluster reads the page under the RIGHT side. See `reference_motion.md` § "Status bar text recolors PER-ELEMENT" for the math.
+**Per-element color recolor:** `9:41` text reads the page under the LEFT side of the status bar; the signal/wifi/battery cluster reads the page under the RIGHT side. See `reference_motion.md` "Status bar text recolors PER-ELEMENT" for the math.
 
-**Height: 54px.** Pages reserve this at the top via a 54px transparent placeholder (see § Page reserve).
+**Height: 54px.** Pages reserve this at the top via a 54px transparent placeholder (see Page reserve).
 
 **Dynamic Island** is a SEPARATE component (`<DynamicIsland />`) rendered as hardware chrome at top center — `position: absolute, top: 11, left: 50%, transform: translateX(-50%), width: 126, height: 37, background: #000, borderRadius: 19, zIndex: 70`.
 
@@ -148,7 +148,7 @@ The status bar renders ONCE at the phone-shell level, inside the 425-wide screen
 
 **Real-time `onIndexChange`:** fires whenever the nearest-to-center page changes mid-drag. The parent uses this to update the bottom nav's `visuallyActive` AND any cross-cutting visual state (status bar variant cascade is automatic since the motion value drives it directly).
 
-**Bidirectional midpoint sensing:** uses `lastEmittedRef` (NOT `activeIndex`) for the comparison. See `reference_motion.md` § "Bidirectional midpoint snap (lastEmittedRef pattern)".
+**Bidirectional midpoint sensing:** uses `lastEmittedRef` (NOT `activeIndex`) for the comparison. See `reference_motion.md` "Bidirectional midpoint snap (lastEmittedRef pattern)".
 
 **Commit on release (`onDragEnd`):** snaps to the nearest page, fires `onCommit(idx)`, animates `x` to the snapped target via spring `{ stiffness: 320, damping: 32, mass: 0.85 }`.
 
@@ -364,7 +364,7 @@ return (
 
 **Apply to:** Banking, Explore, Credit (slate-10 bg), Activity (white bg). NOT Pay (V-500 immersive, no fade — content slides into nothing).
 
-**ANTI-PATTERN (R23 fix-it):** placing the fade INSIDE the scroll container with `position:sticky; bottom:0; marginTop:-120; order:999` on a non-flex parent. `order` is a no-op outside flex; `position:sticky bottom:0` sticks only when the element scrolls into the bottom-of-viewport boundary. The gradient ended up appearing mid-list. See `reference_anti_patterns.md` § "Sticky-fade-in-non-flex hack".
+**ANTI-PATTERN (R23 fix-it):** placing the fade INSIDE the scroll container with `position:sticky; bottom:0; marginTop:-120; order:999` on a non-flex parent. `order` is a no-op outside flex; `position:sticky bottom:0` sticks only when the element scrolls into the bottom-of-viewport boundary. The gradient ended up appearing mid-list. See `reference_anti_patterns.md` "Sticky-fade-in-non-flex hack".
 
 ### Pattern: L0 page-wrapper (relative container + scroll child + absolute overlays)
 
@@ -426,7 +426,7 @@ For each element, define its `centerX` (e.g. time at `60`, icons cluster at `425
 
 **Why not span-overlap (retracted):** the earlier "any overlap with dark → LIGHT" algorithm flipped the white-side icons to white the moment Valentino started entering, leaving them invisible against the still-visible white half. The correct behavior: icons on the white side stay dark; icons on the Valentino side become white; the flip happens at the boundary.
 
-**ANTI-PATTERN:** span-overlap with "ANY dark overlap → LIGHT". Causes white-side icons to vanish prematurely during drag. See `reference_anti_patterns.md` § "R23 fix-it-2 retractions".
+**ANTI-PATTERN:** span-overlap with "ANY dark overlap → LIGHT". Causes white-side icons to vanish prematurely during drag. See `reference_anti_patterns.md` "R23 fix-it-2 retractions".
 
 ### Anti-pattern: approximating a Figma asset with inline SVG (RETRACTED & inverted)
 
@@ -448,4 +448,4 @@ The earlier fix-it pass treated "hardcoded `background: '#FFFFFF'` on L0" as an 
 
 ### Anti-pattern: search-bar/action-bar removed from L0 during refactor
 
-Activity L0 was shipped without its search row visible (the `<SearchBarRow />` was rendered but a `position:sticky; bottom:0; order:999` overlay above it was intercepting layout). User couldn't see search OR filter pill. **Rule:** when refactoring a page, screenshot the proto before and after and visually confirm every canonical chrome element is present. See § "L0 page-wrapper" pattern for the safe structure.
+Activity L0 was shipped without its search row visible (the `<SearchBarRow />` was rendered but a `position:sticky; bottom:0; order:999` overlay above it was intercepting layout). User couldn't see search OR filter pill. **Rule:** when refactoring a page, screenshot the proto before and after and visually confirm every canonical chrome element is present. See "L0 page-wrapper" pattern for the safe structure.

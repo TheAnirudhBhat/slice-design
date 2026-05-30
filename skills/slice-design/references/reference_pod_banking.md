@@ -78,7 +78,7 @@ Source frame: node `885:19757` (DLS working copy `PNUz3Dr9KSlFJSnsXsC0nL`) — c
 
 ### Motion on Banking L0
 
-- **Nav push/pop** when entering Savings detail or Atom: translateX 0 → -25% + opacity 1 → 0.7 outgoing, translateX 100% → 0 incoming. 320ms `out` (gentle). See `reference_motion.md` § Nav push.
+- **Nav push/pop** when entering Savings detail or Atom: translateX 0 → -25% + opacity 1 → 0.7 outgoing, translateX 100% → 0 incoming. 320ms `out` (gentle). See `reference_motion.md` Nav push.
 - **Press feedback on Add money button**: opacity 1 → 0.7 over 160ms `quick`, restore on release. NEVER scale (no rubber-band).
 - **Skeleton shimmer** during balance load: linear gradient on the amount line, 1200ms linear infinite — the only allowed loop.
 - **Value change on Savings amount** (e.g. after Add money succeeds and user returns): new value translateY -100%→0 + opacity 0→1, old value translateY 0→100% + opacity 1→0 simultaneously, 240ms `out`.
@@ -113,7 +113,7 @@ The L1 hero IS the canonical Top header molecule (see `reference_dls_top_header.
 
 ## Savings — Add money form (L2)
 
-Recipe (per `reference_dls_screen_layouts.md` § Add money — amount entry):
+Recipe (per `reference_dls_screen_layouts.md` Add money — amount entry):
 
 1. App bar Standard chevron back + `Add money` title
 2. **Massive centred amount** `₹1,20,000` — ₹ matches digit weight and size (no subscript). cal:2026-05-17 pair 800 ✅

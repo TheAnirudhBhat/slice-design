@@ -78,7 +78,7 @@ NEW addition: previously only the 120px hero variant was documented in the skill
 | Frames cited | AVC `2410:22541` (Failed light + dark variants) |
 | Confidence | High |
 
-The full-screen hero failure variant uses the same red-Bold with X but at ~120px (already documented in `reference_dls_screen_layouts.md` § Transaction Failed recipe).
+The full-screen hero failure variant uses the same red-Bold with X but at ~120px (already documented in `reference_dls_screen_layouts.md` Transaction Failed recipe).
 
 ### amber_processing_ring
 **Visual**: Yellow/amber donut or ring ~32-40px with white ! glyph inside (pending indicator).

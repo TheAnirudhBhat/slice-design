@@ -1,6 +1,6 @@
 // Profile V3 — slice DLS 2.0 (R21 calibration)
 //
-// Canonical recipe (per slice-design skill · reference_dls_screen_layouts.md § Profile V3,
+// Canonical recipe (per slice-design skill · reference_dls_screen_layouts.md Profile V3,
 // reference_pod_banking.md · cal:2026-05-28 R21):
 //   • OVERLAY surface — NO bottom nav
 //   • X close top-right (sheet-style overlay dismiss)

@@ -44,8 +44,8 @@ Source frame: node `885:20015` (DLS working copy `PNUz3Dr9KSlFJSnsXsC0nL`) — c
    - **Two recent transaction rows** inline below amount (no section header, no card-internal divider):
      - Small coloured Avatar (Blue Bold for transport, Red Bold for retail, etc.) + caption `Paid ₹370 to Uber`
      - Same row pattern for second txn
-   - **In-card callout row** at the bottom of the card (Radius L, no chevron, no CTA, whole-row tap target) — colour per the 4-color taxonomy (see § Calibrated callouts below).
-   - WHY 2-insight subvariant: Credit L0's job is "where my money is going". One amount + two most-recent txns gives the user the spend gestalt in a single glance. Distinct from Banking Savings card (single insight: green interest delta). Source: `reference_dls_cards.md` § L0 Large 2-insight subvariant.
+   - **In-card callout row** at the bottom of the card (Radius L, no chevron, no CTA, whole-row tap target) — colour per the 4-color taxonomy (see Calibrated callouts below).
+   - WHY 2-insight subvariant: Credit L0's job is "where my money is going". One amount + two most-recent txns gives the user the spend gestalt in a single glance. Distinct from Banking Savings card (single insight: green interest delta). Source: `reference_dls_cards.md` L0 Large 2-insight subvariant.
 
 3. **L0 card / Medium — Super card promo**:
    - H3 title left `Meet your slice / super card`
@@ -68,7 +68,7 @@ Source frame: node `885:20015` (DLS working copy `PNUz3Dr9KSlFJSnsXsC0nL`) — c
 
 ### Motion on Credit L0
 
-- **Nav push** when tapping the Spends card or super card promo: translateX 0 → -25% + opacity 1 → 0.7 outgoing, translateX 100% → 0 incoming. 320ms `out` (gentle). See `reference_motion.md` § Nav push.
+- **Nav push** when tapping the Spends card or super card promo: translateX 0 → -25% + opacity 1 → 0.7 outgoing, translateX 100% → 0 incoming. 320ms `out` (gentle). See `reference_motion.md` Nav push.
 - **Press feedback on the in-card callout row**: opacity 1 → 0.7 over 160ms `quick`, restore on release. NEVER scale.
 - **Skeleton shimmer** during spends-amount load: 1200ms linear infinite on the amount line.
 
@@ -168,8 +168,8 @@ WHY cohort colour, not gradient: a gradient ring would make every point feel the
 
 1. **Chip → notch animation**: tapping a chip animates the dialer notch smoothly from its current position to the chip's notch position. Caption updates en route.
 2. **Drag → intermediate state**: dragging the notch between chip positions does **NOT** select a chip. Caption updates to the intermediate label (`Paying less than total due` / `Paying more than total due`). No chip is highlighted.
-3. **Pointer capture during drag**: once drag starts, set the dialer to capture all pointer events so the user can drag off the ring without losing the gesture. Critical — the ring is the input, not just a visual. Source: `reference_motion.md` § Pointer capture during drag.
-4. **Damping at boundaries**: dragging past the Full chip (or before Min due) applies damping — the notch slows as the user pushes past the natural boundary. Things in real life slow down before stopping; a hard wall feels broken. Source: `reference_motion.md` § Damping at boundaries.
+3. **Pointer capture during drag**: once drag starts, set the dialer to capture all pointer events so the user can drag off the ring without losing the gesture. Critical — the ring is the input, not just a visual. Source: `reference_motion.md` Pointer capture during drag.
+4. **Damping at boundaries**: dragging past the Full chip (or before Min due) applies damping — the notch slows as the user pushes past the natural boundary. Things in real life slow down before stopping; a hard wall feels broken. Source: `reference_motion.md` Damping at boundaries.
 5. **Release**: notch snaps to the nearest valid position (chip notch OR releases at the user's intermediate drag point — depending on the design intent of that frame). Snap uses 240ms `out` (base) or 320ms `out` (gentle).
 6. **Repay CTA label** updates with the live amount: `Repay ₹10,125.41`. Verb + value pattern (no leading icon per `reference_anti_patterns.md` L297).
 
@@ -181,7 +181,7 @@ Same dialer + **red `Overdue by 1 day` chip beneath the title** (chip palette un
 
 - **Chip-tap → notch animation**: 320ms `gentle` (`out` easing). The animation should feel deliberate — too fast loses the "ring tells the story" signal.
 - **Drag → notch follow**: notch follows the pointer with damping at the boundaries (per Emil's damping technique — see `reference_motion.md`). The ring colour transitions smoothly as the notch crosses cohort boundaries (orange → green → blue) using a 240ms `base` colour interpolation.
-- **Caption swap**: as the cohort changes, the caption above the ring crossfades — translateY -100%→0 + opacity 0→1 new caption, simultaneously translateY 0→100% + opacity 1→0 old caption. 240ms `out`. Optional: add subtle `filter: blur(2px)` during the swap if the eye sees two distinct words instead of one smooth transition (per `reference_motion.md` § Blur crossfade).
+- **Caption swap**: as the cohort changes, the caption above the ring crossfades — translateY -100%→0 + opacity 0→1 new caption, simultaneously translateY 0→100% + opacity 1→0 old caption. 240ms `out`. Optional: add subtle `filter: blur(2px)` during the swap if the eye sees two distinct words instead of one smooth transition (per `reference_motion.md` Blur crossfade).
 - **Press feedback on Repay**: opacity 1 → 0.7 over 160ms `quick`, restore on release. NEVER scale.
 
 ### What the dialer doesn't do
@@ -343,12 +343,12 @@ The following surfaces exist in the Credit pod but their canonical specs aren't 
 
 ### Autopay
 - Setup surface for recurring repayment from a linked account.
-- Recipe likely follows the **setup form shell** pattern (App bar Standard chevron back + dynamic title + form rows + bottom-anchored Primary `Continue`). Similar shell to the Atom setup form (see `reference_pod_banking.md` § Atom setup form shell).
+- Recipe likely follows the **setup form shell** pattern (App bar Standard chevron back + dynamic title + form rows + bottom-anchored Primary `Continue`). Similar shell to the Atom setup form (see `reference_pod_banking.md` Atom setup form shell).
 - The CC L0 in-card callout copy `Set up autopay` (Blue-50 informational) is the entry point.
 
 ### Surcharge
 - Disclosure / settings surface explaining merchant surcharge on credit card transactions.
-- Likely flat list with section headers (settings pattern — see `reference_dls_screen_layouts.md` § Settings screen) OR an explainer-style surface with a full-screen how-it-works recipe (X close + paired illustration + H2 + numbered steps + no CTA — mirroring the Atom Round-ups explainer).
+- Likely flat list with section headers (settings pattern — see `reference_dls_screen_layouts.md` Settings screen) OR an explainer-style surface with a full-screen how-it-works recipe (X close + paired illustration + H2 + numbered steps + no CTA — mirroring the Atom Round-ups explainer).
 
 ### CLI (Credit Limit Increase)
 - Flow that surfaces an offer to increase the user's credit limit.

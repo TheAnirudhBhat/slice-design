@@ -38,7 +38,7 @@ These rules apply at the L0 surface (dialer). Downstream flows (Pay person, Pay 
 - Hard rules / brand voice / palette → `reference_pod_cross_cutting.md`
 - Bottom sheet base anatomy → `reference_dls_bottomsheet.md`
 - Per-component deep specs → `reference_dls_<component>.md`
-- Transaction detail page (L2 status header recipe) → `reference_dls_screen_layouts.md` § R19 batch
+- Transaction detail page (L2 status header recipe) → `reference_dls_screen_layouts.md` R19 batch
 
 ---
 
@@ -57,7 +57,7 @@ These rules apply at the L0 surface (dialer). Downstream flows (Pay person, Pay 
 
 ### Anatomy (top → bottom)
 
-1. **Status bar** — rendered GLOBALLY by `App.jsx` as a fixed overlay (54px reserve). NOT per-page. Status-bar text recolors per-element as pages slide under it (see `reference_motion.md` § R23 "clean-cut variant transition").
+1. **Status bar** — rendered GLOBALLY by `App.jsx` as a fixed overlay (54px reserve). NOT per-page. Status-bar text recolors per-element as pages slide under it (see `reference_motion.md` R23 "clean-cut variant transition").
 2. **App bar** — ~52px row (less thick than other L0s; R23 user direction):
    - **LEFT:** "Check balance" pill — `transparent bg + 1px solid rgba(255,255,255,0.20) border`, white text Rubik Regular 14/20 0.28px tracking, padding `6px 14px`, radius 100. **Note: TRANSPARENT bg, NOT white-alpha fill** (caught in R23 — solid-ish fills compete with the keypad).
    - **RIGHT cluster** (4px gap):
@@ -145,7 +145,7 @@ WHY custom keypad here (but not in PIN entry): the dialer surface IS the input �
 - ❌ **List or Bold section header on the surface.** L0s use the surface itself as structure — no intermediate headers.
 - ❌ **Leading icon on App bar L0.** No hamburger, no slice logo, no back chevron — Payments doesn't even have an App bar; it has brand-immersive chrome.
 
-Source: `reference_anti_patterns.md` § "Brand-gradient 'Pay anyone' banner", "List or Bold section header between L0 cards", "Leading icon on App bar L0", `SKILL.md` "Absolute bans" line 151.
+Source: `reference_anti_patterns.md` "Brand-gradient 'Pay anyone' banner", "List or Bold section header between L0 cards", "Leading icon on App bar L0", `SKILL.md` "Absolute bans" line 151.
 
 ### Dark mode
 **Brand-immersive surface FLATTENS to pure black.** Page bg = `#000000` (true black, OLED-friendly — not slate-950, not a darker purple). White text + outline-subtle pills (transparent fill + white-subtle outline) + V-500 only on the active dock-icon glyph + link text.
@@ -202,7 +202,7 @@ A distinct pill family used ONLY on the Payments L0 brand-immersive surface. Not
 - ❌ **Removing the UPI ID pill.** Without it, the user loses the "this is your account" signal during the payment-entry moment.
 - ❌ **Two simultaneous tickers.** Tickers run sequentially.
 
-Source: `reference_anti_patterns.md` § R19 batch.
+Source: `reference_anti_patterns.md` R19 batch.
 
 ### Campaign pill reveal motion (9-step choreography)
 
@@ -222,7 +222,7 @@ How the "Win up to ₹100" / marketing pill enters the Payments L0 screen post-B
 
 **Holding state (post-animation steady state):** Run-once gated — does NOT loop after first trigger. WHY: reinforces the no-infinite-loop rule. Attention-grab animation that loops becomes noise.
 
-Source: cal:2026-05-28 R19, `reference_motion.md` § campaign_pill_reveal.
+Source: cal:2026-05-28 R19, `reference_motion.md` campaign_pill_reveal.
 
 ---
 
@@ -242,7 +242,7 @@ The second brand-immersive surface in the pod. Used **only when paying a known U
 - ❌ **Pay-to-person screen on white.** The brand-immersive V-500 fill IS the screen for known UPI ID payee. White is the unresolved-payee Pay screen (L1/L2 below).
 - ❌ **Chevron back at top-left.** Confirmation / brand-immersive payment surfaces use X close, not chevron. Chevron = nav back; X = exit modal/flow.
 
-Source: `reference_dls_screen_layouts.md` § "Pay person — brand-immersive", `SKILL.md` "slice-slop test" line 167.
+Source: `reference_dls_screen_layouts.md` "Pay person — brand-immersive", `SKILL.md` "slice-slop test" line 167.
 
 ---
 
@@ -262,7 +262,7 @@ WHY dynamic title `Pay ₹X`: the amount has been entered upstream (or is being 
 
 WHY this is L1/L2, not L0: this surface presents form rows + lists + section headers — a clear flow-with-data pattern. L0 surfaces don't use intermediate section headers. The Payments L0 dialer is the entry point; this is the journey.
 
-Source: `reference_dls_screen_layouts.md` § "Pay screen".
+Source: `reference_dls_screen_layouts.md` "Pay screen".
 
 ---
 
@@ -278,7 +278,7 @@ This rule applies across:
 - Add money / amount entry (`₹1,20,000` on white)
 - Atom contribution setup (Display amount, ₹ matches digit weight)
 
-Source: cal:2026-05-17 — pair 800 A + reason "rupee symbol not aligned properly, it should be the same size as the main value font" ✅. `reference_dls_screen_layouts.md` § Amount entry.
+Source: cal:2026-05-17 — pair 800 A + reason "rupee symbol not aligned properly, it should be the same size as the main value font" ✅. `reference_dls_screen_layouts.md` Amount entry.
 
 ---
 
@@ -323,7 +323,7 @@ The success state — the receipt screen at the end of every successful payment.
 - ❌ **Generic line-art illustration in confirmation state** — slice ships the real branded grainy tick. Generic placeholders are prototyping only.
 - ❌ **"Confirm payment" bottom sheet pattern** — slice doesn't use bottom sheets for payment commitments. Bottom sheets carry transient single-action prompts ("Continue with Aadhaar?", "Switch account?"), not financial commitments — those are too important to be dismissable via a scrim tap.
 
-Source: `reference_dls_screen_layouts.md` § Payment confirmation, `SKILL.md` "Absolute bans" lines 145–146, `reference_anti_patterns.md` § R12 batch.
+Source: `reference_dls_screen_layouts.md` Payment confirmation, `SKILL.md` "Absolute bans" lines 145–146, `reference_anti_patterns.md` R12 batch.
 
 ---
 
@@ -337,7 +337,7 @@ The failure-state counterpart to Payment confirmation. Same scaffold inverted.
 4. **Body (secondary, optional)** — 1 line on next step
 5. **Bottom-anchored CTAs:** Primary `Retry payment` + Text `Cancel`
 
-Source: cal:2026-05-21 — r14-empty-1404. `reference_dls_screen_layouts.md` § Transaction Failed. `reference_dls_illustrations.md` § red_avatar_bold_x.
+Source: cal:2026-05-21 — r14-empty-1404. `reference_dls_screen_layouts.md` Transaction Failed. `reference_dls_illustrations.md` red_avatar_bold_x.
 
 ---
 
@@ -365,7 +365,7 @@ WHY pink immersion for rewarded txns: rewards are a brand moment — slice celeb
 
 WHY (per-frame durations TBD): captured at canvas-level; per-frame node IDs not extracted in R19 sweep. Should be confirmed via individual frame sampling in a follow-up calibration.
 
-Source: cal:2026-05-28 R19, `reference_motion.md` § payment_status_transition.
+Source: cal:2026-05-28 R19, `reference_motion.md` payment_status_transition.
 
 ---
 
@@ -373,12 +373,12 @@ Source: cal:2026-05-28 R19, `reference_motion.md` § payment_status_transition.
 
 | Choreography | Use | Duration / curve | Source |
 |---|---|---|---|
-| **Sheet present** (campaign-pill bottom sheet, etc.) | Sheet rises on tap of campaign pill | translateY 100%→0, 280ms `out` + backdrop 0→0.3 | `reference_motion.md` § Sheet present |
-| **Sheet dismiss** | Scrim tap dismisses | translateY 0→100%, 240ms `out-fast` | `reference_motion.md` § Sheet dismiss |
-| **Value change** (amount morph) | Hero amount updates as user types | New value translateY -100%→0 + opacity 0→1, 240ms `out`; old value mirror | `reference_motion.md` § Value change |
-| **Campaign pill reveal** (9-step) | Marketing pill enters Action Pills row post-BE | bling 640ms `spring-soft` + horizontal `gentle` 320ms `out` + run-once gate | This file § Campaign pill reveal motion |
-| **Payment status transition envelope** | Payment completion → confirmation | 3-stage (brand-immersion → reveal → resolve), durations TBD | This file § Payment status transition envelope |
-| **Press feedback** on Tertiary pill / dock icon | Tap confirmation | Opacity 1→0.7→1, 160ms `quick` | `reference_motion.md` § Press feedback |
+| **Sheet present** (campaign-pill bottom sheet, etc.) | Sheet rises on tap of campaign pill | translateY 100%→0, 280ms `out` + backdrop 0→0.3 | `reference_motion.md` Sheet present |
+| **Sheet dismiss** | Scrim tap dismisses | translateY 0→100%, 240ms `out-fast` | `reference_motion.md` Sheet dismiss |
+| **Value change** (amount morph) | Hero amount updates as user types | New value translateY -100%→0 + opacity 0→1, 240ms `out`; old value mirror | `reference_motion.md` Value change |
+| **Campaign pill reveal** (9-step) | Marketing pill enters Action Pills row post-BE | bling 640ms `spring-soft` + horizontal `gentle` 320ms `out` + run-once gate | This file Campaign pill reveal motion |
+| **Payment status transition envelope** | Payment completion → confirmation | 3-stage (brand-immersion → reveal → resolve), durations TBD | This file Payment status transition envelope |
+| **Press feedback** on Tertiary pill / dock icon | Tap confirmation | Opacity 1→0.7→1, 160ms `quick` | `reference_motion.md` Press feedback |
 
 ### What we never animate in Payments
 - ❌ Digit entry on the custom keypad — high-frequency interaction, no animation (per emil's frequency rule: 100+ times/day = no animation ever)

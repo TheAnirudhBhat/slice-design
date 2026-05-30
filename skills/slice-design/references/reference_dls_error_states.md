@@ -179,10 +179,10 @@ Pick one leading visual (avatar OR illustration OR neither). Same rule as bottom
 
 | Error type | Treatment | Reference file |
 |---|---|---|
-| Form input validation | 2px red-500 border + red caption + red label (no helper text until error) | `reference_dls_screen_layouts.md` § Validation Error + `reference_dls_input_field.md` |
+| Form input validation | 2px red-500 border + red caption + red label (no helper text until error) | `reference_dls_screen_layouts.md` Validation Error + `reference_dls_input_field.md` |
 | PIN / OTP error | 2px red-500 border on the PIN field | `reference_dls_pin_field.md` |
-| Transaction Failed (full-screen) | App bar X close + red Avatar Bold X (~120px) + `Payment of ₹X failed` H2 + Retry/Cancel CTAs | `reference_dls_screen_layouts.md` § Transaction Failed |
-| Txn detail header — Failed state | Red Avatar Bold X (~40px) + red-600 caption beneath title | `reference_dls_screen_layouts.md` § Transaction detail L2 § Failed state |
+| Transaction Failed (full-screen) | App bar X close + red Avatar Bold X (~120px) + `Payment of ₹X failed` H2 + Retry/Cancel CTAs | `reference_dls_screen_layouts.md` Transaction Failed |
+| Txn detail header — Failed state | Red Avatar Bold X (~40px) + red-600 caption beneath title | `reference_dls_screen_layouts.md` Transaction detail L2 Failed state |
 | Negative Red Snackbar | Bottom-anchored toast, red bg, white text, optional action | `reference_dls_snackbar.md` |
 | Negative Red Subtle Banner (User Action Request) | Inline pill banner, red-50 bg, red Bold Avatar, red caption | `reference_dls_user_action_banners.md` |
 

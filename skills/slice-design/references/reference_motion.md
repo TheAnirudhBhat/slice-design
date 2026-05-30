@@ -346,7 +346,7 @@ Source: mem:feedback_spark_reveal_choreography ✅
 
 ### payment_status_transition (rewarded vs un-rewarded)
 
-3-stage envelope for payment-completion transitions. See `reference_dls_screen_layouts.md` § "Payment OS — Transition envelope" for the rewarded/un-rewarded matrix.
+3-stage envelope for payment-completion transitions. See `reference_dls_screen_layouts.md` "Payment OS — Transition envelope" for the rewarded/un-rewarded matrix.
 
 **Motion specifics** (confidence LOW-MEDIUM — durations inferred):
 - **Stage 1 (brand-immersion, rewarded only)**: pink full-bleed fades in. Duration uncertain (likely `linger` 520ms `out`).

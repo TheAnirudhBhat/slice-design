@@ -14,7 +14,7 @@ slice-design is **healthy and substantially complete** for routine slice design 
 
 **Weak**: icon library (directory missing — needs re-export from DLS), illustration extraction (~10 of 22 cataloged, Payment OS file timeouts blocked the rest), no automated eval loop (works empirically, not benchmarked).
 
-**No RAG needed yet** — progressive disclosure works. See § RAG analysis below.
+**No RAG needed yet** — progressive disclosure works. See RAG analysis below.
 
 ---
 
@@ -207,7 +207,7 @@ Current bottleneck is NOT retrieval — it's **maintenance pace** (keeping the s
 8. **Per-pod index files** — useful as the skill grows.
 
 ### Not recommended right now
-- **RAG** — overkill. See § RAG analysis. Reconsider only at 15,000+ lines.
+- **RAG** — overkill. See RAG analysis. Reconsider only at 15,000+ lines.
 - **Splitting slice-design into multiple skills** — current single-skill structure works. Don't fragment.
 - **Migrating to a different skill format** — the current structure is skill-creator compliant.
 

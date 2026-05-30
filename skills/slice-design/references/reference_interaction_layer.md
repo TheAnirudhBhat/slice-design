@@ -150,7 +150,7 @@ WHY: per Emil's frequency rule — high-frequency actions feel slow with any ani
 - Pink full-bleed fades IN over ~520ms `linger` → reveal frame shows reward art → resolves to white tick frame
 - **Use when**: payment status transition envelope for rewarded txns (FIRE, MONIES, SPARK+FIRE+MONIES, FIRE+CASHBACK)
 
-See `reference_motion.md` § payment_status_transition for the 3-stage envelope detail.
+See `reference_motion.md` payment_status_transition for the 3-stage envelope detail.
 
 ---
 

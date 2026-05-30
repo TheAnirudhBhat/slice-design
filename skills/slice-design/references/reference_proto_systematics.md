@@ -305,7 +305,7 @@ If any check fails → fix before claiming done, AND surface why the skill didn'
 
 ---
 
-Source: distilled 2026-05-29 from R23 calibration log + 7 fix-it rounds on `slice-app-proto`. Author: Claude (this conversation). For the round-by-round audit trail see `reference_calibration_log.md` § R23 fix-it-2 cont 1–8.
+Source: distilled 2026-05-29 from R23 calibration log + 7 fix-it rounds on `slice-app-proto`. Author: Claude (this conversation). For the round-by-round audit trail see `reference_calibration_log.md` R23 fix-it-2 cont 1–8.
 
 ---
 
@@ -383,7 +383,7 @@ non-negotiable #2).
       set — so a skill fix propagates to every project automatically (cont-32). Add
       your feature pod under `src/pods/`; NEVER edit the linked kit locally and
       NEVER fork it by copying (that reintroduces drift). For an EXISTING project,
-      `link-kit.sh link <project>`. See `reference_web_proto.md` § "Shared kit".
+      `link-kit.sh link <project>`. See `reference_web_proto.md` "Shared kit".
 - [ ] **Agentation present.** `package.json` lists `agentation`; `main.jsx`
       renders `<Agentation/>` as a sibling of `<App/>`. (cont-29)
 - [ ] **Fonts will load AND inherit.** Rubik 400/500/600 linked in `index.html`;
