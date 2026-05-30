@@ -4,6 +4,20 @@ Hard "don't do" list. Anything here overrides advice from `impeccable`, `design-
 
 Source legend: `slice-dls L<line>` = original DLS skill, `mem:<key>` = global memory, `imp:<file>` = impeccable, `dmp:<file>` = design-motion-principles, `cal:<date>` = calibrated.
 
+## Icons & elevation
+
+### ❌ Hand-drawing a glyph that already exists in the DLS
+Looks like: inlining `<svg><path d="M6 6L18 18…"/>` for close / back-chevron / tick / copy / search because it's "just an X" or "just a V".
+Why slice doesn't: hand-drawn glyphs never match the DLS weight/geometry — they read thin, off-center, or wrong-cornered, and a designer spots it instantly. Recurred 3× in one session (R24 cont-31): back chevron drawn as a thin stroke (canonical is the FILLED Interface/Chevron 582:580); close drawn as a stroke X (canonical is `profile_close.svg` / Interface/Cross).
+Do instead: for EVERY icon use the canonical asset/path — grep `references/dls-cache/COMPONENT_INDEX.md` (General/*, Interface/*, Status/*) or copy the proto's `public/assets/icons/*` (`profile_close.svg`, `dls_chevron.svg`, the filled `ChevronBack`, etc.). If it isn't cached, export it from Figma. NEVER approximate a glyph.
+Source: cal:2026-05-30 R24 cont-31 ✅
+
+### ❌ Card shadow heavy enough to read as a grey wash
+Looks like: card `box-shadow: 0 4px 24px rgba(0,0,0,0.08)` (or heavier). Fine on one card, but on a card-DENSE screen (stacked selection cards, a summary list) the overlapping soft shadows turn the white page greyish — which reads as a grey background (a hard no in slice).
+Why slice doesn't: the canonical float shadow is the SUBTLE `0px 2px 32px 0px rgba(0,0,0,0.05)`; anything heavier breaks the "shadow-on-white IS the float, never grey" rule.
+Do instead: use `0 2px 32px 0.05` for genuinely-floating cards. For SELECTION / list / chooser cards use an OUTLINE (1px border, NO shadow) — the canonical Atom-chooser pattern — so a stack of them stays crisp white.
+Source: cal:2026-05-30 R24 cont-31 ✅
+
 ## Brand and copy
 
 ### ❌ Capitalising "slice"
