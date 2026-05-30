@@ -163,42 +163,45 @@ dark page** — the "weird box in dark". Lesson: a sprite crop is not theme-safe
 prefer the clean standalone official asset. (And per the icon rule above, don't
 re-trace it — get the official file.)
 
-## 11. Theme-switch reveal motion (light⇄dark) — CANONICAL (Figma "App visual fix" node `3309:13267`)
-A full-screen **gradient overlay FADES in** (opacity), the **destination icon +
-caption sit CENTRED**, then it **FADES out** — it does **NOT slide**. Verified
-against the user's screen recording 2026-05-30 (`ScreenRecording_…19-00-46`).
+## 11. Theme-switch reveal motion (light⇄dark) — CANONICAL (Figma "App visual fix" `4586:10407` + `3315:7279`)
+A **TALL gradient overlay (3× screen) SLIDES top→bottom with a PAUSE**, matched to
+the user's screen recording 2026-05-30. NOT a pure fade, NOT a fill-and-reveal
+curtain — it is one continuous downward slide that holds in the middle.
 
-- **The gradient = canonical (Figma `3311:7095`)**: `linear-gradient(to top,
-  rgba(147,65,255,0) 0%, rgba(98,31,255,0.34) 53%, #FF55BA 101%)` layered over the
-  target base (`#090B0C` dark / `#FFFFFF` light). The **FIRST stop is 0% opacity**
-  (transparent) — user-directed, this is the soft edge; the magenta glow sits at the
-  TOP. Same gradient orientation BOTH directions (one direction); only the base
-  colour + icon differ.
-- **Opacity fade** — one overlay `opacity [0,1,1,0]`, `times [0,0.16,0.78,1]`,
-  **~2.2s** easeInOut (short fade-in, LONG hold so it reads, fade-out). `data-theme`
-  flips mid-hold (`setTimeout ~1000ms`) so the transparent lower band of the gradient
-  reveals the already-flipped target-colour page underneath (no flash, seamless fill).
+- **The overlay rectangle** (`linear-gradient(to bottom, …)`, height `300%`):
+  transparent **trailing** edge (top) → **solid target middle** (`#090B0C` dark /
+  `#FFFFFF` light, ~26–72%) → Valentino **glow leading edge** (bottom, ~`#621FFF`→
+  `#FF55BA`). First stop is 0% opacity (soft edge, user-directed). Same gradient
+  orientation BOTH directions; only the base colour + icon differ (one direction).
+- **Slide + pause** — `y: ['-100%','-33.333%','-33.333%','33.333%']`, `times
+  [0,0.26,0.64,1]`, **~3.2s** easeInOut. `-100%`=fully above (glow edge at screen
+  top), `-33.333%`=solid middle exactly covers the screen (the two equal keyframes =
+  the **pause**), `+33.333%`=overlay top edge at screen bottom (fully exited). The
+  geometry: a 300%-tall element, so screen = its middle third at `-33.333%`.
+- **Pause = the moment**: solid colour covers the screen; the destination icon +
+  caption are shown; `data-theme` flips behind it (`setTimeout ~1700ms`, inside the
+  pause) so the exit slide reveals the already-flipped new theme. The glow is only
+  seen sweeping IN (entry) and OUT (exit), never during the pause.
 - **Destination icon** (switching TO): **moon → dark**, **sun → light** — held
-  centred the whole time (NOT a sun→moon morph; the video shows only the destination).
-  Official transparent SVGs → `proto/public/assets/theme_moon.svg` (purple crescent) +
-  `theme_sun.svg` (orange sun). Multi-colour brand illustrations → `<img>` (NOT
-  currentColor); transparent-bg (no bg rect, `fill="none"` root). Fix Figma's
+  centred, **does NOT morph** (no sun↔moon crossfade; the recording shows only the
+  destination). Official transparent SVGs → `proto/public/assets/theme_moon.svg`
+  (purple crescent) + `theme_sun.svg` (orange sun). `<img>` (multi-colour, NOT
+  currentColor); transparent-bg (no bg rect, `fill="none"`). Fix Figma's
   `preserveAspectRatio="none"` → `xMidYMid meet` (stretch gotcha, section 9), 80×80
-  `objectFit:contain`. Icon layer `opacity [0,1,1,0]`, `times [0,0.2,0.76,0.98]`.
-- **Caption** TYPES on (typewriter, user-directed): `Switching to dark mode` /
+  `objectFit:contain`. Icon+caption layer `opacity [0,0,1,1,0]`, `times
+  [0,0.22,0.3,0.62,0.68]` (only visible during the pause).
+- **Caption TYPES on** (typewriter, user-directed): `Switching to dark mode` /
   `Switching to light mode`. Letters reveal left→right via an opacity STAGGER (each
-  char pre-occupies its space so the centred line never jitters) — `delayChildren 0.4`
-  (waits for the overlay to cover), `staggerChildren 0.035`. Component `TypeCaption`
-  in `App.jsx`. Rubik Regular 16/24, +0.32px tracking, centred, 24px under the icon.
-  `rgba(255,255,255,0.95)` on →dark, `rgba(0,0,0,0.9)` on →light (over the target fill).
-- **Icon does NOT morph** — the destination glyph is shown for the whole transition
-  (no sun↔moon crossfade), confirmed against the recording.
-- Implemented in `App.jsx`: `REVEAL_GLOW / REVEAL_CURTAIN / REVEAL_ICON / REVEAL_LABEL
-  / REVEAL_TEXT` + the 2-layer AnimatePresence overlay; `handleThemeToggle` guards re-tap.
-- ⚠️ History (don't resurrect): a flat-cover SLIDE → a magenta-at-bottom fade → a
-  current→valentino→target colour-journey → a fill-and-reveal curtain. ALL rejected.
-  The signed-off behaviour is THIS: a plain opacity fade of the canonical transparent-
-  first-stop gradient, destination icon centred. Match the live `App.jsx` REVEAL_*.
+  char pre-occupies its space so the centred line never jitters) — `TypeCaption`
+  with `delay` synced to the pause (~0.95s) + `staggerChildren 0.032`. Rubik Regular
+  16/24, +0.32px tracking, centred, 24px under the icon. `rgba(255,255,255,0.95)` on
+  →dark, `rgba(0,0,0,0.9)` on →light.
+- Implemented in `App.jsx`: `REVEAL_SLIDE / REVEAL_ICON / REVEAL_LABEL / REVEAL_TEXT`
+  + `TypeCaption(delay)` + the sliding AnimatePresence overlay; `handleThemeToggle`
+  guards re-tap and schedules the mid-pause `data-theme` flip.
+- ⚠️ History (don't resurrect): flat-cover slide → magenta-at-bottom fade →
+  current→valentino→target colour-journey → curtain → plain opacity fade. ALL
+  superseded. Signed-off behaviour is THIS slide-with-pause. Match the live `App.jsx`.
 
 ## 12. More dark-mode component gotchas (this session)
 - **Card-corner illustrations** (Banking FD rocket, monies cluster): the Figma node

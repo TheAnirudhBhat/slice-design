@@ -55,21 +55,20 @@ const STATUS_VARIANT = {
 // holds briefly so it reads, then slides off in the reveal direction (up = dark
 // fills from the bottom; down = light fills from the top). Gradient stops + caption
 // type + the two SVGs are pulled verbatim from the canonical transition frames.
-// Theme-switch reveal (canonical Figma 3309:13267 / 3311:7095, video-matched).
-// A full-screen gradient overlay FADES in (opacity), the destination icon (moon →
-// dark / sun → light) + caption sit CENTRED, then it FADES out — it does NOT slide.
-// The gradient is the canonical one: FIRST stop 0% opacity (transparent) at the
-// bottom → purple → magenta glow at the TOP, layered over the target base colour.
-// Same gradient both directions (one orientation); only the base + icon differ.
-// data-theme flips mid-hold so the transparent lower band reveals the flipped page.
-const REVEAL_GLOW = 'linear-gradient(to top, rgba(147,65,255,0) 0%, rgba(98,31,255,0.34) 53%, #FF55BA 101%)';
-const REVEAL_CURTAIN = {
-  toDark: `${REVEAL_GLOW}, #090B0C`,
-  toLight: `${REVEAL_GLOW}, #FFFFFF`,
+// Theme-switch reveal (canonical Figma 4586:10407 / 3315:7279). A TALL gradient
+// overlay (3× screen) SLIDES top→bottom: a transparent trailing edge → SOLID
+// target-colour middle → Valentino glow leading (bottom) edge. It slides in until
+// the solid middle fully covers the screen, PAUSES there (destination icon +
+// type-on caption shown, data-theme flips behind it), then eases on down and exits
+// off the bottom, revealing the new theme. Same direction both ways; only the base
+// colour + icon differ. First gradient stop is 0% opacity (soft edge, per user).
+const REVEAL_SLIDE = {
+  toDark: 'linear-gradient(to bottom, rgba(9,11,12,0) 0%, #090B0C 26%, #090B0C 72%, #621FFF 88%, #FF55BA 100%)',
+  toLight: 'linear-gradient(to bottom, rgba(255,255,255,0) 0%, #FFFFFF 26%, #FFFFFF 72%, #9341FF 88%, #FF55BA 100%)',
 };
 const REVEAL_ICON = { toDark: '/assets/theme_moon.svg', toLight: '/assets/theme_sun.svg' };
 const REVEAL_LABEL = { toDark: 'Switching to dark mode', toLight: 'Switching to light mode' };
-const REVEAL_TEXT = { toDark: 'rgba(255,255,255,0.95)', toLight: 'rgba(0,0,0,0.9)' }; // caption over the target fill
+const REVEAL_TEXT = { toDark: 'rgba(255,255,255,0.95)', toLight: 'rgba(0,0,0,0.9)' }; // caption over the solid fill
 
 // R24 cont-13: map from pod → component constructor (not pre-instantiated JSX)
 // so we can hand each L0 a per-pod `onScrollChange` callback at render time.
@@ -87,12 +86,12 @@ const PAGES_BY_POD = {
 // on 'switching to…'"). Opacity stagger — every char pre-occupies its space so the
 // centred line never jitters as it reveals. delayChildren waits for the overlay to
 // cover; staggerChildren paces the type-on.
-function TypeCaption({ text, color }) {
+function TypeCaption({ text, color, delay = 0.4 }) {
   return (
     <motion.div
       initial="hidden"
       animate="visible"
-      variants={{ visible: { transition: { delayChildren: 0.4, staggerChildren: 0.035 } } }}
+      variants={{ visible: { transition: { delayChildren: delay, staggerChildren: 0.032 } } }}
       style={{
         fontFamily: 'Rubik, sans-serif',
         fontWeight: 400,
@@ -306,9 +305,9 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
     if (themeAnim) return; // ignore taps while a switch is mid-flight
     const goingDark = theme !== 'dark';
     setThemeAnim({ dir: goingDark ? 'toDark' : 'toLight', id: Date.now() });
-    // Flip the mode mid-HOLD (overlay fully faded in) so the transparent lower band
-    // of the gradient reveals the already-flipped target-colour page underneath.
-    window.setTimeout(() => setTheme(goingDark ? 'dark' : 'light'), 1000);
+    // Flip the mode during the PAUSE (solid middle fully covers the screen) so the
+    // exit slide reveals the already-flipped new theme.
+    window.setTimeout(() => setTheme(goingDark ? 'dark' : 'light'), 1700);
   };
 
   // R23 fix-it-2-cont-10: simplified to 2-div scaffold. Outer is the App
@@ -434,30 +433,40 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
               pages={pagesMeta}
             />
 
-            {/* Theme-switch reveal (canonical Figma 3309:13267). A full-screen
-               gradient overlay (first stop 0% opacity → Valentino glow → solid
-               target colour) FADES in and takes over, the centre icon switches
-               sun↔moon (data-theme flips, hidden under it), then it FADES out. It
-               does NOT slide. */}
+            {/* Theme-switch reveal (canonical Figma 4586:10407 / 3315:7279). A TALL
+               (3× screen) gradient overlay SLIDES top→bottom: Valentino glow leading
+               edge → solid target middle → transparent trailing edge. It slides in
+               until the solid middle covers the screen, PAUSES (destination icon +
+               type-on caption shown; data-theme flips behind it), then eases on down
+               and exits off the bottom, revealing the new theme. */}
             <AnimatePresence>
               {themeAnim && (
                 <motion.div
                   key={themeAnim.id}
                   style={{ position: 'absolute', inset: 0, zIndex: 999, pointerEvents: 'none', overflow: 'hidden' }}
                 >
-                  {/* gradient overlay: fades in (takes over) → long hold → fades out */}
+                  {/* sliding overlay rectangle: enter (to -33.3% = solid covers) →
+                     PAUSE → exit (to +33.3% = top edge at screen bottom) */}
                   <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: [0, 1, 1, 0] }}
-                    transition={{ duration: 2.2, times: [0, 0.16, 0.78, 1], ease: 'easeInOut' }}
+                    initial={{ y: '-100%' }}
+                    animate={{ y: ['-100%', '-33.333%', '-33.333%', '33.333%'] }}
+                    transition={{ duration: 3.2, times: [0, 0.26, 0.64, 1], ease: 'easeInOut' }}
                     onAnimationComplete={() => setThemeAnim(null)}
-                    style={{ position: 'absolute', inset: 0, background: REVEAL_CURTAIN[themeAnim.dir] }}
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      right: 0,
+                      top: 0,
+                      height: '300%',
+                      background: REVEAL_SLIDE[themeAnim.dir],
+                    }}
                   />
-                  {/* centre destination icon (moon→dark / sun→light) + caption */}
+                  {/* centre destination icon (no morph) + type-on caption — shown
+                     only during the pause, while the solid middle covers the screen */}
                   <motion.div
                     initial={{ opacity: 0 }}
-                    animate={{ opacity: [0, 1, 1, 0] }}
-                    transition={{ duration: 2.2, times: [0, 0.2, 0.76, 0.98], ease: 'easeInOut' }}
+                    animate={{ opacity: [0, 0, 1, 1, 0] }}
+                    transition={{ duration: 3.2, times: [0, 0.22, 0.3, 0.62, 0.68], ease: 'easeInOut' }}
                     style={{
                       position: 'absolute',
                       inset: 0,
@@ -474,7 +483,7 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
                       aria-hidden="true"
                       style={{ width: 80, height: 80, objectFit: 'contain', display: 'block' }}
                     />
-                    <TypeCaption text={REVEAL_LABEL[themeAnim.dir]} color={REVEAL_TEXT[themeAnim.dir]} />
+                    <TypeCaption text={REVEAL_LABEL[themeAnim.dir]} color={REVEAL_TEXT[themeAnim.dir]} delay={0.95} />
                   </motion.div>
                 </motion.div>
               )}
