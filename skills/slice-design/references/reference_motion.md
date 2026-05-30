@@ -248,10 +248,11 @@ Do not invent custom curves. If a moment doesn't fit one of these four, ask befo
 
 ## Choreographies — reusable patterns
 
-### Nav push (screen → screen)
-- Outgoing screen: translateX 0 → -25%, opacity 1 → 0.7, 320ms `out`
-- Incoming screen: translateX 100% → 0, 320ms `out`
+### Nav push / L1 open (screen → screen, slide in from right)
+- Incoming screen: translateX 100% → 0, **400ms, iOS-natural `cubic-bezier(0.32, 0.72, 0, 1)`** (the iOS push/sheet decelerate curve)
+- Outgoing screen: translateX 0 → -25%, opacity 1 → 0.7, same 400ms curve (parallax)
 - Bottom nav: stays put, no transition
+- **Pace it iOS-natural — ~400ms, NOT a snappy ~280ms.** A too-short push reads abrupt; the user calibrated this as "too fast" (cal:2026-05-30 cont-32). The proto's `L1Stack` slide uses exactly this; match it for any new push/slide-in. (The bottom-sheet present is a touch longer still, ~450ms.)
 
 ### Nav pop (back)
 - Incoming screen: translateX -25% → 0, opacity 0.7 → 1, 320ms `out`

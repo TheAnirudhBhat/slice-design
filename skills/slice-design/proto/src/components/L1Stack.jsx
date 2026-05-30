@@ -11,8 +11,10 @@
 //   • Status bar STAYS the same throughout L1 navigation (it's a chrome
 //     element, not part of any L0 / L1).
 //
-// Canonical motion per slice DLS: slide-in from right, ~280ms, ease-out
-// cubic-bezier(0.16, 1, 0.3, 1). Slide-out reverses.
+// Canonical motion per slice DLS: slide-in from right at iOS-NATURAL pacing —
+// ~400ms, ease cubic-bezier(0.32, 0.72, 0, 1) (the iOS push/sheet decelerate
+// curve). Slide-out reverses. (cal:2026-05-30 cont-32: the old 280ms +
+// easeOutExpo [0.16,1,0.3,1] read too fast/snappy — "pace to iOS natural speed".)
 
 import React, { createContext, useCallback, useContext, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -38,13 +40,13 @@ const MOTION_VARIANTS = {
     initial: { x: '100%' },
     animate: { x: 0 },
     exit: { x: '100%' },
-    transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
+    transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] },
   },
   bottom: {
     initial: { y: '100%' },
     animate: { y: 0 },
     exit: { y: '100%' },
-    transition: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
+    transition: { duration: 0.45, ease: [0.32, 0.72, 0, 1] },
   },
 };
 

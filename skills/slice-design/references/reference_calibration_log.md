@@ -1777,3 +1777,13 @@ User direction, after exploring FLUX for icon/illustration generation: "I want s
 3. **Artifacts.** New `references/reference_slice_asset_generation.md` (spec + procedure + templates + manifest format). Amended SKILL.md asset-reuse rule + the "Need an icon"/"Need an illustration" table rows; amended `reference_dls_iconography.md` ban to scope it to product/post-handoff. Proof icon shipped: `proto/public/assets/icons/gen_bell.svg` (filled, currentColor, rounded — pending visual verify in the running proto).
 
 Source: R24 cont-33, 2026-05-30.
+
+### 2026-05-30 · R24 cont-34 (L1 push pacing — iOS-natural, not snappy)
+
+User on the L1 slide-in: "when i click on something the slide in from the right happens too fast, please pace to ios natural speed."
+
+The `L1Stack` right-slide was `duration 0.28s, ease [0.16,1,0.3,1]` (easeOutExpo). That combo — short duration + a very front-loaded decelerate — reads abrupt/snappy, not like an iOS push. Fix: **400ms, `cubic-bezier(0.32, 0.72, 0, 1)`** (the iOS push/sheet decelerate curve); bottom-sheet variant 450ms same curve. Applied to the linked `L1Stack` (propagates to all projects) + matched the insurance flow's internal step track (320→400ms, same curve) for cohesion. Verified live: the slide now lingers long enough to catch mid-transition.
+
+Rules updated: `reference_motion.md` "Nav push / L1 open" choreography now specs 400ms + the iOS curve and explicitly warns against ~280ms ("reads abrupt"). Lesson: for a full-screen push/slide-in, **duration is the lever** — sub-300ms feels rushed regardless of easing; ~400ms with a gentle decelerate is the iOS-natural target.
+
+Source: R24 cont-34, 2026-05-30.
