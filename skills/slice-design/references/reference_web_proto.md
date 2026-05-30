@@ -31,27 +31,54 @@ Source: explore-base (`~/claude/slice/projects/explore-base/`), explore-react (`
     sections/             (per-section split when App.jsx exceeds ~600 lines)
 ```
 
-## Shared kit — design-system layer propagates by REFERENCE (R24 cont-32)
+## Shared kit + extension seam — a project inherits the WHOLE app (R24 cont-32 → cont-35)
 
-**Every project derived from this skill links the design-system layer back to the
-skill proto, so a fix made once in the skill appears in ALL projects on the next
-reload — zero per-project sync.** This is the single source of truth for design
-consistency at scale. (User direction, cont-32: "whenever the skill proto updates,
-those updates should be reflected in all projects derived from it.")
+**A derived project IS the skill app + its feature. It inherits everything — phone
+shell, dark-mode, status bar, bottom nav, ALL base pods, Explore — live from the
+skill proto, and owns only a thin App wrapper + its feature pod(s). Nothing base
+can drift.** (User, cont-35, on a project showing the old shell: "I thought the
+[project] is supposed to inherit the skill proto and keep everything the same.")
 
-**The boundary (what's shared vs project-owned):**
+> **cont-35 correction.** cont-32 originally kept `App.jsx` + `pods/` project-owned
+> (copied). That was too narrow — those copies drifted into a "legacy view" (old
+> phone shell, no dark-mode) while the skill app evolved. The fix is the **extension
+> seam**: the skill `App` accepts injection props, so the project's App is a THIN
+> wrapper that inherits the real App + every base pod.
+
+**The boundary:**
 
 | Layer | Paths | How |
 |---|---|---|
-| **KIT** — design-system, must stay consistent | `src/components/` `src/icons/` `src/utils/` `src/tokens.js` `src/index.css` | **symlinked** into the skill proto (`~/.claude/skills/slice-design/proto/src/…`) → live-linked, propagates |
-| **Project-owned** — feature content | `src/App.jsx` `src/main.jsx` `src/pods/` `public/assets/` | real files, copied at scaffold, never auto-touched |
+| **KIT** — design-system | `src/components/` `src/icons/` `src/utils/` `src/tokens.js` `src/index.css` | **symlinked** to the skill proto → propagates |
+| **Base app** — shell, theme, all base pods, Explore | `src/AppBase.jsx` (→ skill `App.jsx`) | **symlinked**; AppBase's own imports pull the skill's pods directly, so base pods are inherited WITHOUT being copied into the project |
+| **Project-owned** — feature ONLY | `src/App.jsx` (thin wrapper), `src/main.jsx`, `src/local.css`, `src/pods/<feature>/`, `public/assets/` | real files |
 
-Why this exact split: chrome (status bar, app bar, bottom nav, fades), icons,
-shared hooks (`useTapGuard`), tokens, and base CSS are what define "looks like
-slice" — they MUST stay identical across projects. Pods and App wiring are
-inherently per-feature, so they stay local. Assets are copied (a project adds its
-own); shared new assets are synced additively, never live-linked (a symlinked
-`public/assets` would force project-specific art to live in the skill).
+**The seam (skill `App.jsx` props, all default to the standalone skill proto):**
+- `extraL1` — extra L1 routes merged into the registry (`{ name: { Component, slideFrom } }`)
+- `exploreExtraCards` — full-width cards injected into Explore (after Recharge & bills)
+- `initialPod` — landing pod (`'pay'` default)
+
+Project `src/App.jsx` is then just:
+```jsx
+import AppBase from './AppBase.jsx';            // symlink → skill App.jsx
+import FeatureFlow from './pods/feature/FeatureFlow.jsx';
+import FeatureEntryCard from './pods/feature/FeatureEntryCard.jsx';
+export default () => (
+  <AppBase
+    extraL1={{ feature: { Component: FeatureFlow, slideFrom: 'right' } }}
+    exploreExtraCards={[<FeatureEntryCard key="feature" />]}
+    initialPod="explore"
+  />
+);
+```
+
+Why: chrome + icons + hooks + tokens + base CSS + the whole base app define "looks
+like slice" and MUST stay identical. A feature is purely additive — a pod + an
+entry card + a route — so it injects through the seam instead of forking shared
+files. Base pods are NOT copied into the project (AppBase imports the skill's
+directly); the project's `pods/` holds ONLY its feature pod. Assets are copied +
+synced from the skill (the inherited shell + base pods reference them); a symlinked
+`public/assets` would force project art into the skill, so copy, don't link.
 
 **Starting a NEW project — born kit-linked (the default, do this every time):**
 ```bash

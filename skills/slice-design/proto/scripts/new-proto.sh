@@ -1,22 +1,19 @@
 #!/usr/bin/env bash
 # ---------------------------------------------------------------------------
-# new-proto.sh — scaffold a NEW slice proto project, BORN KIT-LINKED.
+# new-proto.sh — scaffold a NEW slice proto via the EXTENSION SEAM (R24 cont-35).
 #
-# Every project derived from this skill starts as a copy of the canonical app
-# (the project-owned layer) with the design-system KIT symlinked back to the
-# skill proto — so skill-proto updates propagate to it automatically, from day
-# one. (R24 cont-32: "set this up from the start in every new project.")
+# The project INHERITS the whole skill app (phone shell, dark-mode, status bar,
+# bottom nav, ALL base pods, Explore) live, and owns only a thin App wrapper +
+# its feature pod(s). Nothing base can drift, ever.
 #
-# Usage:
-#   new-proto.sh <project-name> [dest-parent-dir] [port]
-#     dest-parent default: ~/claude/slice/projects
-#     port default:        8790
+# Project-owned (copied/generated):  App.jsx (thin), main.jsx, local.css,
+#                                     pods/<feature>/, configs, public/assets/
+# Linked from the skill (propagate):  AppBase.jsx (→ skill App.jsx),
+#                                     components/ icons/ utils/ tokens.js index.css
+# Inherited via AppBase's own imports (NOT copied): all base pods + Explore.
 #
-# Result: <dest-parent>/<name>/ with
-#   • project-owned (copied):  App.jsx, main.jsx, pods/, public/assets/, configs
-#   • kit (symlinked → skill):  components/ icons/ utils/ tokens.js index.css
-#   • vite.config.js with server.fs.allow including the skill path
-#   • registered in proto-registry.txt (so `link-kit relink-all` covers it)
+# Usage: new-proto.sh <project-name> [dest-parent-dir] [port]
+#   dest-parent default: ~/claude/slice/projects ; port default: 8790
 # ---------------------------------------------------------------------------
 set -euo pipefail
 
@@ -25,49 +22,88 @@ NAME="${1:?usage: new-proto.sh <project-name> [dest-parent] [port]}"
 DEST_PARENT="${2:-$HOME/claude/slice/projects}"
 PORT="${3:-8790}"
 DEST="$DEST_PARENT/$NAME"
-
 [ -e "$DEST" ] && { echo "ERROR: $DEST already exists"; exit 1; }
-mkdir -p "$DEST"
+mkdir -p "$DEST/src/pods" "$DEST/public/assets"
 
-# 1. Copy the canonical app (project-owned layer). Exclude heavy/local/skill-only
-#    artifacts. The kit dirs ARE copied here, then replaced by symlinks in step 2.
-rsync -a \
-  --exclude node_modules --exclude dist --exclude scripts \
-  --exclude proto-registry.txt --exclude package-lock.json \
-  --exclude .git --exclude .claude \
-  "$KIT_PROTO/" "$DEST/"
+# 1. Configs (project-owned copies). NOT App.jsx, NOT pods/ — those inherit.
+for f in package.json index.html tailwind.config.js postcss.config.js; do
+  [ -f "$KIT_PROTO/$f" ] && cp "$KIT_PROTO/$f" "$DEST/$f"
+done
 
-# 2. Symlink the design-system kit (link-kit rm's the copied kit paths first).
+# 2. Kit (symlinks) — the design-system layer that propagates from the skill.
 "$KIT_PROTO/scripts/link-kit.sh" link "$DEST" >/dev/null
 
-# 3. Fresh vite.config.js — fs.allow lets Vite serve the symlinked files; own port.
+# 3. AppBase = symlink to the skill App; thin local App.jsx wraps + injects.
+ln -sfn "$KIT_PROTO/src/App.jsx" "$DEST/src/AppBase.jsx"
+cat > "$DEST/src/App.jsx" <<EOF
+// $NAME = the slice skill app + your feature, via the extension seam (cont-35).
+// Inherit EVERYTHING (shell, theme, all base pods, Explore); inject ONLY your
+// feature. Add your feature pod under src/pods/<feature>/ and wire it here:
+//   extraL1            — { name: { Component, slideFrom: 'right'|'bottom' } }
+//   exploreExtraCards  — [<YourEntryCard/>]  (full-width cards after Recharge)
+//   initialPod         — 'pay' | 'banking' | 'explore' | 'credit' | 'activity'
+// NEVER edit AppBase / the linked kit here — those are the shared skill app.
+import React from 'react';
+import AppBase from './AppBase.jsx'; // symlink → skill proto src/App.jsx
+
+export default function App() {
+  return <AppBase /* extraL1={{}} exploreExtraCards={[]} initialPod="pay" */ />;
+}
+EOF
+
+# 4. Entry (main.jsx) — fonts + linked index.css + local.css + App + Agentation.
+cat > "$DEST/src/main.jsx" <<'EOF'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { Agentation } from 'agentation';
+// Self-hosted Rubik (bundled) — NEVER the Google Fonts CDN (blocked on slice's
+// corporate network; Medium-500 silently falls back).
+import '@fontsource/rubik/400.css';
+import '@fontsource/rubik/500.css';
+import '@fontsource/rubik/600.css';
+import '@fontsource/rubik/700.css';
+import App from './App.jsx';
+import './index.css';   // linked kit base CSS (theme vars + resets) — propagates
+import './local.css';   // tiny project-local overrides, loaded AFTER the kit
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+    <Agentation
+      onAnnotationAdd={(a) => console.log('[agentation] add', a)}
+      onSubmit={(payload) => console.log('[agentation] submit', payload)}
+    />
+  </React.StrictMode>,
+);
+EOF
+
+printf '/* project-local base overrides, loaded AFTER the kit index.css. Keep tiny. */\n' > "$DEST/src/local.css"
+
+# 5. Assets — copied + synced (the inherited shell + base pods reference them).
+rsync -a "$KIT_PROTO/public/assets/" "$DEST/public/assets/"
+
+# 6. vite.config — fs.allow lets Vite serve the symlinked kit + AppBase; own port.
 cat > "$DEST/vite.config.js" <<EOF
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-
-// src/{components,icons,utils,tokens.js,index.css} are SYMLINKS into the
-// slice-design skill proto (the shared kit) — design-system updates propagate
-// automatically. Vite must be allowed to serve those real paths (outside root).
 const KIT_PROTO = '$KIT_PROTO';
-
 export default defineConfig({
   plugins: [react()],
   server: { port: $PORT, fs: { allow: ['.', KIT_PROTO] } },
 });
 EOF
 
-# 4. Name the package.
+# 7. Name the package.
 if [ -f "$DEST/package.json" ]; then
   sed -i '' "s/\"name\": *\"[^\"]*\"/\"name\": \"$NAME\"/" "$DEST/package.json" 2>/dev/null \
     || sed -i "s/\"name\": *\"[^\"]*\"/\"name\": \"$NAME\"/" "$DEST/package.json"
 fi
 
-echo "✓ scaffolded $DEST (kit-linked, port $PORT)"
+echo "✓ scaffolded $DEST (extension-seam, port $PORT)"
 echo ""
 echo "  cd \"$DEST\""
 echo "  npm install --cache \"\$TMPDIR/npm-cache-$NAME\""
 echo "  npm run dev"
 echo ""
-echo "Then add your feature pod under src/pods/<feature>/ and wire its entry"
-echo "point. Do NOT edit src/{components,icons,utils,tokens.js,index.css} — those"
-echo "are the shared kit (edit them in the skill proto to update ALL projects)."
+echo "Build your feature pod under src/pods/<feature>/ and wire it in src/App.jsx"
+echo "(extraL1 / exploreExtraCards / initialPod). Everything else inherits live."

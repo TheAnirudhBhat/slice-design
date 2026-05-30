@@ -18,10 +18,12 @@
 import React from 'react';
 
 const TONES = {
-  plain:    { ring: 'none',                            bg: 'transparent',    fg: null },
-  subtle:   { ring: '1px solid var(--outline-subtle)', bg: 'transparent',    fg: null },
-  outlined: { ring: '1px solid var(--outline-bold)',   bg: 'var(--surface)', fg: 'var(--text-primary)' },
-  received: { ring: '1px solid var(--positive)',       bg: 'var(--surface)', fg: 'var(--positive)' },
+  plain:    { ring: 'none',                            bg: 'transparent', fg: null },
+  subtle:   { ring: '1px solid var(--outline-subtle)', bg: 'transparent', fg: null },
+  // `chip` = the Activity list avatar: a constant WHITE disc (so it reads on the
+  // dark page too) + a faint outline-subtle ring + dark-grey monogram letter.
+  // Content (photo / icon / letter) sits on white, so its colours don't theme.
+  chip:     { ring: '1px solid var(--outline-subtle)', bg: '#FFFFFF',     fg: 'rgba(0,0,0,0.5)' },
 };
 
 export default function Avatar({
@@ -30,6 +32,7 @@ export default function Avatar({
   initial,
   children,
   tone = 'plain',
+  fg,            // optional monogram-letter colour override (e.g. brand-red 'Z')
   hit = false,
   onTap,
   ariaLabel,
@@ -53,10 +56,12 @@ export default function Avatar({
         flexShrink: 0,
         fontFamily: 'Rubik, sans-serif',
         fontWeight: 500,
-        fontSize: 16,
-        lineHeight: '20px',
-        letterSpacing: '0.32px',
-        color: t.fg || undefined,
+        // Canonical DLS monogram: ~half the avatar (20px on a 40px avatar),
+        // -0.2px tracking, leading-none.
+        fontSize: Math.round(size * 0.5),
+        lineHeight: 1,
+        letterSpacing: '-0.2px',
+        color: fg || t.fg || undefined,
       }}
     >
       {photo != null ? (

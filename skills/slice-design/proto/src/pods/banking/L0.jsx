@@ -139,7 +139,9 @@ function SavingsHero({ balanceHidden }) {
           style={{
             height: 1,
             background: OUTLINE_SUBTLE,
-            margin: `0 -${CARD_PAD}px`,
+            // MIDDLE divider — respects the card's L/R padding on BOTH sides
+            // (NOT full-bleed, and NOT an "inset" divider — inset is the
+            // avatar-list type, indented under the leading avatar only).
           }}
         />
         <div

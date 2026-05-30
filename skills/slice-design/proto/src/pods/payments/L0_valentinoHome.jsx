@@ -165,15 +165,14 @@ function AmountHero({ amount }) {
         }}
         aria-label="UPI ID"
       >
-        {/* BHIM-UPI mark — canonical PNG fetched from Figma node 886:28338
-           (R23 fix-it-2-cont-7). Replaces inline SVG approximation. */}
+        {/* UPI mark. PLACEHOLDER (dummy) until the user's exact image is dropped
+           in at public/assets/upi_pill.png — overwrite that file and it renders
+           AS-IS (no trace, no processing). Pasted-inline images aren't written
+           to disk, so the file must live in the repo to be used. */}
         <img
-          src="/assets/bhim_upi.png"
-          alt=""
-          width={30}
-          height={12}
-          style={{ display: 'block', pointerEvents: 'none', userSelect: 'none', opacity: 0.9 }}
-          aria-hidden="true"
+          src="/assets/upi_pill.png"
+          alt="UPI"
+          style={{ height: 16, width: 'auto', display: 'block', pointerEvents: 'none', userSelect: 'none' }}
         />
         <span
           style={{

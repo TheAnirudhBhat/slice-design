@@ -1787,3 +1787,21 @@ The `L1Stack` right-slide was `duration 0.28s, ease [0.16,1,0.3,1]` (easeOutExpo
 Rules updated: `reference_motion.md` "Nav push / L1 open" choreography now specs 400ms + the iOS curve and explicitly warns against ~280ms ("reads abrupt"). Lesson: for a full-screen push/slide-in, **duration is the lever** — sub-300ms feels rushed regardless of easing; ~400ms with a gentle decelerate is the iOS-natural target.
 
 Source: R24 cont-34, 2026-05-30.
+
+### 2026-05-30 · R24 cont-35 (extension seam — a project inherits the WHOLE skill app, not just the kit)
+
+User, running insurance-flow: "I thought the [project] is supposed to inherit the slice skill proto and keep everything the same, but … it's still running the legacy view." Diagnosis: the cont-32 kit linked only the design-system LAYER (components/icons/utils/tokens/index.css); `App.jsx` + `pods/` stayed project-owned COPIES. The skill App had since evolved hard (dark-mode theming, a new iPhone-17 bezel phone shell), so the project's copied App + pods were a months-old fork = the "legacy view." Linking only chrome wasn't enough.
+
+**Fix — extension seam (supersedes cont-32's "App + pods are project-owned").** The skill `App.jsx` now takes injection props (`extraL1`, `exploreExtraCards`, `initialPod`), all defaulting to the standalone skill proto (so the skill itself is unchanged). A derived project becomes a THIN wrapper:
+- `src/AppBase.jsx` = symlink → skill `App.jsx`. Because Vite resolves a symlinked file's imports against its REAL path (preserveSymlinks:false), AppBase pulls the skill's pods + Explore DIRECTLY — so **all base pods are inherited without being copied into the project**.
+- `src/App.jsx` = thin local wrapper: `<AppBase extraL1={…} exploreExtraCards={[<EntryCard/>]} initialPod="…" />`.
+- Explore L0 gained an `extraCards` slot (after Recharge & bills) for injected entry cards.
+- Project owns ONLY: thin App.jsx, main.jsx, local.css, `pods/<feature>/`, public/assets. Everything else (shell, theme, status bar, nav, all base pods, Explore) inherits live.
+
+Converted insurance-flow as proof: deleted its forked App + all base-pod copies; now it's `App.jsx` (thin) + `AppBase` symlink + `pods/insurance/` (flow + a standalone `InsuranceEntryCard`). Verified: it renders the CURRENT skill app (iPhone-17 bezel, dark-mode toggle, current pods) + the injected Health cover card, and the card opens the Core PDP via the injected L1 route. Asset gotcha: the inherited shell needs the skill's assets (e.g. `iphone17_bezel.png`) → `rsync -a --ignore-existing` skill `public/assets` into the project.
+
+`new-proto.sh` rewritten to scaffold seam-wrappers (thin App + AppBase symlink + feature-only `pods/` + synced assets), so NEW projects can't re-fork. Docs: `reference_web_proto.md` "Shared kit + extension seam".
+
+Lesson: "inherit the design system" wasn't what the user meant by "keep everything the same" — they meant inherit the whole APP. For a proto family where projects = app + one feature, the right unit of inheritance is the entire base app via an injection seam; only genuinely-additive feature code is project-owned.
+
+Source: R24 cont-35, 2026-05-30.

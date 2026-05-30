@@ -11,10 +11,11 @@
 import React from 'react';
 import { motion, useTransform } from 'framer-motion';
 
-// Center x-coordinate of each status bar element in the 393-wide phone screen
-// (iPhone 16 Pro logical width per R24 cont-9).
-const TIME_CENTER = 60;          // "9:41" sits near the left edge
-const ICONS_CENTER = 393 - 60;   // icons cluster sits near the right edge
+// Center x-coordinate of each status bar element in the 402-wide phone screen
+// (iPhone 17 Pro screen cut-out). Used only for per-page colour sampling during
+// a pager drag; the visual L/R position is set by the padding below.
+const TIME_CENTER = 60;          // "9:41" near the left edge
+const ICONS_CENTER = 402 - 62;   // icons cluster near the right edge
 
 const DARK = 'rgba(0,0,0,0.85)';
 const LIGHT = '#FFFFFF';
@@ -132,20 +133,25 @@ export default function MotionStatusBar({ pagerX, pages, pageWidth, time = '9:41
           top: 0,
           left: 0,
           right: 0,
-          height: 54,
+          // Height 40 (not the full 54) so time + icons vertically CENTER on the
+          // Dynamic Island (island center ≈ screen-y 20), not the status area.
+          height: 40,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          paddingLeft: 30,
-          paddingRight: 24,
+          // Canonical iOS status bar (DLS node 6566:58784): time 40px from the
+          // left, icons 30px from the right — balanced inset, matched here.
+          paddingLeft: 40,
+          paddingRight: 30,
         }}
       >
         <motion.div
           style={{
-            fontFamily: "'Rubik', sans-serif",
+            // iOS status bar uses the SYSTEM font (SF Pro), not Rubik — match it.
+            fontFamily: '-apple-system, "SF Pro Text", system-ui, sans-serif',
             fontWeight: 600,
-            fontSize: 17,
-            letterSpacing: '-0.2px',
+            fontSize: 16,
+            letterSpacing: '-0.3px',
             color: timeColor,
             lineHeight: 1,
             width: 84,

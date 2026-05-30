@@ -39,8 +39,9 @@
    commits — during the white→Valentino drag, circles stay slate-tinted and
    legible. */
 .slice-bnav[data-variant='immersive'] {
-  --inactive-bg: rgba(255, 255, 255, 0.30);
-  --inactive-fg: #d30ad7;
+  /* User direction (2026-05-30): inactive medallion = #FFFFFF @ 20%, glyph = black. */
+  --inactive-bg: rgba(255, 255, 255, 0.20);
+  --inactive-fg: #000000;
   --label-color: rgba(255, 255, 255, 0.7);
   --label-color-active: #ffffff;
   --gesture-bar-bg: rgba(255, 255, 255, 0.55);
@@ -163,11 +164,12 @@
    --inactive-fg so each circle's styling matches the page bg under THAT
    specific slot, not the nav as a whole. */
 .slice-bnav-slot[data-slot-variant='immersive'] .slice-bnav-circle {
-  background: rgba(255, 255, 255, 0.30);
-  color: #d30ad7;
+  /* User direction (2026-05-30): medallion #FFFFFF @ 20%, glyph BLACK. */
+  background: rgba(255, 255, 255, 0.20);
+  color: #000000;
 }
 .slice-bnav-slot[data-slot-variant='immersive'] .slice-bnav-balance {
-  color: #d30ad7;
+  color: #000000;
 }
 /* Deselected on white: 10%-black circle bg + WHITE glyph. White glyph reads
    as "punched out" of the slightly-darkened medallion against the white

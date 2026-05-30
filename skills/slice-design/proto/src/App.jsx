@@ -6,9 +6,10 @@
 //   • Banking + Explore page bg → slate-10 so 0.05 alpha card shadows actually show
 
 import React, { useEffect, useState } from 'react';
-import { useMotionValue } from 'framer-motion';
+import { useMotionValue, motion, AnimatePresence } from 'framer-motion';
 import BottomNav from './components/BottomNav.jsx';
-import MotionStatusBar, { DynamicIsland } from './components/StatusBar.jsx';
+import MotionStatusBar from './components/StatusBar.jsx';
+import { MoonIcon, BulbIcon } from './icons/ThemeIcons.jsx';
 import Pager from './components/Pager.jsx';
 import BankingL0 from './pods/banking/L0.jsx';
 import PaymentsL0 from './pods/payments/L0_valentinoHome.jsx';
@@ -61,8 +62,8 @@ const PAGES_BY_POD = {
 };
 
 // Dev control: small bottom-left toggle that flips the proto between light/dark
-// by setting data-theme on the stage. Neutral contrast glyph (slice has no theme
-// icon yet) — swap for a slice glyph if one lands in the DLS.
+// (sets data-theme on the stage). Sun in dark (tap → light), moon in light
+// (tap → dark). White pill so it reads as slice chrome on the white stage.
 function ThemeToggle({ theme, onToggle }) {
   const dark = theme === 'dark';
   return (
@@ -71,107 +72,81 @@ function ThemeToggle({ theme, onToggle }) {
       aria-label={dark ? 'switch to light mode' : 'switch to dark mode'}
       style={{
         position: 'fixed',
-        left: 16,
-        bottom: 16,
+        left: 20,
+        bottom: 20,
         zIndex: 100,
-        width: 40,
-        height: 40,
+        width: 44,
+        height: 44,
         borderRadius: 100,
-        background: dark ? '#1B1B1F' : '#FFFFFF',
-        border: `1px solid ${dark ? 'rgba(255,255,255,0.16)' : 'rgba(0,0,0,0.1)'}`,
-        boxShadow: '0 2px 12px rgba(0,0,0,0.25)',
+        background: '#FFFFFF',
+        border: '1px solid rgba(0,0,0,0.06)',
+        boxShadow: '0px 4px 16px rgba(0,0,0,0.12)',
         cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 0,
+        color: '#171A1F',
         WebkitTapHighlightColor: 'transparent',
       }}
     >
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <circle cx="10" cy="10" r="7" stroke={dark ? '#FFFFFF' : '#171A1F'} strokeWidth="1.6" />
-        <path d="M10 3a7 7 0 010 14z" fill={dark ? '#FFFFFF' : '#171A1F'} />
-      </svg>
+      {/* moon in light (tap → dark), bulb in dark (tap → light) — DLS Objects icons */}
+      {dark ? <BulbIcon /> : <MoonIcon />}
     </button>
   );
 }
 
-// R24 cont-9: real iPhone 16 Pro logical dims — screen 393×852 CSS px.
-// R24 cont-31 FIX: the OUTER chassis MUST equal screen + 2×(total bezel padding),
-// or the fixed-393 screen is wider than the chassis "hole" and the white screen
-// pokes past the black bezel ("screen width bigger than the phone"). Old 402×874
-// with 6+4=10px padding gave a 382-wide hole < 393. Now: FRAME pad 4 + BLACK pad 2
-// = 6px each side → OUTER = 393+12 × 852+12 = 405×864, screen fits exactly with an
-// even 6px bezel.
-const PHONE_OUTER_WIDTH = 405;
-const PHONE_OUTER_HEIGHT = 864;
-const PHONE_WIDTH = 393;
-const PHONE_HEIGHT = 852;
+// Device frame = the iPhone 17 Pro Silver bezel PNG exported from Figma
+// (file cMITYopAqGfe4JC6gIkrIE, node 8402:7). The art is 450×920 with a
+// TRANSPARENT screen cut-out inset ~24px L/R and ~23px T/B (measured from the
+// PNG alpha) → a 402×874 screen. Rim + Dynamic Island + side buttons are baked
+// into the PNG; screen content shows through the transparent cut-out.
+const PHONE_OUTER_WIDTH = 450; // bezel art width
+const PHONE_OUTER_HEIGHT = 920; // bezel art height
+const PHONE_WIDTH = 402; // screen cut-out width
+const PHONE_HEIGHT = 874; // screen cut-out height
+const SCREEN_INSET_LEFT = 24; // rim+bezel thickness L/R (from PNG alpha)
+const SCREEN_INSET_TOP = 23; // rim+bezel thickness T/B
+const SCREEN_RADIUS = 50; // screen corner radius
 
 function PhoneFrame({ children }) {
   return (
-    <div
-      style={{
-        position: 'relative',
-        width: PHONE_OUTER_WIDTH,
-        height: PHONE_OUTER_HEIGHT,
-        flexShrink: 0,
-      }}
-    >
+    <div style={{ position: 'relative', width: PHONE_OUTER_WIDTH, height: PHONE_OUTER_HEIGHT, flexShrink: 0 }}>
+      {/* Screen content sits in the transparent cut-out, BEHIND the bezel art. */}
       <div
         style={{
           position: 'absolute',
-          inset: 0,
-          borderRadius: 62,
-          background: 'linear-gradient(135deg, #2A2D31 0%, #16181B 45%, #1F2125 100%)',
-          padding: 4,
+          top: SCREEN_INSET_TOP,
+          left: SCREEN_INSET_LEFT,
+          width: PHONE_WIDTH,
+          height: PHONE_HEIGHT,
+          borderRadius: SCREEN_RADIUS,
+          overflow: 'hidden',
+          background: 'var(--page-bg)',
+          zIndex: 1,
         }}
       >
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-            borderRadius: 56,
-            background: '#000',
-            padding: 2,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <div
-            style={{
-              width: PHONE_WIDTH,
-              height: PHONE_HEIGHT,
-              borderRadius: 52,
-              overflow: 'hidden',
-              position: 'relative',
-              background: 'var(--page-bg)',
-            }}
-          >
-            {children}
-          </div>
-        </div>
+        {children}
       </div>
-      <div style={sideButtonStyle('left', 130, 32)} />
-      <div style={sideButtonStyle('left', 175, 56)} />
-      <div style={sideButtonStyle('left', 245, 56)} />
-      <div style={sideButtonStyle('right', 175, 96)} />
+      {/* iPhone 17 Pro Silver bezel from Figma — rim + Dynamic Island + side
+         buttons baked in. drop-shadow follows the device silhouette (alpha) so
+         it floats on the white stage. pointer-events:none → taps pass through. */}
+      <img
+        src="/assets/iphone17_bezel.png"
+        alt=""
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 2,
+          pointerEvents: 'none',
+          filter: 'drop-shadow(0px 20px 50px rgba(0,0,0,0.18)) drop-shadow(0px 4px 14px rgba(0,0,0,0.10))',
+        }}
+      />
     </div>
   );
-}
-
-function sideButtonStyle(side, top, height) {
-  return {
-    position: 'absolute',
-    top,
-    [side]: -2,
-    width: 3,
-    height,
-    background: 'linear-gradient(90deg, #0A0B0D 0%, #2A2D31 50%, #0A0B0D 100%)',
-    boxShadow: '0 1px 2px rgba(0,0,0,0.4)',
-    borderRadius: side === 'left' ? '2px 0 0 2px' : '0 2px 2px 0',
-  };
 }
 
 // R23 fix-it-2-cont-9 (corrected): phone stays at native 440×952 or smaller
@@ -214,10 +189,23 @@ function useFitScale(targetWidth, targetHeight, padding = 8) {
 
 const PAGES_META = PODS.map((pod) => ({ pod, variant: STATUS_VARIANT[pod] }));
 
-export default function App() {
-  const [active, setActive] = useState('pay');
-  const [visuallyActive, setVisuallyActive] = useState('pay');
+// EXTENSION SEAM (R24 cont-35): a derived project wraps this App and injects its
+// feature WITHOUT forking — so it inherits the whole shell, theme, and every pod
+// live. Props (all default to the standalone skill proto, so the skill itself is
+// unchanged):
+//   • extraL1            — extra L1 routes merged into the registry ({ name: {Component, slideFrom} })
+//   • exploreExtraCards  — extra full-width cards injected into Explore (after Recharge & bills)
+//   • initialPod         — landing pod (default 'pay' = Valentino home)
+// Usage (project App.jsx): <App extraL1={{insurance:{Component,slideFrom:'right'}}}
+//   exploreExtraCards={[<InsuranceEntryCard/>]} initialPod="explore" />
+export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod = 'pay' } = {}) {
+  const [active, setActive] = useState(initialPod);
+  const [visuallyActive, setVisuallyActive] = useState(initialPod);
   const [theme, setTheme] = useState('light'); // light | dark — flips data-theme on the stage
+  // Theme-switch reveal: flip data-theme instantly, then slide a cover of the
+  // PREVIOUS bg out — up for →dark (dark fades in from the bottom), down for
+  // →light (light fades in from the top). Cleared when the slide finishes.
+  const [themeAnim, setThemeAnim] = useState(null);
   const [l1Open, setL1Open] = useState(false);
   // R24 cont-13: per-pod scroll state lifted up so the 54px status reserve
   // (sitting OUTSIDE each L0 in App.jsx) can paint white when that L0 is
@@ -233,7 +221,7 @@ export default function App() {
 
   // Shared motion value for the page pager's x-translation. Drives:
   // (1) the Pager itself; (2) the StatusBar overlay's per-element color.
-  const pagerX = useMotionValue(-PODS.indexOf('pay') * PHONE_WIDTH);
+  const pagerX = useMotionValue(-PODS.indexOf(initialPod) * PHONE_WIDTH);
 
   const activeIndex = PODS.indexOf(active);
   // In dark theme every pod surface is dark → force the "dark" status/nav variant
@@ -257,6 +245,21 @@ export default function App() {
   const handleNavVisualChange = (pod) => {
     setVisuallyActive(pod);
   };
+  const handleThemeToggle = () => {
+    const goingDark = theme !== 'dark';
+    // Cover = the CURRENT (pre-flip) page bg of the active pod, so the reveal
+    // starts from exactly what's on screen (Pay is V-500 in light, #090B0C dark).
+    const cover =
+      active === 'pay'
+        ? theme === 'dark'
+          ? '#090B0C'
+          : '#D30AD7'
+        : theme === 'dark'
+        ? '#090B0C'
+        : '#FFFFFF';
+    setThemeAnim({ dir: goingDark ? 'toDark' : 'toLight', cover, id: Date.now() });
+    setTheme(goingDark ? 'dark' : 'light');
+  };
 
   // R23 fix-it-2-cont-10: simplified to 2-div scaffold. Outer is the App
   // container — width:100vw height:100vh — visibly the full browser viewport.
@@ -273,7 +276,7 @@ export default function App() {
         inset: 0,
         width: '100vw',
         height: '100vh',
-        background: '#000',
+        background: '#FFFFFF',
         overflow: 'hidden',
         display: 'flex',
         justifyContent: 'center',
@@ -292,7 +295,7 @@ export default function App() {
         <PhoneFrame>
           {/* L1Stack provides useL1() to all descendants. L1 overlays render
              above the L0 pager via AnimatePresence + slide-in motion. */}
-          <L1Stack registry={L1_REGISTRY} onOpenChange={setL1Open}>
+          <L1Stack registry={{ ...L1_REGISTRY, ...extraL1 }} onOpenChange={setL1Open}>
             {/* Horizontal page pager — each page renders FULL HEIGHT (no per-page
                status bar). The slide edge appears top-to-bottom because pages
                span the full phone screen. */}
@@ -349,7 +352,10 @@ export default function App() {
                         }}
                       />
                       <div style={{ flex: 1, minHeight: 0, position: 'relative' }}>
-                        <PodPage onScrollChange={(s) => handlePodScroll(pod, s)} />
+                        <PodPage
+                          onScrollChange={(s) => handlePodScroll(pod, s)}
+                          {...(pod === 'explore' ? { extraCards: exploreExtraCards } : {})}
+                        />
                       </div>
                     </div>
                   );
@@ -366,9 +372,6 @@ export default function App() {
               forceVariant={theme === 'dark' ? 'dark' : l1Open ? 'light' : null}
             />
 
-            {/* Hardware dynamic island */}
-            <DynamicIsland />
-
             {/* Bottom nav floats above pager — pagerX + pages shared so each
                nav slot can compute its own variant based on what's under it */}
             <BottomNav
@@ -380,10 +383,39 @@ export default function App() {
               pagerX={pagerX}
               pages={pagesMeta}
             />
+
+            {/* Theme-switch reveal — flips data-theme instantly, then slides a
+               cover of the PREVIOUS bg out: up for →dark (dark fades in from the
+               bottom), down for →light (light fades in from the top). The soft
+               gradient leading edge makes it read as a fade, not a hard wipe.
+               Sits inside the screen (under the bezel), above pager/status/nav. */}
+            <AnimatePresence>
+              {themeAnim && (
+                <motion.div
+                  key={themeAnim.id}
+                  initial={{ y: '0%' }}
+                  animate={{ y: themeAnim.dir === 'toDark' ? '-100%' : '100%' }}
+                  // Calm, appreciable reveal — slow settle (user: "make it calmer,
+                  // right now it's too fast"). ~1s with a gentle ease-out.
+                  transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
+                  onAnimationComplete={() => setThemeAnim(null)}
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    zIndex: 999,
+                    pointerEvents: 'none',
+                    background:
+                      themeAnim.dir === 'toDark'
+                        ? `linear-gradient(to bottom, ${themeAnim.cover} 78%, transparent 100%)`
+                        : `linear-gradient(to top, ${themeAnim.cover} 78%, transparent 100%)`,
+                  }}
+                />
+              )}
+            </AnimatePresence>
           </L1Stack>
         </PhoneFrame>
       </div>
-      <ThemeToggle theme={theme} onToggle={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))} />
+      <ThemeToggle theme={theme} onToggle={handleThemeToggle} />
     </div>
   );
 }

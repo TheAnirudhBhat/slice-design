@@ -265,7 +265,7 @@ function ExploreSmall({ subtext, title }) {
 }
 
 // ---- Page ----
-export default function ExploreL0({ onScrollChange }) {
+export default function ExploreL0({ onScrollChange, extraCards = [] }) {
   const scrollRef = useRef(null);
   const scrolled = usePageScroll(scrollRef);
   const { push } = useL1();
@@ -311,6 +311,12 @@ export default function ExploreL0({ onScrollChange }) {
           }}
         >
           <BillsCompositeCard />
+
+          {/* Extension slot — project-injected full-width cards (e.g. the insurance
+             "Health cover" entry). Empty in the standalone skill proto. (cont-35) */}
+          {extraCards.map((c, i) => (
+            <React.Fragment key={i}>{c}</React.Fragment>
+          ))}
 
           {/* row 1: Play & win + May spends */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: CARD_GAP }}>
