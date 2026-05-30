@@ -561,3 +561,103 @@ dropdown switches device), NOT a wall of phones. Precondition: pods must be
 width-fluid (`width:100%`, NO hardcoded 393) for reflow to be real.
 Status: deferred per user ("for now keep only 1 phone shell"); build when the
 multi-device review workflow is prioritized.
+
+---
+
+# Operational rules (moved from SKILL.md, 2026-05-30 slim)
+
+The root causes above explain WHY each rule exists; this section is the
+operational WHAT — the workspace layout, the inherit model, the two process
+non-negotiables, and the pre-ship craft checklist. SKILL.md now points here
+instead of inlining all of it.
+
+## Projects INHERIT the skill proto; the skill proto is upstream + READ-ONLY during project work (R24 cont-35/36)
+
+The skill proto (`~/.claude/skills/slice-design/proto/`) is the **single upstream source of truth — the "main".** Every project is a thin wrapper that **inherits the whole proto by default and builds on top of it**, staying live-linked so skill-proto improvements flow down automatically (see `reference_web_proto.md` "Shared kit + extension seam"). Non-negotiables:
+
+1. **Default = inherit everything, build on top.** A new project (`proto/scripts/new-proto.sh`) is born as `App.jsx` (thin wrapper) + `AppBase.jsx` (symlink → skill `App.jsx`) + linked kit + its feature pod(s). Shell, theme, status bar, nav, all base pods, Explore — all inherited live. The project adds its feature via the seam (`extraL1` / `exploreExtraCards` / `initialPod`), never by forking.
+2. **NEVER edit the skill proto to satisfy a project.** While building/exploring a project, the skill proto is **read-only**. A project-specific change goes in the PROJECT. To diverge a shared component, **UNLINK just that component into the project** — `link-kit.sh materialize <project> src/<path>` (e.g. `src/components` or `src/AppBase.jsx`) — copies the skill's current file in so the project owns its copy. The skill proto is untouched; every other project keeps inheriting the original.
+3. **The skill proto changes ONLY via deliberate skill maintenance** — a universal DLS truth (canonical token, fixed chrome bug, motion-pacing rule) promoted on purpose, with a `reference_calibration_log.md` entry. SEPARATE from building a project, never an incidental side-effect. When in doubt whether a change is universal or project-specific: assume project-specific (edit the project), promote to the skill proto only when it's clearly a slice-wide rule the user has confirmed.
+
+Why: a project's copied files silently drift from the evolving skill app → the "legacy view" (cont-35). Inherit-by-default + unlink-only-to-explore keeps every project current and the design system consistent, while protecting the upstream from project churn.
+
+## Two non-negotiables before you write any proto code
+
+Skipping these produces "kinda mid" output that then takes 20 correction rounds to fix (root cause of R24 cont-25→29). Do these every time:
+
+1. **Compose from cache — don't rebuild chrome.** The proto + `references/proto-snapshot/` are a read-through cache of the canonical app. For ANY new screen/flow, COPY the StatusBar / AppBar / Avatar / phone shell / tokens / Primary button from `proto-snapshot/code/` and `proto-snapshot/assets/`. Don't re-hand-build them from memory — that's how you reintroduce already-fixed bugs (cropped wifi, wrong chevron, 52px button, lowercase CTA). If you catch yourself typing `<svg>` for a glyph or `borderRadius` for a button that already exists in the snapshot, STOP and copy.
+2. **Self-audit before you show.** The loop is: fetch canonical → build → **screenshot your own output → compare against canonical side-by-side → fix the diffs → THEN show the user.** The most expensive failures are all things a 10-second self-screenshot catches (font not inheriting, double header, off button height). Never hand the user the first build as if it's done. If the browser is genuinely unavailable, say so and fall back to `npm run build` + a careful manual diff against the snapshot spec — don't silently skip the audit.
+
+When you skip these, you outsource QA to the user one screenshot at a time — the "death by a thousand corrections" anti-pattern. The new-screen pre-flight checklist (cont-30, above) operationalizes both.
+
+## LIVE proto + snapshot — workspace, run, refresh
+
+The slice-app-proto LIVES INSIDE the skill:
+
+```
+~/.claude/skills/slice-design/
+  ├── proto/                    ← LIVE working proto (R23 cont-23)
+  │   ├── src/                    (App, components, icons, pods)
+  │   ├── public/assets/          (canonical PNGs + SVGs from Figma)
+  │   ├── package.json, vite.config.js, etc.
+  │   └── ARCHITECTURE.md
+  └── references/
+      └── proto-snapshot/       ← FROZEN snapshot at R23 cont-22
+          ├── code/, assets/, manifests/, INDEX.md, README.md
+```
+
+**Run the live proto:**
+```bash
+cd ~/.claude/skills/slice-design/proto
+npm install --cache "$TMPDIR/npm-cache-slice-app-proto"   # first time
+npm run dev                                                # default vite port
+```
+Boots to the working R23 state: all 5 pods (Banking, Explore, Pay/Valentino, Credit, Activity), full bottom nav + status bar + page pager, agentation wired (toolbar bottom-right).
+
+**When to use which:**
+- **Editing / iterating** → work in `proto/` (live source; changes are immediate).
+- **Recreating one component elsewhere** → check `references/proto-snapshot/INDEX.md` first (curated catalog with Figma node IDs + calibration-history per item); copy from `proto-snapshot/code/` for the R23 cont-22 known-good baseline.
+- **Researching WHY a line is the way it is** → this file (meta-rules) + `reference_calibration_log.md` (round-by-round audit).
+
+**Refresh cadence:** snapshot is frozen at R23 cont-22 (2026-05-29). Re-snapshot the live proto into `references/proto-snapshot/` when: a major round lands and the user calls the proto "in a decent state"; a new pod / cross-cutting component is added; the asset library grows by 10+ items. Re-snapshot script: re-run the file-copy commands in `meta/INTEGRATION_PLAN.md`.
+
+## Asset reuse — copy first; generate a flagged placeholder only when truly missing
+
+- **Before generating any icon/image/illustration**, check `/Users/anirudhbhat/claude/slice/projects/explore-base/public/assets/` (87 canonical assets: spark / fire / monies / invite-magnet / bill tiles / brand logos / category icons / 3D illustrations / rewards cards). Copy directly (`cp explore-base/public/assets/<file> <proto>/public/assets/`). Never inline-SVG-generate a glyph if a real one exists locally.
+- **ICONS — official ONLY; missing → DUMMY placeholder. NEVER hand-draw / trace / generate an icon.** Official library = Figma DLS 2.0 Copy node `582:257`; most are already in the proto `public/assets/` + `public/assets/icons/`. Theme a monochrome official icon by inlining its EXACT Figma path + `fill:currentColor` (same geometry = still official). (HARD rule — see SKILL.md "Absolute bans".)
+- **ILLUSTRATIONS genuinely missing everywhere** → auto-generate a high-fidelity, slice-accurate, FLAGGED placeholder per `reference_slice_asset_generation.md` (Gemini/Nano-Banana). Flag (`gen_` prefix + `GENERATED_ASSETS.md` entry) mandatory; project-owned, never the linked kit. Generation is for illustrations, NOT icons.
+- Canonical L0 pages reference: file `PNUz3Dr9KSlFJSnsXsC0nL` node `885:19528` (Banking, Explore, Credit, Activity, Profile L0s in one frame).
+
+## Internal nomenclature
+
+- **"Valentino home"** = the Payments L0 brand-immersive screen (#D30AD7 V-500 page with the custom keypad dialer). Internally, the payment screen is the canonical *home* — not Banking. "Valentino home" and "Payments L0" are interchangeable; the former is preferred because it captures both surface identity (V-500) and role (home).
+- **Pay is HOME.** When wiring routing defaults / first-launch flows: Pay is the initial active state, not Banking.
+
+## Cross-cutting craft checklist (run BEFORE marking any L0 done)
+
+Per-component recipes alone don't catch cross-cutting failures. Every L0 build / refactor MUST pass this before claiming done:
+
+1. **Page bg from App.jsx** — outermost L0 div is `background:'transparent'`. `App.jsx PAGE_BG` sets pure WHITE for every non-immersive pod, V-500 for Pay. (Anti-pattern: gray / slate-10 / off-white page bg — slice has zero gray surfaces.)
+2. **L0 wrapper structure** — `<div style={{position:'relative', overflow:'hidden'}}>` → scroll container → BottomFade sibling. Three layers. (Anti-pattern: BottomFade inside scroll container, `order:999` on non-flex parent.)
+3. **BottomFade present on white pages** — Banking / Explore / Credit / Activity all have `<BottomFade color="#FFFFFF" />` (or the pod's bg). Pay does NOT.
+4. **Type tokens from canonical Figma response** — copy the `These styles are contained in the design` block verbatim BEFORE writing components. A token name "h4" is meaningless if its value doesn't match the canonical frame.
+5. **Asset fetched from Figma, not approximated** — every glyph/icon/illustration in JSX fetched from the canonical node (`get_design_context` asset URL or `get_screenshot`). If a fetched asset doesn't render (empty/transparent PNG), re-fetch via `get_screenshot` of the node. (Anti-pattern: shipping an inline SVG approximation because the asset "looked broken".)
+6. **AppBar profile avatar 40×40 with NO outline/ring** — pure 40×40 photo, `border-radius:9999`, no border/wrapper/stroke. Tap-target is the avatar itself. (Valentino is the exception — it keeps a white-30 ring per canonical.)
+7. **Status bar variant + page bg in sync** — every pod in `PAGE_BG` has a matching `STATUS_VARIANT`. Dark variant only on V-500-immersive pods.
+8. **Status bar color logic = CENTER-POINT sampling** — each element's color = the variant of the page whose viewport span contains the element's center x. Hard cut at the page boundary. (Anti-pattern: span-overlap "any dark overlap → LIGHT" — flips white-side icons invisible too early.)
+9. **Phone centering uses 3-layer position:fixed + 50/50 + translate** (or `display:grid; place-items:center` + `useFitScale`). NOT flex-center with transform-scale.
+10. **Failed/pending txn states use corner-badge avatar** (monogram + 16×16 status badge bottom-right). NOT solid-red-circle or amber-ring as the WHOLE avatar.
+11. **Side-by-side canonical Figma check** — list every chrome element from the canonical frame, walk down after build, confirm each visible. Refactors must not silently remove canonical chrome.
+12. **Bottom nav per-slot variant** — each slot tracks the page under ITS viewport center via `useMotionValueEvent` on navX + pagerX, writes `data-slot-variant="immersive"|"standard"`, CSS keys off it. Mid-drag the row is heterogeneous. NEVER a single global nav variant.
+13. **Keypad respects page-padding gutters** — `padding: 0 32px` + `justify-content: space-between` (cont-5 bump from 24px), aligning the keypad cluster.
+14. **Agentation installed + wired** — `package.json` has `agentation@^3.0.2`; `main.jsx` renders `<Agentation />` as a sibling of `<App />`.
+15. **AppBar background prop** — default `transparent` (page bg cascades through). Pods needing a solid bg (e.g. Activity, sticky search below) pass `background="#FFFFFF"` explicitly.
+16. **Explore bento column heights match** — ExploreSmall height = 66 so 2×66 + 16 gap = 148, equal to INVITE card height.
+17. **Phone fit-scale uses ResizeObserver + window resize together** — padding 8, init state inline to avoid flash-of-full-size, rAF-debounced.
+18. **Card drop-shadow visibility** — `0px 4px 24px 0px rgba(0,0,0,0.08)` (was `0 2px 32px rgba(0,0,0,0.05)`, invisible on pure white).
+19. **Bottom nav layout = `display:flex; gap:20px`** (cont-7). NO uniform SLOT_WIDTH grid — it can't give symmetric edge-to-edge with different circle sizes (44 / 64 / 72).
+20. **Phone shell centering uses `display:grid; place-items:center`** + responsive `useFitScale`; scales down below 440×952, native otherwise, always centered.
+21. **Slice DLS icons fetched from canonical nodes**, not approximated. Eye open `586:138`, eye closed `586:132`.
+22. **Valentino app bar canonical (cont-6, node `885:19901`)**: row padding `8px 20px 8px 16px`. LEFT = "Check balance" pill (1px white-20 border, `8/16` padding, 14/20R white). RIGHT cluster (gap 8): audio button (48 hit → 40 circle + 1px white-30 border → 20×20 glyph) + avatar button (48 hit → 40 photo + 1px white-30 border). The Valentino avatar KEEPS its white-30 ring (differs from the no-ring standard rule because canonical shows it).
+
+If any item fails → fix before claiming done, AND surface why the skill didn't catch it earlier (so this checklist gets a new line). See `reference_anti_patterns.md` "R23 fix-it" + `reference_proto_patterns.md` "R23 fix-it" for the failure modes + patterns.

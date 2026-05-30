@@ -1,29 +1,44 @@
 ---
-name: slice asset generation (missing-asset placeholders)
-description: How to GENERATE high-fidelity flagged placeholders when a required icon/illustration is missing on disk — icons via direct SVG few-shot, illustrations via Gemini (Nano Banana) free tier. Auto-invoked during proto builds. Overrides the older "dull dummy circle" + "never generate" rules for PROTO context only.
+name: slice asset generation (missing-illustration placeholders)
+description: How to GENERATE a high-fidelity flagged placeholder when a required ILLUSTRATION is missing on disk (Gemini / Nano Banana free tier), for PROTO context only. ICONS are NOT generated — they are official-only or a dummy placeholder (see SKILL.md "ICONS — official ONLY"). Auto-invoked during proto builds for illustrations.
 type: reference
 ---
 
-> **User-directed override (2026-05-30).** The base skill said: missing asset → dull dummy + flag, and "never generate icon SVGs". The user overruled this for **proto/working context** because dull placeholders make pages read as broken during design review. New policy: missing asset → **generate a high-fidelity, slice-accurate, FLAGGED placeholder**. The flag is non-negotiable — it keeps handoff safe. See calibration log R24 cont-33.
+> **⚠️ ICON GENERATION IS RETIRED (superseded 2026-05-30, later same-day directive).**
+> An earlier 2026-05-30 note (below) let icons be generated via SVG few-shot to avoid
+> dull placeholders. The user **reversed this later the same day**, repeatedly and
+> emphatically: *"only use official icons, if you don't have use dummy icons"*,
+> *"no don't trace wtf, just use the image i gave you"*. **The final, authoritative
+> rule: icons are NEVER generated/traced/hand-drawn — official DLS icon (`582:257`)
+> or a clear DUMMY placeholder, full stop** (SKILL.md "ICONS — official ONLY"). The
+> Icon engine below (§Engine 1) is kept ONLY as a record of the retired harness —
+> do not use it to produce icons for a build.
+>
+> **What still stands: ILLUSTRATION generation.** Big 3D/brand art genuinely missing
+> everywhere → generate a high-fidelity, slice-accurate, FLAGGED placeholder (Engine 2,
+> Gemini/Nano-Banana), proto context only. The flag is non-negotiable — it keeps
+> handoff safe. See calibration log R24 cont-33 (and the icon reversal in this session).
 
 ## Status / action plan (2026-05-30)
 
 | Engine | Status | Notes |
 |---|---|---|
-| **Icons (SVG few-shot)** | ✅ LIVE — validated | Rating game scored 10/12 first-pass, both filled + outline. Two craft fixes baked in. No model/key needed. Use it now. |
+| **Icons (SVG few-shot)** | ⛔ RETIRED — do NOT use | Superseded by the official-only/dummy icon rule (later same-day user directive). The harness scored 10/12 in a rating game and the slice-icon DNA notes below are useful for *understanding* official icons, but icons are no longer generated for builds. Missing icon → official `582:257` or a dummy placeholder. |
 | **Illustrations (Gemini/Nano-Banana)** | ⏸ PARKED — blocked on setup | Spec is written + correct, but generation can't run until: (1) user sets a free `NANOBANANA_API_KEY` from https://aistudio.google.com/apikey, and (2) the nanobanana extension is re-enabled (the `!/Users/anirudhbhat/*` override in `~/.gemini/extensions/extension-enablement.json` disables it; run `gemini extensions enable nanobanana`). Until both are done, fall back to dummy + flag. **Action: when the user provides the key, re-enable + re-run the gem test from an empty dir, then mark LIVE.** |
 
 Stress-test harness lives at `icon-lab/` (in this skill dir): `build_icons.py` (batch generator), `server.py` + `index.html` (the spot-the-bad-ones rating game on :8777), `ratings.jsonl` (verdict log). Reuse it to validate future generation rounds.
 
 ## When this fires (AUTO-INVOKE)
 
-During any `build` / `iterate` / `proto` flow, the asset-resolution order is now:
+During any `build` / `iterate` / `proto` flow, the asset-resolution order is:
 
-1. **Copy** — asset exists in `proto/public/assets/`, the kit, or `explore-base/public/assets/`? Use it directly. (Unchanged — copy always beats generate.)
-2. **Figma** — buildable via a known DLS node? Pull the real vector. (Unchanged.)
-3. **GENERATE (new)** — asset genuinely doesn't exist anywhere? Don't drop a dull dummy. Generate a slice-accurate flagged placeholder per this file.
+1. **Copy** — asset exists in `proto/public/assets/`, the kit, or `explore-base/public/assets/`? Use it directly. (Copy always beats generate.)
+2. **Figma** — buildable via a known DLS node? Pull the real vector.
+3. **Then split by asset type:**
+   - **ICON missing everywhere → DUMMY placeholder** (clear neutral rounded-box) + tell the user where to drop the real file. **Never generate/trace/draw an icon.**
+   - **ILLUSTRATION missing everywhere → GENERATE** a slice-accurate flagged placeholder (Engine 2). Don't ship a dull grey hero.
 
-This is automatic. When you're mid-build and reach for an icon/illustration that isn't on disk, generate it — don't stop to ask, don't ship a grey circle.
+For illustrations this is automatic — mid-build, reach for a missing illustration, generate it (don't stop to ask, don't ship a grey circle). For icons, stop generating: official-or-dummy.
 
 ## HARD guardrails (these keep it safe)
 
@@ -36,9 +51,15 @@ This is automatic. When you're mid-build and reach for an icon/illustration that
 
 ---
 
-## Engine 1 — Icons (direct SVG few-shot) — FREE, instant, no model
+## Engine 1 — Icons (direct SVG few-shot) — ⛔ RETIRED (record only)
 
-Icons need **no image model**. Generate the SVG directly in the slice icon style, derived from the real DLS SVGs on disk.
+> **Do NOT generate icons.** This engine is superseded by the official-only/dummy
+> rule (SKILL.md "ICONS — official ONLY"). The DNA table + craft rules below are
+> retained because they describe what *official* slice icons look like (useful when
+> judging or inlining a real DLS icon) — NOT as a licence to author new ones. Missing
+> icon → official `582:257` or a dummy placeholder.
+
+Icons need **no image model**. (Historical:) the retired harness authored SVGs directly in the slice icon style, derived from the real DLS SVGs on disk.
 
 ### slice icon DNA (derived from `proto/public/assets/icons/*.svg`, 2026-05-30)
 
@@ -65,7 +86,7 @@ Icons need **no image model**. Generate the SVG directly in the slice icon style
    - **Filled** (slice default — the on-disk DLS icons skew filled): inline with text, dense list rows, search/filter/settings chrome, the **active/selected** state of a togglable icon, status/confirmation, brand/emphasis moments. When unsure, default filled.
    - **Outline**: the **inactive/unselected** counterpart of a filled active icon; large hero / empty-state glyphs where a solid fill would read too heavy; lighter secondary affordances. Rule of thumb: if a sibling state is filled, the resting state is outline.
    - If the icon sits in a known DLS component slot, match whatever that component's existing icons use.
-4. **Colour rules still apply — unchanged, both styles.** Generated icons obey the same rules as real DLS icons (see `reference_dls_colors.md` / `reference_dark_mode.md`):
+4. **Colour rules still apply — unchanged, both styles.** Generated icons obey the same rules as real DLS icons (see `reference_dls_colors.md` / `reference_theming.md`):
    - Fill/stroke = `currentColor` or a token var — **never a hardcoded hex**.
    - Slate default `fill-opacity: 0.5`; strong/primary `0.9`; **V-500 `#D30AD7`** only for active/selected/brand glyphs.
    - **Inline SVG only, never PNG** — an icon must recolour and theme light/dark via `currentColor`. A raster icon can't and is banned.
@@ -110,7 +131,7 @@ If any of these isn't satisfied, fall back to dummy + flag and tell the user exa
 1. Pick 2–3 closest existing slice illustrations as **style references** (`explore-base/public/assets/fy_3d_*.png`, `fire_*.png`, etc.) — pass them as reference images so the model anchors on slice's actual 3D/gradient look, not generic clip-art.
 2. Prompt anchored on slice style. Skeleton:
    > "A single 3D-rendered object illustration of `<concept>`, in the style of the reference images: soft purple→pink gradient lighting, glossy rounded 3D forms, subtle glow, transparent background, centered, no text, no background scene."
-3. Request **transparent background** (illustrations with baked backgrounds show as white boxes on dark surfaces — see `reference_dark_mode.md`).
+3. Request **transparent background** (illustrations with baked backgrounds show as white boxes on dark surfaces — see `reference_theming.md`).
 4. Save to `public/assets/gen_<name>.png`, add to `GENERATED_ASSETS.md`.
 5. Honor DLS placement conventions (`reference_dls_illustrations.md`): circle container (V-100 `#F4E5F8` fill) for big center heroes ~120–200px; any reasonable shape for smaller spots, sized to the surface.
 
@@ -125,6 +146,8 @@ If `gemini` isn't authed / image gen is unavailable, fall back to the **base ski
 # Generated placeholder assets — REDRAW before ship (visual team worklist)
 | Asset | Concept | Engine | Created | Status |
 |---|---|---|---|---|
-| public/assets/icons/gen_bell.svg | notification bell | svg-fewshot | 2026-05-30 | placeholder |
 | public/assets/gen_loyalty_orb.png | loyalty 3D orb | nano-banana | 2026-05-30 | placeholder |
+| public/assets/gen_reward_asteroid.png | rewards asteroid hero | nano-banana | 2026-05-30 | placeholder |
 ```
+
+(Only illustrations appear here — icons are never generated, so they never enter this manifest.)

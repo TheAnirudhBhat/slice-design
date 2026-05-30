@@ -165,8 +165,50 @@ Source: cal:2026-05-29 R23 — proto build at `slice/projects/slice-app-proto`. 
 
 ---
 
+## Dark-mode colours — CANONICAL (Figma `6591:60485`, get_variable_defs, 2026-05-30)
+
+The hardest-won rule of the dark build: this **recurred ~10 rounds**. Valentino-light
+and dark mode BOTH resolve to `data-slot-variant='immersive'` (dark theme sets every
+page variant='dark'), so they MUST be split by `data-theme`. The medallion is light;
+the glyph contrasts it. **Active and inactive differ by BOTH chip opacity AND glyph
+colour — NOT "one glyph colour for both".**
+
+| State | Chip (medallion) | Glyph |
+|---|---|---|
+| **Active (selected)** | `Component/Bottom nav/Selected` = **#FFFFFF @ 60%** (`rgba(255,255,255,0.60)`) | **#090B0C** (`Background/Primary`, punched out) — the active icon is dark, NOT white |
+| **Deselected (inactive)** | `Component/Bottom nav/Primary nav bg` = **#FFFFFF @ 20%** (`rgba(255,255,255,0.20)`) | **#FFFFFF (white)** |
+
+- The "page-bg punched out" logic (Valentino light) does **NOT** carry to inactive
+  in dark — a #090B0C glyph on the dark-grey 20% medallion is invisible. **Inactive
+  dark glyphs are white.**
+- CSS: `[data-theme='dark'] .slice-bnav-slot .slice-bnav-circle` →
+  `bg rgba(255,255,255,0.20); color #FFFFFF` (deselected);
+  `[data-theme='dark'] …[data-state='active'] …` →
+  `bg rgba(255,255,255,0.60); color #090B0C`.
+- **Pay scan glyph (PayCenter)** = `currentColor` via `.slice-bnav-pay-inner` color:
+  **V-500 in light, #090B0C in dark**. White ring/inner unchanged.
+
+Glyph colour by context, all four resolved:
+- **Light, white page (standard) inactive** = black-10% chip + slate-40% glyph.
+- **Light, white page active** = white chip + dark-40% glyph.
+- **Valentino (light) inactive** = #FFFFFF@20% chip + V-500 glyph (page-bg punched out).
+- **Dark (either)** = the table above.
+
+⚠️ Churn history: earlier drafts WRONGLY recorded "all dark glyphs #090B0C, active
+chip solid #FFFFFF, deselected chip @30%" — that bad rule kept getting re-applied
+and re-broke the screen. The canonical Figma values above (active chip @60% +
+#090B0C glyph; inactive chip @20% + WHITE glyph) are the source of truth. Pull
+`get_variable_defs` on `6591:60485` if ever in doubt; don't eyeball.
+
+> Nav bg stays TRANSPARENT in every theme (the "Valentino sticking" fix) — see
+> "Nav bg is TRANSPARENT" above. These colours ride on translucent chips over the
+> page bg, so they work on white AND #090B0C without a nav chrome layer.
+
+---
+
 ## Calibration history
 
+- cal:2026-05-30 — **dark-mode colours canonical** (Figma `6591:60485` get_variable_defs). Active chip #FFFFFF@60% + #090B0C glyph; inactive chip #FFFFFF@20% + WHITE glyph; Pay scan glyph V-500 light / #090B0C dark. Corrected a bad earlier draft that kept getting re-applied (~10 rounds of churn). Folded in from the retired reference_dark_mode.md §14.
 - cal:2026-05-29 R23 — append-only R23 rules above. Transparent nav bg, variant-aware glyph/circle, ₹3K balance pill V-500 on immersive, instant bg swap with size-only tween, bidirectional midpoint via `lastEmittedRef`.
 - cal:2026-05-28 R23 — full anatomy rewrite based on building the canonical React component (`slice-app-proto/src/components/BottomNav.jsx`). Replaced R22's sparse spec.
 - cal:2026-05-28 — `nav_active_indicator_style` A pick + reason "pattern is more slice" (active = filled glyph in white circle).

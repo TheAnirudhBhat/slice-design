@@ -85,6 +85,49 @@ Subset of the 6 R19 Payment OS rules (`reference_dls_avatar.md` Avatar backgroun
 | **System / generated txn** (e.g. "Dec savings interest") | CardBG fill + line icon (slate or V-500) |
 | **Bank** (e.g. "HDFC NEFT credit") | **White circle** + bank logo (NOT subtle — banks are external brands; subtle dilutes their mark). Fallback: bank line icon on CardBG. |
 
+> "White circle" above is the **light-mode** read of a THEMED surface chip — see
+> the proto-validated avatar spec below for the dark-safe implementation.
+
+### Transaction list-item STATES — proto-validated (Figma `6577:60247`, 2026-05-30)
+
+Built and signed off in the proto. The status word goes on the **RIGHT, UNDER the
+amount** — **NEVER** as the left subtitle (user: "we don't say pending here"). The
+left subtitle is ALWAYS `<date> · UPI`.
+
+| type | amount colour | status line (right, under amount) |
+|---|---|---|
+| sent | text-primary | — |
+| received | positive (green), **no `+`** | — |
+| failed | text-tertiary | **Failed** (negative red) |
+| pending | text-tertiary | **Pending** (text-secondary) |
+| requested | text-primary | **Requested** (blue-500) |
+
+- Amount = Body Normal 16/24 **Regular (400)** — NOT medium/bold (the party name is
+  the emphasis; the amount is calm).
+- Status line = 12/16 Medium.
+- Failed/pending amounts go **text-tertiary** (de-emphasised) — the coloured status
+  word carries the meaning, not the number.
+
+### Transaction list AVATARS — proto-validated, dark-safe (Figma `6577:60417` / `6569:59190` / dark `6591:60485`)
+
+MIXED avatar kinds on a **THEMED surface chip** (`Avatar tone="chip"`): bg
+`var(--surface)` (white in light, **rgba(255,255,255,0.05) card-bg in dark** — do
+NOT hardcode `#FFFFFF`, that ships a white-fill avatar bug in dark) + faint
+outline-subtle ring + a tertiary monogram letter that themes (dark-grey light →
+light-grey dark). Verified vs dark node `6591:60485` — the discs are subtle dark
+surfaces, NOT white.
+
+| kind | when | treatment |
+|---|---|---|
+| **Photo** | people / contacts | real profile picture, **NO ring** (user: "we don't keep these with an outline ever") → `Avatar tone="plain"` |
+| **Icon** | automated income | official green glyph on the chip: **trend-up** = interest/savings, **recurring** = "fires". Pulled from `6569:59190` → `icons/ActivityIcons.jsx`. Green = `var(--positive)` (themed: #00A63E → #3DBB6C), NOT a constant. |
+| **Monogram** | merchants (no logo) | grey letter `var(--text-tertiary)`, ~size/2 Medium, -0.2px tracking. Brand colour for some (Zomato "Z" = brand red) via Avatar `fg` prop. |
+
+- **Show ALL variations in the proto** — don't ship an all-monogram list; the mix
+  (photo + icon + monogram) is the canonical Activity look.
+- The chip is the single shared `Avatar` primitive (`tone="chip"`); income glyphs
+  theme with the disc because the disc is now a themed surface.
+
 ### What Activity L0 doesn't do
 - ❌ Tabs as filter pattern — slice uses pills, never tabs (cal:2026-05-17 pair 504)
 - ❌ Pills row directly under the search bar — not a slice pattern today (cal:2026-05-18 review-1203 "we don't have pills under search till now")
@@ -316,6 +359,7 @@ Style consistency: real branded illustrations only. Generic line-art is prototyp
 | R17 | 2026-05-27 | Sticky date group headers (pair 1616); search bar resting-state (pair 1614 — icon left + left-aligned placeholder) |
 | R18 | 2026-05-28 | Activity L0 reverified (canonical frame `885:20122`) — **filter button correction: white + outline-subtle + slate glyph** (NOT slate-10 + V-500); pod title capitalisation both forms valid |
 | R19 | 2026-05-28 | **Transaction detail L2 4-state status header recipe** (AVC `2410:22541` 12 frames); Spark Offer callout dark-mode V-700/950 scope; status-coloured caption rule; ❌ card chrome on status header; Avatar background rules in txn context (Payment OS `1115:6700`); status indicators (4 small Avatar variants) cataloged in illustrations |
+| proto | 2026-05-30 | **Proto-validated L0 states + avatars** (Figma `6577:60247` / `6577:60417` / `6569:59190`, dark `6591:60485`). Status word goes RIGHT under the amount (never left subtitle); left subtitle always `<date> · UPI`; amount = Body Normal Regular(400); failed/pending amounts text-tertiary. Avatars = themed `tone="chip"` surface (dark-safe `var(--surface)`, NOT #FFFFFF) with mixed photo(no-ring)/icon(green `var(--positive)`)/monogram kinds. Folded in from the retired reference_dark_mode.md §12+§13. |
 
 ---
 

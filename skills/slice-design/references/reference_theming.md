@@ -1,17 +1,32 @@
-# reference_dark_mode.md — slice dark mode + theme-safe assets
+---
+name: slice-design theming (light/dark) + theme-safe assets
+description: Load for any light/dark theming work — asset theme-safety (icons vs illustrations), dark-mode token values, the CSS-variable theming mechanism, Figma MCP workflow for dark values, proto phone chrome, the theme-switch reveal motion, and the dark-mode component gotchas. Bottom-nav colours live in reference_dls_bottom_nav.md; Activity states/avatars in reference_pod_activity.md.
+type: reference
+---
 
-Distilled from the 2026-05-30 dark-mode build of the proto. Two parts:
-1. **Asset theme-safety** (icons vs illustrations) — the part that bites; get it right up front.
-2. Dark-mode token values + the CSS-variable theming mechanism + Figma refs.
+# slice theming — light/dark + theme-safe assets
+
+Distilled from the 2026-05-30 dark-mode build of the proto. Theming = CSS
+variables: `tokens.js` exports `var(--x)`; `index.css` defines `:root` (light) +
+`[data-theme="dark"]`; the toggle flips `data-theme` on the phone root. Centralising
+colour into `tokens.js` first is what makes dark mode one var-set + routing instead
+of a rewrite.
+
+Two parts bite hardest, in this order:
+1. **Asset theme-safety** (icons vs illustrations) — get it right when you ADD an asset.
+2. Dark-mode token values + the theming mechanism + how to pull dark values from Figma.
+
+> Bottom-nav colours (Valentino light + canonical dark) → `reference_dls_bottom_nav.md`.
+> Activity list-item states + avatars → `reference_pod_activity.md`.
 
 ---
 
 ## 1. Asset theme-safety — ICONS vs ILLUSTRATIONS (read FIRST)
 
 A surface only works in light AND dark if **every asset on it can adapt**. The
-recurring failure (and a mistake made in the R-dark build): treating icons as
-fixed raster PNGs and shipping illustrations with baked backgrounds — they look
-fine in light and become **white boxes / wrong-colour glyphs in dark**.
+recurring failure: treating icons as fixed raster PNGs and shipping illustrations
+with baked backgrounds — they look fine in light and become **white boxes /
+wrong-colour glyphs in dark**.
 
 ### Icons → ALWAYS single-colour SVG with `currentColor`
 - slice icons are **VECTORS** in Figma. Use them as **SVG inlined as a React
@@ -43,11 +58,6 @@ theme-safety when you ADD an asset — not after dark mode "looks broken."
 
 ## 2. Dark-mode tokens (Figma dark L0, node `2017:5795`)
 
-Theming = CSS variables. `tokens.js` exports `var(--x)`; `index.css` defines
-`:root` (light) + `[data-theme="dark"]`; toggle `data-theme` on the phone root.
-Centralising colour into `tokens.js` first is what makes dark mode one var-set
-+ routing instead of a rewrite.
-
 | token | light | dark (✓ from Figma) |
 |---|---|---|
 | page bg (Background/Primary) | #FFFFFF | **#090B0C** |
@@ -59,8 +69,9 @@ Centralising colour into `tokens.js` first is what makes dark mode one var-set
 | negative | #CE1D26 | #DA535A (Red/400) |
 | V-500 (buttons / accent) | #D30AD7 | #D30AD7 (unchanged) |
 
-Bottom nav dark (Figma): Primary nav bg `#ffffff33`, container gradient
-`#00000000 → #090b0c`, Selected `#ffffff99`, **glyphs WHITE** (Text&Icons/On color/Primary = #fff).
+Bottom-nav dark colours are their own thing (active chip @60% + #090B0C glyph;
+inactive chip @20% + WHITE glyph) — see `reference_dls_bottom_nav.md`. Don't
+duplicate them here.
 
 ---
 
@@ -120,8 +131,8 @@ Bottom nav dark (Figma): Primary nav bg `#ffffff33`, container gradient
   "inset" with "middle" — inset is the avatar-list type.
 
 ## 8. ICONS — official-only, never invent (HARD, user-directed 2026-05-30)
-The recurring, anger-inducing failure of this session: **making up icons**
-(hand-drawing bill glyphs, tracing the BHIM-UPI mark into polygons). The rule:
+The recurring, anger-inducing failure: **making up icons** (hand-drawing bill
+glyphs, tracing the BHIM-UPI mark into polygons). The rule:
 - **Use the official slice DLS icon, full stop.** Library = Figma DLS 2.0 Copy
   node **`582:257`**. **Most icons are ALREADY in the proto** (`public/assets/`,
   `public/assets/icons/`, plus `icons/NavIcons.jsx` / `SliceIcons.jsx`) — check
@@ -161,80 +172,7 @@ the active pod (Pay = V-500 light / #090B0C dark). A soft gradient leading edge
 wipe. Timing: **~1.0s, gentle ease-out** — user: "make it calmer, right now it's
 too fast, don't even have time to appreciate it." (Implemented in `App.jsx`.)
 
-## 12. Activity list-item STATES (Figma node 6577:60247)
-The status word goes on the **RIGHT, UNDER the amount** — NEVER as the left
-subtitle (user: "we don't say pending here"). The left subtitle is ALWAYS
-`<date> · UPI`. Per type:
-| type | amount colour | status line (right, under amount) |
-|---|---|---|
-| sent | text-primary | — |
-| received | positive (green), **no `+`** | — |
-| failed | text-tertiary | **Failed** (negative red) |
-| pending | text-tertiary | **Pending** (text-secondary) |
-| requested | text-primary | **Requested** (blue-500) |
-Amount = Body Normal 16/24 **Regular (400)**. Status = 12/16 Medium.
-
-## 13. Activity list AVATARS (Figma node 6577:60417 / 6569:59190)
-MIXED, on a **THEMED surface chip** (Avatar `tone="chip"`): bg `var(--surface)`
-(white in light, **rgba(255,255,255,0.05) card-bg in dark** — do NOT hardcode
-`#FFFFFF`, that ships a white-fill avatar bug in dark) + faint outline-subtle ring
-+ a tertiary letter that themes (dark-grey light → light-grey dark). Income icons
-use `var(--positive)` (themed green: #00A63E → #3DBB6C). Verified vs dark node
-6591:60485 — the discs are subtle dark surfaces, NOT white.
-- **Photo** (people) → real profile picture, **NO ring** (user: "we don't keep
-  these with an outline ever"). Avatar `tone="plain"`.
-- **Icon** (automated income) → official green glyph: **trend-up** = interest,
-  **recurring** = "fires" (pulled from 6569:59190 → `icons/ActivityIcons.jsx`).
-- **Monogram** (merchants) → grey letter (rgba(0,0,0,.5)), 20px Medium, -0.2px;
-  brand colour for some (Zomato "Z" = red, via Avatar `fg` prop).
-Show ALL variations in the proto — don't ship an all-monogram list.
-
-## 14. Bottom-nav colours — Valentino (light) vs dark mode (user direction 2026-05-30)
-Two DIFFERENT contexts that both resolve to `data-slot-variant='immersive'` (dark
-theme sets every page variant='dark'), so they MUST be split by `data-theme`:
-- **Valentino, LIGHT mode** (V-500 page): inactive medallion **#FFFFFF @ 20%**,
-  glyph **V-500 (#D30AD7)** — the page-bg colour "punched out" of the white-alpha
-  medallion (NOT white, NOT black). `[data-variant='immersive']` vars +
-  `[data-slot-variant='immersive'] .slice-bnav-circle`.
-- **DARK mode (CANONICAL — Figma `6591:60485`, get_variable_defs, 2026-05-30).**
-  The medallion is light, the glyph contrasts it. Active and inactive differ by
-  BOTH chip opacity AND glyph colour (NOT "one glyph colour for both"):
-  - **Active (selected):** chip = `Component/Bottom nav/Selected` **#FFFFFF @ 60%**
-    (`rgba(255,255,255,0.60)`), glyph = **#090B0C** (`Background/Primary`, punched
-    out). The active ICON is #090B0C, NOT white.
-  - **Deselected (inactive):** chip = `Component/Bottom nav/Primary nav bg`
-    **#FFFFFF @ 20%** (`rgba(255,255,255,0.20)`), glyph = **#FFFFFF (white)**. The
-    "page-bg punched out" logic does NOT carry to inactive in dark — a #090B0C glyph
-    on the dark-grey 20% medallion is invisible. Inactive dark glyphs are white.
-  - CSS: `[data-theme='dark'] .slice-bnav-slot .slice-bnav-circle` =
-    `bg rgba(255,255,255,0.20); color #FFFFFF` (deselected);
-    `[data-theme='dark'] …[data-state='active'] …` =
-    `bg rgba(255,255,255,0.60); color #090B0C`.
-- **LIGHT mode active** = white chip + dark-40% glyph (canonical). **Valentino
-  (light) inactive** = #FFFFFF@20% + V-500 glyph (punched out). **White-page
-  (standard) inactive** = black-10% chip + white glyph.
-- **Pay scan glyph (PayCenter)** = `currentColor` via `.slice-bnav-pay-inner`
-  color: **V-500 in light, #090B0C in dark**. White ring/inner unchanged.
-- ⚠️ Churn history: this recurred ~10 rounds. Earlier drafts here WRONGLY recorded
-  "all dark glyphs #090B0C, active chip solid #FFFFFF, deselected chip @30%" — that
-  bad rule kept getting re-applied. The canonical Figma values above (active chip
-  @60% + #090B0C glyph; inactive chip @20% + WHITE glyph) are the source of truth.
-  Pull `get_variable_defs` on `6591:60485` if ever in doubt; don't eyeball.
-
-## 15. Bottom-nav background MUST stay TRANSPARENT (pager-drag "sticking")
-`.slice-bnav` is `position:absolute` and does NOT move during a horizontal pod
-swipe — the Pager translates the PAGES under the fixed nav. So ANY fixed nav
-background (solid OR gradient) **sticks**: it holds the prior pod's colour at the
-bottom while the page slides to the next pod (reported live: V-500 retained over a
-half-swiped white Credit). **Keep the nav background transparent.** Each page's own
-bg (+ its `BottomFade`, which lives inside the page) sits behind the nav and moves
-WITH the swipe, so the Valentino↔white change reads **end-to-end** and the gesture/
-home-indicator area is "filled" by the page itself. Do NOT port Figma's per-screen
-"container gradient" onto the live nav element — Figma's is static per frame; the
-live pager needs the fill on the PAGE side, not the nav. (I added a nav gradient to
-"fill the gesture area" → it stuck on drag → reverted. Don't repeat.)
-
-## 16. More dark-mode component gotchas (this session)
+## 12. More dark-mode component gotchas (this session)
 - **Card-corner illustrations** (Banking FD rocket, monies cluster): the Figma node
   bakes a **"Card Background"** rect behind the art → exporting the whole node =
   opaque white box in dark. Use the ILLUSTRATION layer ONLY (transparent): the

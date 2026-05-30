@@ -53,7 +53,7 @@ Re-snapshot the proto into this folder when:
 - Asset library grows by 10+ items.
 - A new cross-cutting rule lands that requires a code-level reference.
 
-To re-snapshot, run the same commands documented in `../../INTEGRATION_PLAN.md` (the plan that produced this snapshot).
+To re-snapshot, run the same commands documented in `../../meta/INTEGRATION_PLAN.md` (the plan that produced this snapshot).
 
 ## Don't
 
