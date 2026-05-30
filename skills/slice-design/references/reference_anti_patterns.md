@@ -15,8 +15,8 @@ Source: cal:2026-05-30 R24 cont-31 ✅
 ### ❌ Card shadow heavy enough to read as a grey wash
 Looks like: card `box-shadow: 0 4px 24px rgba(0,0,0,0.08)` (or heavier). Fine on one card, but on a card-DENSE screen (stacked selection cards, a summary list) the overlapping soft shadows turn the white page greyish — which reads as a grey background (a hard no in slice).
 Why slice doesn't: the canonical float shadow is the SUBTLE `0px 2px 32px 0px rgba(0,0,0,0.05)`; anything heavier breaks the "shadow-on-white IS the float, never grey" rule.
-Do instead: use `0 2px 32px 0.05` for genuinely-floating cards. For SELECTION / list / chooser cards use an OUTLINE (1px border, NO shadow) — the canonical Atom-chooser pattern — so a stack of them stays crisp white.
-Source: cal:2026-05-30 R24 cont-31 ✅
+Do instead: use `0 2px 32px 0.05` for ALL slice cards — content AND selection/chooser cards — the Explore L0 "white-on-white floating" aesthetic. A selection card adds a 2px V-500 border when active (reserve `2px solid transparent` when inactive to avoid layout shift) and KEEPS the shadow. The fix for a too-heavy shadow is the LIGHTER shadow, not removing it: do NOT strip selection cards down to outline-only/shadow-less. (An over-correction earlier in cont-31 did exactly that; the user reversed it — "the white-on-white drop-shadow aesthetic is not coming out, [it] is the aesthetic on the explore cards.")
+Source: cal:2026-05-30 R24 cont-31 (+ correction same round) ✅
 
 ## Brand and copy
 
@@ -241,6 +241,12 @@ Do instead:
 - **Multi-field block** (e.g. Cover amount / Premium / Valid till): stacked rows, label-on-top (Caption 12/16, tertiary) / value-below (Body 16/24, primary), left-aligned, a hairline (`rgba(0,0,0,0.05)`) between each, no surrounding box.
 - **Single total** (e.g. "You pay ₹549/month" above a CTA): label-left tertiary / value-right primary on a single top hairline — the divider anchors it so it doesn't "hang" as bare floating text.
 Source: cal:2026-05-30 R24 cont-31 — user, on the boxed insurance success summary + "You pay" box: "they should not be in a box, data inside a box is a really rare pattern." Canonical: Payment OS 26 node 6910:49952 (file xIc12scqCFBSJ5Kgyd6Krh).
+
+### ❌ Leading a detail/data block with a divider
+Looks like: a flush detail list (or any row group) whose first child is a hairline `<div>`, so the section opens on a rule directly under the hero/heading above it.
+Why slice doesn't: "we don't start this component with a divider ever." Dividers separate sibling rows; a leading divider reads as a stray line. The block is separated from the content above it by WHITESPACE.
+Do instead: hairlines BETWEEN rows only — `Row · hairline · Row · hairline · Row`, no rule before the first row or after the last. (Exception: a fixed footer total above a CTA may carry a single top hairline — that's a region separator between scroll content and the pinned footer, not a list-leading divider.)
+Source: cal:2026-05-30 R24 cont-31 ✅
 
 ### ❌ "Monthly SIP" or active-SIP filters in mutual-funds sections
 Looks like: a chip filter showing "Monthly SIP: ₹5,000"

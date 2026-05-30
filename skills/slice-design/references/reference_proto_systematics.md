@@ -440,11 +440,23 @@ non-negotiable #2).
       prefix on in-app GENERIC features — it's already in the slice app, so
       "Health cover" not "slice health cover". Keep the mark only on named
       sub-products ("slice atom", "slice super card").
-- [ ] **No grey, ever. Cards: outline OR shadow by role.** Page bg = pure white
-      (#FFFFFF) on every non-immersive surface. A SELECTION / chooser card =
-      1px outline (`rgba(0,0,0,0.1)`), no shadow; active = 2px V-500. A floating
-      CONTENT card = white + `0 2px 32px rgba(0,0,0,0.05)` ONLY. Never the heavier
-      `0.08/24px` shadow — it reads as a grey wash and the user calls it "grey."
+- [ ] **No grey, ever. The slice card = white + the canonical drop shadow.** Page
+      bg = pure white (#FFFFFF) on every non-immersive surface. The default slice
+      card — content AND selection/chooser cards alike — is white + `0px 2px 32px
+      0px rgba(0,0,0,0.05)` (the Explore L0 "white-on-white floating" aesthetic).
+      A SELECTION card adds a 2px V-500 border when active (reserve `2px solid
+      transparent` when inactive so there's no layout shift) + a filled radio, and
+      KEEPS the shadow. Do NOT make selection cards outline-only / shadow-less —
+      that was a cont-31 over-correction the user reversed: "the white-on-white
+      drop-shadow aesthetic is not coming out, [it] is the aesthetic on the explore
+      cards." The ONLY shadow ban is the heavier `0.08/24px` — that one reads as a
+      grey wash. Right shadow, not no shadow.
+- [ ] **Never LEAD a data/detail block with a divider.** Hairlines go BETWEEN
+      rows only. Separate a flush detail block from the hero/content above it with
+      WHITESPACE, not a top rule. "we don't start this component with a divider
+      ever." (A footer total above a CTA is the one exception — its single top
+      hairline is a region separator between scroll content and the fixed footer,
+      not a leading divider on a list.)
 - [ ] **Optically center top-heavy blocks PROACTIVELY.** A success / empty /
       confirmation block (big tick/illustration → headline → detail) is top-heavy,
       so a geometric center reads LOW / bottom-biased. Either anchor it near the
