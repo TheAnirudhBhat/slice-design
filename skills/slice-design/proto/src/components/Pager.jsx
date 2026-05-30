@@ -125,6 +125,13 @@ export default function Pager({
             flexShrink: 0,
             overflow: 'hidden',
             position: 'relative',
+            // pan-y = browser owns VERTICAL scroll, but a HORIZONTAL touch gesture is
+            // handed to JS so the framer drag (page swipe) fires. Without this, on
+            // TOUCH the pods' vertical scroll containers swallowed the horizontal
+            // swipe and you couldn't change pods by swiping (mouse-drag still worked,
+            // so it only showed on mobile). Set on every page so all pods swipe, not
+            // just Activity (which had its own pan-y). (cont-38 QA)
+            touchAction: 'pan-y',
           }}
         >
           {child}
