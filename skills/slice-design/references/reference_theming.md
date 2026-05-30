@@ -168,11 +168,14 @@ A **TALL gradient overlay (3× screen) SLIDES top→bottom with a PAUSE**, match
 the user's screen recording 2026-05-30. NOT a pure fade, NOT a fill-and-reveal
 curtain — it is one continuous downward slide that holds in the middle.
 
-- **The overlay rectangle** (`linear-gradient(to bottom, …)`, height `300%`):
-  transparent **trailing** edge (top) → **solid target middle** (`#090B0C` dark /
-  `#FFFFFF` light, ~26–72%) → Valentino **glow leading edge** (bottom, ~`#621FFF`→
-  `#FF55BA`). First stop is 0% opacity (soft edge, user-directed). Same gradient
-  orientation BOTH directions; only the base colour + icon differ (one direction).
+- **The overlay rectangle** (EXACT canonical, Figma `4586:10407`; `linear-gradient(
+  to top, …)`, height `300%`): leading (bottom) end = blue-violet Valentino
+  **`#9341FF` at 0 opacity** → `rgba(98,31,255,0.4)` → **solid target middle**
+  (`#090B0C` dark / `#FFFFFF` light, 30–70%) → **0-opacity target** at the trailing
+  (top) end. **BOTH ends are 0 opacity** and the glow ramps GRADUALLY → NO hard edge.
+  Do **NOT** use magenta/pink (`#FF55BA`) — it produced a hard pink band on screen
+  (user-rejected). The glow is the blue-violet end of Valentino, never pink. Same
+  gradient BOTH directions; only the base colour + icon differ (one direction).
 - **Slide + pause** — `y: ['-100%','-33.333%','-33.333%','33.333%']`, `times
   [0,0.26,0.64,1]`, **~3.2s** easeInOut. `-100%`=fully above (glow edge at screen
   top), `-33.333%`=solid middle exactly covers the screen (the two equal keyframes =
@@ -200,8 +203,10 @@ curtain — it is one continuous downward slide that holds in the middle.
   + `TypeCaption(delay)` + the sliding AnimatePresence overlay; `handleThemeToggle`
   guards re-tap and schedules the mid-pause `data-theme` flip.
 - ⚠️ History (don't resurrect): flat-cover slide → magenta-at-bottom fade →
-  current→valentino→target colour-journey → curtain → plain opacity fade. ALL
-  superseded. Signed-off behaviour is THIS slide-with-pause. Match the live `App.jsx`.
+  current→valentino→target colour-journey → curtain → plain opacity fade → a
+  backdrop-blur phase. ALL rejected. Signed-off + user-validated ("looks beautiful",
+  2026-05-30): THIS slide-with-pause, exact canonical gradient, blue-violet glow,
+  both ends 0 opacity, NO blur. Match the live `App.jsx` REVEAL_SLIDE.
 
 ## 12. More dark-mode component gotchas (this session)
 - **Card-corner illustrations** (Banking FD rocket, monies cluster): the Figma node

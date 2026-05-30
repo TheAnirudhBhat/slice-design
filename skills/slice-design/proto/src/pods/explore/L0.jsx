@@ -184,13 +184,41 @@ function BillsCompositeCard() {
           textAlign: 'left',
         }}
       >
-        <img
-          src="/assets/flame_orange.png"
-          width={40}
-          height={40}
-          alt=""
-          style={{ display: 'block', flexShrink: 0, borderRadius: 100 }}
-        />
+        {/* Get-assured avatar — canonical themed chip (Figma 6599:60900): card-bg
+           surface + outline-subtle ring + a monochrome flame glyph masked to a
+           themed colour. White-chip/dark-flame in light → dark-chip/white-flame in
+           dark. Replaces the baked-white flame_orange.png (showed as a white blob
+           on the dark page). */}
+        <div
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: 100,
+            flexShrink: 0,
+            background: SURFACE,
+            border: `1px solid ${OUTLINE_SUBTLE}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          aria-hidden="true"
+        >
+          <div
+            style={{
+              width: 20,
+              height: 20,
+              backgroundColor: TEXT_PRIMARY,
+              WebkitMaskImage: 'url(/assets/icons/get_assured_flame.svg)',
+              maskImage: 'url(/assets/icons/get_assured_flame.svg)',
+              WebkitMaskRepeat: 'no-repeat',
+              maskRepeat: 'no-repeat',
+              WebkitMaskSize: 'contain',
+              maskSize: 'contain',
+              WebkitMaskPosition: 'center',
+              maskPosition: 'center',
+            }}
+          />
+        </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ ...T.btnSm, color: TEXT_PRIMARY }}>Get assured ₹10</div>
           <div style={{ ...T.caption, marginTop: 2 }}>Reward on 1st bill payment</div>
