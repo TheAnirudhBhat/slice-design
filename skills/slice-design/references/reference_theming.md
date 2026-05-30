@@ -35,6 +35,17 @@ wrong-colour glyphs in dark**.
 - **NEVER use a PNG for an icon.** A PNG can't recolour → it breaks in dark.
 - `<img src="icon.svg">` does NOT recolour either — the SVG must be **inlined**
   so `currentColor` resolves. Inline it (or use a loader that inlines).
+- **Can't inline? Use a CSS MASK (validated 2026-05-30).** DLS icon exports often
+  fill `var(--fill-0, black)` — via `<img>` that falls back to **black** and
+  vanishes on a dark page. Instead of inlining, render the icon as a **CSS mask**:
+  a `<div>` with `mask-image: url(icon.svg)` (+ `-webkit-mask-image`, `mask-repeat:
+  no-repeat`, `mask-size: contain`, `mask-position: center`) and
+  `background-color: <themed token>`. The mask uses the official shape's alpha; the
+  background paints it any theme colour (e.g. `var(--text-tertiary)` = slate→white-50%,
+  `var(--text-primary)` = →white). Keeps the EXACT official geometry, recolours for
+  free, no redraw. Used for Profile menu/close glyphs, App Settings row icons, and
+  the Get-assured flame. This is the go-to when you have the official SVG file but
+  don't want to hand-inline its paths.
 - Before adding ANY icon: check the icon library first
   (`slice-design-suite/icons/<category>/`, proto `public/assets/icons/`), then
   pull the SVG from Figma (vectors export as SVG via a specific frame node-id).

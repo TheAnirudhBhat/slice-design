@@ -661,3 +661,45 @@ Per-component recipes alone don't catch cross-cutting failures. Every L0 build /
 22. **Valentino app bar canonical (cont-6, node `885:19901`)**: row padding `8px 20px 8px 16px`. LEFT = "Check balance" pill (1px white-20 border, `8/16` padding, 14/20R white). RIGHT cluster (gap 8): audio button (48 hit → 40 circle + 1px white-30 border → 20×20 glyph) + avatar button (48 hit → 40 photo + 1px white-30 border). The Valentino avatar KEEPS its white-30 ring (differs from the no-ring standard rule because canonical shows it).
 
 If any item fails → fix before claiming done, AND surface why the skill didn't catch it earlier (so this checklist gets a new line). See `reference_anti_patterns.md` "R23 fix-it" + `reference_proto_patterns.md` "R23 fix-it" for the failure modes + patterns.
+
+---
+
+# Running the proto on a real iPhone (cont-38, 2026-05-30)
+
+## The `100vh` bottom-cutoff (fix it before anything else)
+On iOS Safari `100vh` is the **larger, toolbar-hidden** height, so a stage sized
+`height:100vh` is TALLER than the visible viewport → the phone's bottom (nav + home
+indicator) gets pushed behind the Safari toolbar and looks **cut off**. Fix: size the
+stage `height:100dvh` (dynamic viewport height) and make `useFitScale` read
+`window.visualViewport` (the truly-visible area, which tracks the toolbar) rather than
+`window.innerHeight`. `index.html` viewport meta already needs `viewport-fit=cover`.
+
+## "Device mode" — full-bleed for on-phone (PLANNED, shared, reusable)
+To let a derived project run on a phone (PWA "Add to Home Screen" or an Expo Go +
+react-native-webview shell), add a **device mode** to the shared App (so every project
+inherits it): a flag (`?device=1` / auto-detect `window.ReactNativeWebView` or a
+phone-sized touch viewport) that DROPS the bezel + white stage and renders the active
+app **full-bleed `100dvh`**, **removes the custom StatusBar** (pad the top with
+`env(safe-area-inset-top)` so the real OS status bar sits over empty space), and keeps
+the **bottom safe area transparent** (`env(safe-area-inset-bottom)`, nav gesture strip
+transparent so the system home indicator shows). Note: a WebView wrapper buys little
+over a PWA for a proto (both render the same web app); true-native is an RN rewrite.
+Status: pending the user's PWA-vs-Expo decision.
+
+## App Settings screen + theme toggle wiring (cont-38)
+- **App Settings L1** (canonical Figma "App visual fix" `4594:10703`; built at
+  `pods/profile/AppSettingsL1.jsx`): App bar Standard ("App settings" + chevron-back) +
+  a flat list of List item/Control + List item/Standard rows — Touch ID/Face ID (Active,
+  switch on), Change slice PIN, **Dark mode** (switch), Notification preferences, Logout.
+  Each leading glyph is the official DLS icon on a **themed card-bg chip** (40px,
+  `var(--surface)` + outline-subtle ring) recoloured via **CSS mask** (see
+  `reference_theming.md` §1). Opened from Profile → "App Settings" via `useL1().push`.
+  (The canonical frame's Android status bar + theme bottom-sheet are ignored — the proto
+  uses iOS chrome and the toggle fires the transition directly.)
+- **ThemeContext pattern** (`src/theme-context.js`): App.jsx provides `{ theme,
+  toggleTheme }` around the L1Stack so any L1 screen (the App Settings "Dark mode"
+  switch) can fire the SAME canonical theme-switch transition the dev toggle uses —
+  don't thread theme state through props.
+- **Switch** (DLS): track 40×24 rounded-100, handle 16 white; ON = `var(--positive)`
+  track + handle right (left:20), OFF = `#CFCFCF` track + handle left (left:4). Make the
+  ROW the tap target and the Switch a visual-only child (never nest buttons).
