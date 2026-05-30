@@ -87,7 +87,11 @@
 .slice-bnav-viewport {
   position: relative;
   width: 100%;
-  max-width: 393px; /* full phone width — iPhone 16 Pro logical (R24 cont-9) */
+  max-width: 402px; /* MUST match App.jsx PHONE_WIDTH + BottomNav.jsx PHONE_WIDTH (402,
+                       iPhone-17 bezel). Was a stale 393 (iPhone-16) while the JS slot
+                       math used 402 → the row was positioned for 402 but the viewport
+                       clipped at 393, cutting the edge nav item ~9px before the screen
+                       edge ("last icons cutting off"). Keep all three in sync. (cont-38) */
   margin: 0 auto;
   height: 96px;
   /* CRITICAL: clip horizontally (items sliding off the sides) but ALLOW vertical
