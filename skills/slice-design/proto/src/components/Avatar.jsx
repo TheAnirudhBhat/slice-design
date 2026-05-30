@@ -20,10 +20,11 @@ import React from 'react';
 const TONES = {
   plain:    { ring: 'none',                            bg: 'transparent', fg: null },
   subtle:   { ring: '1px solid var(--outline-subtle)', bg: 'transparent', fg: null },
-  // `chip` = the Activity list avatar: a constant WHITE disc (so it reads on the
-  // dark page too) + a faint outline-subtle ring + dark-grey monogram letter.
-  // Content (photo / icon / letter) sits on white, so its colours don't theme.
-  chip:     { ring: '1px solid var(--outline-subtle)', bg: '#FFFFFF',     fg: 'rgba(0,0,0,0.5)' },
+  // `chip` = the Activity list avatar: a THEMED surface disc (white in light,
+  // rgba(255,255,255,0.05) card-bg in dark — NOT a constant white fill) + a faint
+  // outline-subtle ring + a tertiary monogram letter that themes (dark-grey in
+  // light, light in dark). Verified vs Figma dark node 6591:60485.
+  chip:     { ring: '1px solid var(--outline-subtle)', bg: 'var(--surface)', fg: 'var(--text-tertiary)' },
 };
 
 export default function Avatar({

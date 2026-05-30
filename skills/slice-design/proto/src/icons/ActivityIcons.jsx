@@ -5,7 +5,9 @@
 //   • RecurringIcon → recurring rewards ("Jan fires" / "Dec fires")
 import React from 'react';
 
-const GREEN = '#00A63E';
+// Themed positive (Extended/Text&Icons/Positive): #00A63E light, #3DBB6C dark —
+// the avatar disc is now a themed surface, so the income glyph themes with it.
+const GREEN = 'var(--positive)';
 
 export function TrendUpIcon({ size = 20 }) {
   return (

@@ -175,9 +175,12 @@ subtitle (user: "we don't say pending here"). The left subtitle is ALWAYS
 Amount = Body Normal 16/24 **Regular (400)**. Status = 12/16 Medium.
 
 ## 13. Activity list AVATARS (Figma node 6577:60417 / 6569:59190)
-MIXED, on a constant **white chip** (Avatar `tone="chip"`): bg #FFFFFF + faint
-outline-subtle ring + content coloured for white (so it reads on the dark page
-too — the dark spec shows white discs).
+MIXED, on a **THEMED surface chip** (Avatar `tone="chip"`): bg `var(--surface)`
+(white in light, **rgba(255,255,255,0.05) card-bg in dark** — do NOT hardcode
+`#FFFFFF`, that ships a white-fill avatar bug in dark) + faint outline-subtle ring
++ a tertiary letter that themes (dark-grey light → light-grey dark). Income icons
+use `var(--positive)` (themed green: #00A63E → #3DBB6C). Verified vs dark node
+6591:60485 — the discs are subtle dark surfaces, NOT white.
 - **Photo** (people) → real profile picture, **NO ring** (user: "we don't keep
   these with an outline ever"). Avatar `tone="plain"`.
 - **Icon** (automated income) → official green glyph: **trend-up** = interest,
