@@ -11,6 +11,7 @@ import BottomNav from './components/BottomNav.jsx';
 import MotionStatusBar from './components/StatusBar.jsx';
 import { MoonIcon, BulbIcon } from './icons/ThemeIcons.jsx';
 import Pager from './components/Pager.jsx';
+import DebugPanel from './components/DebugPanel.jsx';
 import BankingL0 from './pods/banking/L0.jsx';
 import PaymentsL0 from './pods/payments/L0_valentinoHome.jsx';
 import ActivityL0 from './pods/activity/L0.jsx';
@@ -310,7 +311,7 @@ const PAGES_META = PODS.map((pod) => ({ pod, variant: STATUS_VARIANT[pod] }));
 //   exploreExtraCards={[<InsuranceEntryCard/>]} initialPod="explore" />
 // NOTE: to OWN a whole pod (swap its L0), a project does that in ITS OWN wrapper by
 // materialising/unlinking the component — NOT via a prop on the upstream skill proto.
-export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod = 'pay' } = {}) {
+export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod = 'pay', debug = false, debugContent = null } = {}) {
   const [active, setActive] = useState(initialPod);
   const [visuallyActive, setVisuallyActive] = useState(initialPod);
   const [theme, setTheme] = useState('light'); // light | dark — flips data-theme on the stage
@@ -319,6 +320,12 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
   // "to light" slides down. `dir` drives the gradient, icon, caption + direction.
   const [themeAnim, setThemeAnim] = useState(null);
   const [l1Open, setL1Open] = useState(false);
+  // Debug panel = the proto's optional SECOND view (right-docked, desktop-only).
+  // It is OPT-IN: only available when `debug` is set — i.e. when a project builds
+  // on this shell (`<App debug debugContent={...}/>`) or, for standalone testing,
+  // the `?debug` URL param. The default skill proto renders the clean app view
+  // only; the debug panel is never invoked unless asked for a project build.
+  const [debugOpen, setDebugOpen] = useState(false);
   // R24 cont-13: per-pod scroll state lifted up so the 54px status reserve
   // (sitting OUTSIDE each L0 in App.jsx) can paint white when that L0 is
   // scrolled. Without this, the cards scrolling under the AppBar visually
@@ -372,6 +379,20 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
     window.setTimeout(() => setTheme(goingDark ? 'dark' : 'light'), 1700);
   };
 
+  // `d` toggles the debug panel — only when debug is enabled (project build).
+  // Ignore while typing in a field.
+  useEffect(() => {
+    if (!debug) return;
+    const onKey = (e) => {
+      if (e.key !== 'd' && e.key !== 'D') return;
+      const t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      setDebugOpen((o) => !o);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [debug]);
+
   // R23 fix-it-2-cont-10: simplified to 2-div scaffold. Outer is the App
   // container — width:100vw height:100vh — visibly the full browser viewport.
   // Inner is the phone chassis at native 440×952 with transform-scale around
@@ -398,6 +419,12 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        // When the debug panel docks on the right, shrink the centering box so the
+        // phone shifts left out from under it (border-box makes paddingRight reduce
+        // the content area rather than overflow). Desktop only.
+        boxSizing: 'border-box',
+        paddingRight: !isMobile && debugOpen ? 360 : 0,
+        transition: 'padding-right 240ms ease',
       }}
     >
       <div
@@ -567,9 +594,42 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
           </ThemeContext.Provider>
         </PhoneFrame>
       </div>
-      {/* Dev-only control — hidden in full-bleed device/mobile view so it reads as a
-         real app (toggle theme there via App Settings → Dark mode). */}
-      {!isMobile && <ThemeToggle theme={theme} onToggle={handleThemeToggle} />}
+      {/* Default app view stays CLEAN. The debug toggle only appears when debug is
+         enabled (project build / ?debug) — never in the standalone skill proto, so
+         it reads as a real app. Theme lives inside the panel; in-app theme is via
+         App Settings → Dark mode. */}
+      {debug && !isMobile && (
+        <button
+          onClick={() => setDebugOpen((o) => !o)}
+          aria-label="toggle debug panel"
+          style={{
+            position: 'fixed', left: 16, bottom: 16, zIndex: 1001,
+            display: 'flex', alignItems: 'center', gap: 6,
+            padding: '6px 12px', borderRadius: 100, cursor: 'pointer',
+            border: '1px solid rgba(0,0,0,0.08)', background: 'rgba(255,255,255,0.92)',
+            backdropFilter: 'blur(8px)', boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+            font: '500 12px Rubik, system-ui, sans-serif', color: '#171A1F',
+          }}
+        >
+          <span style={{ width: 7, height: 7, borderRadius: 100, background: debugOpen ? '#D30AD7' : '#9AA1AB' }} />
+          debug
+        </button>
+      )}
+      <AnimatePresence>
+        {debug && !isMobile && debugOpen && (
+          <DebugPanel
+            pods={PODS}
+            active={active}
+            onJumpPod={handleNavChange}
+            theme={theme}
+            onToggleTheme={handleThemeToggle}
+            phoneInfo={`${PHONE_WIDTH} × ${PHONE_HEIGHT} · scale ${(isMobile ? coverScale : fitScale).toFixed(2)}`}
+            onClose={() => setDebugOpen(false)}
+          >
+            {debugContent}
+          </DebugPanel>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

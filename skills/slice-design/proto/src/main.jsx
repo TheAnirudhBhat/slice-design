@@ -47,9 +47,15 @@ function MaybeAgentation() {
   );
 }
 
+// Standalone skill proto = clean app view. The debug panel (the proto's second
+// view) is OPT-IN: enable it with the ?debug URL param for skill-author testing.
+// A derived project enables it in its own wrapper: <App debug debugContent={...} />.
+const debugEnabled =
+  typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('debug');
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+    <App debug={debugEnabled} />
     <MaybeAgentation />
   </React.StrictMode>,
 );
