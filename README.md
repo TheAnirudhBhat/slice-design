@@ -2,6 +2,12 @@
 
 A suite of Claude Code skills that encode slice's DLS 2.0 design system — plus a working iPhone-16-Pro proto and the calibration loop that keeps the rules honest.
 
+<p align="center">
+  <img src="docs/proto-home.png" alt="slice proto — Pay / Valentino home (the default landing pod)" width="280" />
+  <br/>
+  <sub>The live proto — Pay / Valentino home, the default landing pod. <code>npm run dev</code> (see below).</sub>
+</p>
+
 ## What ships
 
 | Piece | Role |
@@ -45,7 +51,16 @@ npm install
 npm run dev          # serves on http://localhost:8766
 ```
 
-The proto renders inside a real iPhone 16 Pro chassis (393×852 logical screen). Hot reloading on save. Drags between pods swipe horizontally; tap the avatar in any L0's AppBar to open Profile L1; tap a transaction row in Activity to open Transaction Detail L1.
+The proto renders inside a real iPhone 16 Pro chassis (393×852 logical screen) on desktop, and full-bleed (edge-to-edge, no chassis) at phone viewports. Hot reloading on save. Drags between pods swipe horizontally; tap the avatar in any L0's AppBar to open Profile L1; tap a transaction row in Activity to open Transaction Detail L1. (Port 8766; Vite picks the next free port if it's taken.)
+
+### Debug panel — the proto's second view
+
+The proto ships an **opt-in** debug panel: a right-docked design-review surface that is HIDDEN by default, so the default view always reads as a real app. Both views coexist — the clean app, and the debug panel.
+
+- **Standalone:** add `?debug` to the URL (`http://localhost:8766/?debug`), then open it with the `d` key or the corner `debug` pill. The phone shifts left and the panel docks on the right (two side-by-side views).
+- **In a derived project:** the project's own wrapper enables it and injects controls — `<App debug debugContent={<ExplorationControls/>} />`. The panel's built-in theme / pod-jump / device controls come free; `debugContent` is where a project plugs in its section-variant + preset pickers.
+
+This is the reusable exploration-screen framework (`src/components/DebugPanel.jsx` + the `App({ debug, debugContent })` props). Full write-up in `references/reference_project_workflow.md`.
 
 ## Using the build / judge side (`slice-design`)
 
@@ -72,6 +87,7 @@ Before claiming any spec value matches DLS, the skill MUST fetch the published v
 - `reference_anti_patterns.md` — hard "don't do" list + cross-skill conflict table.
 - `reference_motion.md` — named durations, easings, choreographies.
 - `reference_web_proto.md` — how to start a new slice web proto.
+- `reference_project_workflow.md` — how to RUN a multi-round proto engagement: the extension-seam project model, deploy-by-vendoring, the agentation feedback loop, working discipline, and the reusable debug-view / exploration-screen framework.
 
 ## Using the calibration loop (`slice-design-calibrate`)
 
@@ -128,6 +144,7 @@ slice-design-suite/
 │   │       ├── reference_anti_patterns.md
 │   │       ├── reference_motion.md
 │   │       ├── reference_web_proto.md
+│   │       ├── reference_project_workflow.md     ← how to run a proto engagement + debug-panel framework
 │   │       ├── reference_dls_screen_layouts.md
 │   │       ├── reference_dls_<component>.md     ← 30+ component specs
 │   │       ├── feedback_*.md                    ← workflow / process rules
@@ -153,6 +170,8 @@ slice-design-suite/
 ## Status
 
 Calibrated through **2026-05-29 R24 cont-23** — full L1 routing scaffold (Profile, Transaction Detail), iPhone 16 Pro phone size (393×852), white-on-scroll AppBar+status reserve, drag-vs-click guard on swipeable list rows, canonical avatars (44×44 visual / 48×48 hit, no ring), canonical-fetch-first meta-rule. 100+ promoted rules. Active development.
+
+**2026-06-02** — added the project-workflow reference (`reference_project_workflow.md`), the opt-in debug-panel / exploration-screen framework in the proto (`DebugPanel.jsx` + `App({ debug, debugContent })`), and velocity-aware pager momentum.
 
 ## License
 
