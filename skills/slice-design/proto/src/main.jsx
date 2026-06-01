@@ -55,7 +55,7 @@ const debugEnabled =
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App debug={debugEnabled} />
+    <App debug={debugEnabled} initialDebugOpen={debugEnabled} />
     <MaybeAgentation />
   </React.StrictMode>,
 );

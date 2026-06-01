@@ -311,7 +311,7 @@ const PAGES_META = PODS.map((pod) => ({ pod, variant: STATUS_VARIANT[pod] }));
 //   exploreExtraCards={[<InsuranceEntryCard/>]} initialPod="explore" />
 // NOTE: to OWN a whole pod (swap its L0), a project does that in ITS OWN wrapper by
 // materialising/unlinking the component — NOT via a prop on the upstream skill proto.
-export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod = 'pay', debug = false, debugContent = null } = {}) {
+export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod = 'pay', debug = false, debugContent = null, initialDebugOpen = false } = {}) {
   const [active, setActive] = useState(initialPod);
   const [visuallyActive, setVisuallyActive] = useState(initialPod);
   const [theme, setTheme] = useState('light'); // light | dark — flips data-theme on the stage
@@ -325,7 +325,9 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
   // on this shell (`<App debug debugContent={...}/>`) or, for standalone testing,
   // the `?debug` URL param. The default skill proto renders the clean app view
   // only; the debug panel is never invoked unless asked for a project build.
-  const [debugOpen, setDebugOpen] = useState(false);
+  // `initialDebugOpen` lets a caller deep-link straight into the open debug view
+  // (e.g. main.jsx opens it when `?debug` is present).
+  const [debugOpen, setDebugOpen] = useState(initialDebugOpen);
   // R24 cont-13: per-pod scroll state lifted up so the 54px status reserve
   // (sitting OUTSIDE each L0 in App.jsx) can paint white when that L0 is
   // scrolled. Without this, the cards scrolling under the AppBar visually

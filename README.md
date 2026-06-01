@@ -3,9 +3,9 @@
 A suite of Claude Code skills that encode slice's DLS 2.0 design system — plus a working iPhone-16-Pro proto and the calibration loop that keeps the rules honest.
 
 <p align="center">
-  <img src="docs/proto-home.png" alt="slice proto — Pay / Valentino home (the default landing pod)" width="280" />
+  <img src="docs/proto-debug.png" alt="slice proto in the iPhone 16 Pro shell with the opt-in debug panel open" width="660" />
   <br/>
-  <sub>The live proto — Pay / Valentino home, the default landing pod. <code>npm run dev</code> (see below).</sub>
+  <sub>The live proto — Pay / Valentino home in the iPhone 16 Pro shell, with the opt-in debug panel open (the proto's second view, via <code>?debug</code>). <code>npm run dev</code> (see below).</sub>
 </p>
 
 ## What ships
