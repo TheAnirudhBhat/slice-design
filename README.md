@@ -19,6 +19,16 @@ A suite of Claude Code skills that encode slice's DLS 2.0 design system — plus
 
 The three pieces ship together. Use the proto as the source of truth for any "what does a slice screen look like in code?" question.
 
+## How this skill is used
+
+Invoke `slice-design` for **any** slice design or build work — designing or auditing a screen in Figma, building or iterating a web proto, judging "is this slice?", or applying DLS 2.0 tokens, components, motion, and brand voice. It self-routes via sub-commands (`build` / `iterate` / `judge` / `audit` / `recipe` / `proto` / `motion` / `explore` / `calibrate`) — you don't have to name them; just describe the slice work.
+
+**When it's invoked to create a project, it keeps referring back to the skill by default.** A project built on slice-design inherits the app shell + base pods (the extension-seam model — see `references/reference_project_workflow.md`) and stays anchored to DLS: every screen, component, token, motion, and copy decision is checked against the skill unless you explicitly say otherwise.
+
+- **Exploration is encouraged** for genuinely new surfaces or products — propose novel layouts, compositions, and motion.
+- **HARD rules stay locked even while exploring.** New ideas are styled *with* slice-design, not away from it: lowercase "slice", the V-500 + sanctioned palette, Rubik, no gray surfaces, no emoji, and the calibrated component styling all still apply. The skill's "Working modes — hard rules, soft rules, exploration" section (top of `SKILL.md`) defines the line.
+- **Drop the DLS anchor only when explicitly asked** ("ignore DLS here", "free-form this one"). Absent that, slice-design remains the reference for every component's styling.
+
 ## Precedence (non-negotiable)
 
 When working on slice, **slice-design wins** on any contradiction with `impeccable`, `design-motion-principles`, `frontend-design`, `taste-skill`, `brand-guidelines`, or any other design skill. Calibrated overrides inside `references/` win over baseline rules in `SKILL.md`.
