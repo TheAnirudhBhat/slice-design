@@ -17,7 +17,7 @@ Web-based companion to `slice-design`. Seeds visual design questions into the ca
 - `~/claude/slice/projects/dls-calibration/` — calibration web app (Vite + React, port 8766)
 - `~/claude/slice/projects/dls-calibration/data/log.jsonl` — append-only pick log (auto-saved per answer)
 - `~/claude/slice/projects/dls-calibration/data/parking_lot.jsonl` — "need more info" queue
-- `~/claude/slice/projects/dls-calibration/data/attachments/<session>/` — reference images
+- `~/claude/slice/projects/dls-calibration/data/attachments/<session>/` — reference images (FALLBACK only — prefer a Figma link, see Step 1)
 - `~/claude/slice/projects/dls-calibration/src/pairs.json` — pair definitions
 - `~/.claude/skills/slice-design/references/reference_calibration_log.md` — audit trail
 - `~/.claude/skills/slice-design/references/reference_*.md` — target ref files
@@ -58,6 +58,18 @@ console.log('added', newPairs.length, 'pairs');
 If pairs need new visual renders, add React variants to `src/mockups/Round<N>Variants.jsx` and register in `src/mockups/registry.jsx`.
 
 After seeding: "Seeded N pairs. Refresh the page."
+
+### Reference material — ask for a Figma link, NOT an image
+
+When a pair (or a review screen) needs a real slice reference, **ask the user for a Figma link and fetch the canonical via the official Figma MCP** (`get_design_context` / `get_screenshot` / `get_variable_defs`) — do NOT ask them to attach a screenshot. The skill has canonical Figma access now; a link gives exact specs + the real rendered frame. The `data/attachments/` image path is a **fallback only** (the user has a photo, not a Figma node).
+
+### Mockup compliance — seed only slice-correct mockups (R19 lesson)
+
+A calibration mockup that breaks the skill's OWN rules produces frustration + off-topic "neither"s, not signal (R19 burned most of its 10 pairs this way). Before seeding, every mockup MUST:
+- Run clean against `reference_anti_patterns.md` — e.g. **NO section-header / divider directly under the App bar.**
+- Use a **status-bar-reserved AppBar** — the app bar sits BELOW the status bar, never inside it. Fix `src/dls/primitives.jsx` if its AppBar lacks the ~54px status reserve.
+- Use **canonical assets** (`slice-design-suite/illustrations/`, e.g. `dls_success_tick`), never a hand-drawn glyph.
+- Vary EXACTLY ONE axis between A and B; everything else identical.
 
 ### Step 2 — User walks through (no gate)
 

@@ -95,7 +95,8 @@ Don't load all references at once. Read on demand. **Per-pod aggregator files ar
 | Theming / dark mode | `references/reference_theming.md` (dark tokens, icon-vs-illustration theme-safety, CSS-var mechanism, Figma dark refs, theme-switch motion, dark gotchas). Bottom-nav dark colours → `reference_dls_bottom_nav.md`; Activity states/avatars → `reference_pod_activity.md`. |
 | Composing a full screen layout | `references/reference_dls_screen_layouts.md` (every L0/L1/L2/empty/error recipe) |
 | Anti-pattern check before shipping | `references/reference_anti_patterns.md` |
-| Specific component spec | `references/reference_dls_<component>.md` (~30 files: appbar, avatar, buttons, button_group, cards, chips, accordion, badge, bottom_nav, bottomsheet, carousel, controls, corner_radius, colors, dialer, dividers, dot_indicator, elevation, error_states, file_upload, footer_header, iconography, input_field, list_items, pills, pin_field, progress, search, section_header, slider, snackbar, spacing, tabs, tags, tooltip, top_header, user_action_banners) |
+| Verifying a spec matches DLS (before asserting any value) | `references/reference_canonical_fetch.md` (R24 meta-rule — fetch the published variant via Figma MCP; never eyeball a screenshot) |
+| Specific component spec | `references/reference_dls_<component>.md` (~40 files: appbar, avatar, amount_display, buttons, button_group, cards, chips, accordion, badge, bottom_nav, bottomsheet, carousel, controls, corner_radius, colors, dates_time, dialer, dividers, dot_indicator, elevation, error_states, file_upload, footer_header, iconography, input_field, list_items, phone_shell, pills, pin_field, progress, search, section_header, slider, snackbar, spacing, tabs, tags, tooltip, top_header, user_action_banners) |
 | Motion vocabulary | `references/reference_motion.md` |
 | Performance / accessibility / craft / exploration / project-memory | the same-named `references/reference_<topic>.md` (`_performance`, `_accessibility`, `_craft_principles`, `_exploration_patterns`, `_project_memory`) |
 | Calibrated digest (single-page rule index — STALE since 2026-05-21) | `references/reference_calibrated_digest.md` (regenerate via /update-slice-design) |
@@ -110,8 +111,8 @@ When the user opens a task with one of these verbs (or types them), follow the m
 |---|---|---|---|
 | `build [screen]` | Build | Plan → resolve gallery IDs → 1 `use_figma` call → screenshot verify | this file + `feedback_*.md` + relevant `reference_dls_*.md` |
 | `iterate [frame]` | Build | Clone existing frame, swap props for variants — never hand-build elements | `feedback_reuse_existing.md` |
-| `judge [frame]` | Evaluate | "Is this slice?" review against calibrated rules + anti-patterns | `reference_calibrated_digest.md`, `reference_anti_patterns.md` |
-| `audit [frame]` | Evaluate | Walk every calibrated rule against the frame, list violations | `reference_calibrated_digest.md` |
+| `judge [frame]` | Evaluate | "Is this slice?" review against calibrated rules + anti-patterns | `reference_anti_patterns.md` + the topical `reference_dls_*.md` for the surface + `reference_calibration_log.md` (live source of truth). The `reference_calibrated_digest.md` is **STALE since 2026-05-21 — do not rely on it** |
+| `audit [frame]` | Evaluate | Walk every calibrated rule against the frame, list violations | `reference_anti_patterns.md` + topical `reference_dls_*.md` + `reference_calibration_log.md` (digest is stale — see judge) |
 | `recipe [screen-type]` | Build | Return the calibrated recipe (L0 / balance L1 / confirm / pay / etc.) | `reference_dls_screen_layouts.md` |
 | `proto [name]` | Build | Scaffold a new slice web proto with DLS primitives | `reference_web_proto.md` |
 | `motion [target]` | Enhance | Apply slice motion choreography (Spark reveal, push left/right, campaign-pill reveal) | `reference_motion.md` |
