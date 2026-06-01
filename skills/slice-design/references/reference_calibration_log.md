@@ -1858,3 +1858,27 @@ User: "clean up any mess… any project we don't need anymore, anything redundan
 Lesson: a code review on the canonical proto is high-leverage — every derived project inherits these files, so a drifted constant or a dark-mode-broken util multiplies across projects. Fix the provably-safe findings (dead code, contained bugs); defer structural/cosmetic ones that need visual verification rather than risk the upstream.
 
 Source: R24 cont-37, 2026-05-30.
+
+### 2026-06-02 · R19 (calibration web round — 10 high-signal pairs; 11 answered)
+
+10 fresh pairs seeded targeting judgment calls (debit colour, L0 density, hero radius, row chevron, success immersion, sheet grabber, CTA anchor, merchant avatar, empty state, CTA copy). Outcome: **~1 net-new refinement; the rest re-confirmed existing rules — and the dominant signal was that the MOCKUPS violated slice's own rules.**
+
+**Promoted (new axis):**
+- `success_screen_immersion` → **white / restrained, NOT a V-500 full-bleed celebration** (pick B, "B is better"). Written to `reference_dls_screen_layouts.md` § Payment confirmation. Also re-asserted: use the canonical `dls_success_tick` asset, never a hand-drawn check.
+
+**Re-confirmed (already calibrated — no new write):**
+- `bottom_sheet_grabber` pick A → confirms R20 "Payment/Information sheets HAVE a handle."
+- `l0_section_gap` pick A (16px) → confirms the 16px L0 inter-card gap rule.
+- "we never have a divider right below the app bar" (reason on `merchant_avatar_style`) → confirms the existing anti-pattern "❌ list section header directly after App bar."
+- `promo_card_radius` pick A (16/M) → confirms M is the default card radius.
+
+**Dropped:** silent "neither" on `empty_state_treatment`, `activity_debit_amount_color`, `cta_amount_in_label`; reasonless pick on `tappable_row_chevron`; `cta_anchor_short_screen` "neither — we never have it like this" (both options rejected, no positive signal). `review_txn_detail` "issues" → the mockup diverged from the canonical txn-detail page the user had provided.
+
+**META-LESSON (the important one): calibration mockups MUST themselves obey the skill's rules, or the round is noise.** The R19 mockups broke established rules and the user's reasons were dominated by those bugs, not the design questions:
+1. The calibration `AppBar` primitive renders with NO status-bar reserve → the app bar sat "inside" the status bar ("the app bar is inside the status bar… what is wrong with you"). Real rule (app bar BELOW the status bar) is already HARD; the mockup violated it.
+2. `SectionHeader` placed directly under the `AppBar` in several mockups → the exact "❌ list header directly after App bar" anti-pattern.
+3. Hand-drew a green check instead of the canonical `dls_success_tick`; ignored the canonical txn-detail page the user provided → violated canonical-fetch-first / asset-reuse.
+
+**RULE for future calibration rounds:** before seeding, run every mockup through `reference_anti_patterns.md` + use canonical assets (`slice-design-suite/illustrations/`, e.g. `dls_success_tick`) and a status-bar-reserved AppBar. A mockup that isn't itself slice-compliant produces frustration + off-topic "neither"s, not calibration signal. Fix the calibration `dls/primitives.jsx` AppBar (add the 54px status reserve) before the next round.
+
+Source: R19 calibration web round, 2026-06-02. 11 picks; 1 promoted, 4 confirmed, 6 dropped/noise.

@@ -294,6 +294,7 @@ These recipes consolidate the per-screen patterns confirmed during R11 review wi
    - "**Paid ₹X,XXX**" H2 (verb + amount, never "Payment sent")
 3. NO body explanation paragraph — the title is the receipt
 4. CTAs bottom-anchored: Primary "Done" + Text "Share receipt"
+5. Surface is **WHITE / restrained — NOT a full-bleed V-500 celebration.** Reserve brand immersion (V-500) for the Pay home; the success screen is a calm white receipt. The tick is the canonical grainy-gradient asset (`dls_success_tick`), never a hand-drawn check. Source: cal:2026-06-02 R19 — `success_screen_immersion` pick B ("B is better") + the tick-asset-reuse reason. ✅
 
 ### Empty Rewards (with leaderboard)
 1. App bar Standard with chevron back + "Rewards" + trailing utility (bulb / tip icon) + **trailing slice currency pill** showing accumulated balance
