@@ -220,6 +220,42 @@ For slice: GAP = 24px (canonical Banking dock gap). 5 items × (44 inactive) + 4
 
 ---
 
+## Root cause #17: nested horizontal carousels vs the page — scroll/swipe arbitration is THREE separate gates, not one
+
+**Symptom (recurred ~5 rounds, explore-base R25)**: a horizontal carousel inside the scrolling pod (rewards strip, bills carousel, For-You hero deck) either (a) swallowed VERTICAL scroll so the page wouldn't move when a finger/cursor was over it, or (b) a horizontal swipe/drag on it slid the whole POD instead of scrolling the carousel ("the whole page moves first"). Each "fix" addressed one gate and missed the others, so it kept coming back.
+
+**Why it kept happening**: there are THREE independent mechanisms routing the gesture, and they must ALL be correct. Fixing one (e.g. touch-action) leaves the others broken — and the *wrong* touch-action value actively makes it worse.
+
+**PERMANENT RULE — for every horizontal carousel (`.no-page-swipe`) inside a vertically-scrolling pod that lives in a framer page-pager, set all three:**
+
+1. **`touch-action: pan-x pan-y`** — NOT `pan-x`. `pan-x` alone *blocks* vertical scroll for touches that start on the element (the opposite of intuition). `pan-x pan-y` lets the carousel pan horizontally AND lets a vertical drag chain up to the page scroller. (Touch-only; irrelevant to mouse/wheel.)
+2. **`overscroll-behavior-x: contain`** — NOT `overscroll-behavior: none`. `none` blocks scroll-CHAINING on BOTH axes, so a vertical wheel/drag over the carousel never reaches the page scroller — that's why it failed on desktop wheel too, not just touch. `contain` keeps horizontal overscroll inside the carousel (no page-swipe at the boundary) while letting vertical chain to the page.
+3. **The framer page-pager must NOT auto-drag from a carousel.** framer's `drag="x"` starts a drag on pointerdown REGARDLESS of touch-action (touch-action gates touch, not mouse/pointer) — so a mouse/touch drag starting on a carousel slides the whole pod. Fix: `dragListener={false}` + `useDragControls`, and in `onPointerDown` start the drag manually ONLY if `!e.target.closest('.no-page-swipe')`. Do NOT use `stopPropagation` to block it — React-17 root delegation means that kills the carousel's own handlers (the deck-drag regression).
+
+Mnemonic: **touch-action = which axes the browser may pan (set both); overscroll-behavior = whether a scroll chains to the parent (contain-x, allow-y); framer drag = a separate pointer-drag that ignores both (gate it by target).**
+
+---
+
+## Root cause #18: iOS standalone-PWA safe-area (status bar / notch) — env() is conditional, and you can't reproduce it headless
+
+**Symptom (recurred ~4 rounds)**: the app-bar title sat under the Dynamic Island on a real iPhone PWA; a flat `54px` status reserve was overrun by the ~59px notch.
+
+**Why it kept happening**: headless Chrome / Playwright report `env(safe-area-inset-top)` as **0** (no notch), so the real-device geometry is NOT reproducible locally — every fix was reasoned, not seen. And `env()` only returns a real inset under specific conditions.
+
+**PERMANENT RULE**:
+> `env(safe-area-inset-top)` is non-zero in an iOS PWA only with BOTH `<meta name="viewport" content="…viewport-fit=cover">` AND `<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">` (translucent = content paints under the bar; without it iOS lays content below the bar and env=0). Given both: reserve the bar with **`max(54px, env(safe-area-inset-top, 0px))`**; for a bleed app-bar pulled up under the reserve, pad its title by **`max(env(safe-area-inset-top, 0px) + 8px, 54px)`**. The `54px` floor leaves desktop (env=0) unchanged; the `env` term grows to the device notch on PWA. Apply the SAME reserve formula in the skill proto's `App.jsx` AND any derived project's `AppBase.jsx` — they drifted (skill was a flat `54`).
+
+---
+
+## RULE: for scroll / gesture / positioning bugs, VERIFY IN A REAL BROWSER — don't reason from the CSS
+
+**Why**: across the explore-base scroll saga I shipped 3 reasoned-but-wrong fixes in a row. The behaviour only became clear once I drove the running proto with Playwright — measured `scrollTop` before/after a real `mouse.wheel`, walked the ancestor chain with `elementFromPoint`, and ran a real `mouse.down → move → up` drag to see which element actually moved. Each measured test took one round and was unambiguous; each prior guess took a round and was wrong.
+
+**PERMANENT RULE**:
+> Scroll-chaining, touch-action, overscroll-behavior, framer-drag arbitration, and app-bar/safe-area positioning are NOT reliably predictable by reading styles — too many interacting gates. Reproduce in the running proto: synthesize the ACTUAL gesture (`mouse.wheel`, stepped `mouse` drag) and MEASURE the result (`scrollTop`, `getBoundingClientRect`, `elementFromPoint` ancestor walk). One measured test beats three reasoned guesses. (Only exception: the real-device iOS notch — headless reports env=0, so reason that one and confirm on-device.)
+
+---
+
 ## Pre-build checklist (run before writing ANY L0 component)
 
 1. ☐ `get_design_context` on the canonical Figma node. Save the response.
@@ -716,3 +752,50 @@ over the screen's top reserve. Desktop keeps the bezel + contain-fit.
 - **Switch** (DLS): track 40×24 rounded-100, handle 16 white; ON = `var(--positive)`
   track + handle right (left:20), OFF = `#CFCFCF` track + handle left (left:4). Make the
   ROW the tap target and the Switch a visual-only child (never nest buttons).
+
+## RULE (R23 explore-base loop, 2026-06-02): `env(safe-area-inset-*)` is UNRELIABLE in this proto — use FIXED FLOORS, not bare env math
+
+On the user's **installed iOS PWA**, `env(safe-area-inset-top)` and
+`env(safe-area-inset-bottom)` measured as **~0** even with the correct meta tags
+(`viewport-fit=cover` + `apple-mobile-web-app-status-bar-style=black-translucent` +
+`apple-mobile-web-app-capable`). Likely causes: the phone screen is rendered inside a
+`transform: scale()` wrapper, and/or a stale standalone install. Net effect: any
+clearance written as `max(54px, env(...))` or `calc(env(...) + Npx)` collapses to its
+small fallback and the chrome jams against the Dynamic Island / home indicator.
+
+**The fix that finally worked: bake the desired gap into a FIXED FLOOR that already
+clears a Dynamic Island (~59px), and treat env as a bonus that only grows it.**
+
+- **Top (status reserve + any bleed app-bar title):** `max(88px, calc(env(safe-area-inset-top, 0px) + 28px))`
+  on mobile → ~29px gap below a 59px island whether or not env resolves. Desktop stays
+  flat `54px` (matches the MotionStatusBar overlay). Applied to: the App.jsx status
+  reserve, the explore-pod bleed pull (so heroes still reach y=0 — keep these in lockstep),
+  and the bleed app-bar `padding-top`.
+- **Bottom (nav):** the leftover gap is the button row CENTERING inside the 96px
+  `.slice-bnav-viewport`, NOT padding — shrink the viewport (e.g. 80px) + symmetrise
+  `.slice-bnav-slot` padding to pull the active button to ~8px above the screen bottom.
+  Carry the OS indicator via `.slice-bnav-content { padding-bottom: max(0, env-bottom - slot) }`
+  or just `env-bottom`. The fake home-indicator gesture band is `display:none` on
+  `@media (max-width:600px),(display-mode:standalone)` (OS draws its own).
+- **Can't reproduce headless** (Chrome reports env=0 too), so you cannot verify the gap
+  locally — reason from the floor, ship, and have the user re-test on the real PWA (and
+  REOPEN the installed PWA, not refresh — it caches hard).
+
+## RULE (R23 explore-base loop, 2026-06-02): kill vertical rubber-band on page scrollers with `overscroll-behavior-y: none`
+
+`overscroll-behavior: contain` only stops scroll CHAINING to the parent — it does NOT
+remove the elastic bounce at the top/bottom of the element itself. To remove the
+vertical over-scroll the user sees, every full-height pod scroller (`overflowY:auto`)
+needs **`overscroll-behavior-y: none`** (the 4 L0 pods + the explore `.screen-scroll`).
+`#root { overscroll-behavior: none }` only covers the viewport, not the inner scrollers.
+Keep it `-y` only so a horizontal swipe still reaches the Pager's framer drag.
+
+## RULE (R23 explore-base loop, 2026-06-02): a light bleed hero that reads as "in the status bar" should NOT be a bleed variant
+
+The default For-You **P** (light pink mesh) was in the bleed set, so it pulled up UNDER
+the status bar — the user read this as "goes into the top part of the screen." Dark
+heroes (F/N/L) bleeding under the status bar look intentional (white status icons over
+dark art); a LIGHT hero bleeding into the notch just looks like a mis-positioned top
+edge. Fix: drop it from `heroBleed` so it aligns to the content top edge (below the
+reserve). It can still keep a transparent app bar (so the title floats over the mesh) —
+the bleed (pod pull) and the transparency (isGradientFY) are independent switches.

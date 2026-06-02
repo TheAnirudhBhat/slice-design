@@ -312,6 +312,7 @@ export default function ExploreL0({ onScrollChange, extraCards = [] }) {
           fontFamily: 'Rubik, sans-serif',
           overflowY: 'auto',
           overflowX: 'hidden',
+          overscrollBehaviorY: 'none', // no vertical rubber-band (user, 2026-06-02)
           touchAction: 'pan-y', // horizontal swipe → Pager on touch (see cont-38)
           display: 'flex',
           flexDirection: 'column',
