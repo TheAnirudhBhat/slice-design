@@ -12,6 +12,9 @@
 
 .slice-bnav {
   position: absolute;
+  /* Flush to the bottom of the phone screen. Mobile bottom breathing room is set
+     in the @media block below via .slice-bnav-content padding (NOT a bottom
+     offset), tuned so the buttons sit low but the drop-shadow still clears. */
   bottom: 0;
   left: 0;
   right: 0;
@@ -362,15 +365,30 @@
    as too much empty space at the bottom (user, 2026-06-02). */
 @media (max-width: 600px), (display-mode: standalone) {
   .slice-bnav-gesture { display: none; }
-  /* Tight bottom gap on mobile (user: keep halving → ~8px). The leftover space was
-     the button row centering inside the 96px viewport (~20px under the active
-     button), so shorten the viewport and symmetrise the slot padding: the 64px
-     active button now sits ~8px above the screen bottom. Plus the OS safe-area
-     inset where it resolves (≈0 on this PWA). NOTE: at 8px the active button's
-     drop-shadow clips slightly at the screen edge — intended trade-off for tightness. */
-  .slice-bnav-viewport { height: 80px; }
+  /* Mobile bottom gap: buttons sit ~32px above the screen bottom — low, but with
+     room so the active button's drop-shadow ISN'T clipped. (env(safe-area-inset-
+     bottom) resolves to ~34px once the WebView sets viewport-fit=cover, which
+     pushed the nav too high → use a fixed 24px.) BottomFade (bottom:0) keeps the
+     area below opaque. */
+  /* Shadow-clip fix (iOS WebKit): the L/R fade mask (mask-clip:border-box) AND
+     overflow-x:clip both crop the active button's drop-shadow to the box. `no-clip`
+     and single-axis overflow are NOT reliably honoured on iOS WebKit, so instead of
+     fighting the clip we make the shadow sit physically INSIDE the box:
+       • box-sizing:content-box keeps height:80 as the row area → items center exactly
+         as before, nothing moves.
+       • padding-bottom extends the border-box (= the mask-clip + overflow region) down
+         well past the shadow.
+       • the matching negative margin-bottom makes the element occupy only 80px of flow,
+         so the nav's on-screen position is unchanged.
+     Robust regardless of WebKit's mask-clip / overflow-axis behaviour. */
+  .slice-bnav-viewport {
+    box-sizing: content-box;
+    height: 80px;
+    padding-bottom: 48px;
+    margin-bottom: -48px;
+  }
   .slice-bnav-slot { padding-bottom: 8px; }
-  .slice-bnav-content { padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .slice-bnav-content { padding-bottom: 24px; }
 }
 
 /* Tap feedback */

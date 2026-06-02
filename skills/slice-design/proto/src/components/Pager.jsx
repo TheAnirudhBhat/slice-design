@@ -78,6 +78,10 @@ export default function Pager({
   return (
     <motion.div
       drag="x"
+      // Lock to the first-detected drag axis: a vertical-intent drag (e.g. on a
+      // pod with no vertical scroll) no longer leaks its small horizontal
+      // component into the pager, so the page stops sliding L/R on a vertical drag.
+      dragDirectionLock
       dragConstraints={{ left: minX, right: maxX }}
       dragElastic={0.08}
       dragMomentum={false}

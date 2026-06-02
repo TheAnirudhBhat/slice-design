@@ -463,7 +463,7 @@ export default function BankingL0({ onScrollChange }) {
           <MoniesCard balanceHidden={balanceHidden} />
         </div>
       </div>
-      <BottomFade color="var(--page-bg)" height={200} bottom={12} />
+      <BottomFade color="var(--page-bg)" height={200} bottom={0} />
     </div>
   );
 }

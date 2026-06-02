@@ -395,7 +395,7 @@ export default function ActivityL0({ onScrollChange }) {
           ))}
         </div>
       </div>
-      <BottomFade color={COLORS.pageBg} height={200} bottom={12} />
+      <BottomFade color={COLORS.pageBg} height={200} bottom={0} />
     </div>
   );
 }
