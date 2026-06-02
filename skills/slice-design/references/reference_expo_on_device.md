@@ -35,9 +35,12 @@ import { WebView } from 'react-native-webview';
 const PROTO_URL = 'http://192.168.1.7:8788'; // proto over LAN (npm run dev -- --host)
 
 // Injected into the page: (1) viewport-fit=cover so env(safe-area-*) resolves;
-// (2) kill overscroll; (3) lift the bottom nav off the edge + clip ONLY horizontally
-// so the button shadow shows; (4) sample the top bg every 250ms and tell native
-// whether the iOS status-bar icons should be dark (light pods) or light (V-500).
+// (2) kill overscroll; (3) sample the top bg every 250ms and tell native whether
+// the iOS status-bar icons should be dark (light pods) or light (V-500).
+// Do NOT inject bottom-nav CSS here — the proto owns its mobile nav layout
+// (BottomNav.css @media max-width:600px / display-mode:standalone). Injected CSS
+// only re-applies on a FULL WebView reload (Fast Refresh keeps the old page), and
+// the iOS shadow-clip fix needs box-sizing/padding that belongs in the proto. See gotcha #7.
 const INJECT = `
 (function(){
   try {
@@ -46,9 +49,7 @@ const INJECT = `
     var st = document.createElement('style');
     st.textContent =
       'html,body{overscroll-behavior:none!important;}' +
-      '*{overscroll-behavior:none!important;}' +
-      '.slice-bnav{bottom:16px!important;}' +
-      '.slice-bnav-viewport{overflow-x:clip!important;overflow-y:visible!important;}';
+      '*{overscroll-behavior:none!important;}';
     document.head.appendChild(st);
   } catch(e){}
   function lum(c){
@@ -106,8 +107,10 @@ const styles = StyleSheet.create({
 4. **Edge-to-edge.** iOS WebView auto-insets for the status bar / home indicator (white bands). Kill with `contentInsetAdjustmentBehavior="never"` + `automaticallyAdjustContentInsets={false}`, and inject `viewport-fit=cover` so `env(safe-area-*)` resolves.
 5. **Status-bar icon colour must track the pod** (HARD rule): black on white pods, white on the V-500 Valentino pod. The OS bar is RN-controlled, the pod is in the WebView → inject a luminance probe → `postMessage` → `expo-status-bar` `style`.
 6. **Top gap / app bar too low.** The proto's mobile status reserve was over-padded (`max(88px, env+28)`). Use the real inset: **`max(44px, env(safe-area-inset-top, 0px))`** in the proto's `App.jsx` reserve (with viewport-fit=cover injected so env resolves).
-7. **Bottom nav: shadow clipped + too much bottom space.** `.slice-bnav-viewport{overflow:hidden}` (horizontal dock clip) also cut the button shadow; an env-based lift over-raised it. Fix via injected CSS: `.slice-bnav{bottom:16px}` (buttons ~32px off the bottom) + `.slice-bnav-viewport{overflow-x:clip;overflow-y:visible}`.
+7. **Bottom nav: shadow clipped + too much bottom space.** Two separate things, both fixed IN THE PROTO (`BottomNav.css`, `@media (max-width:600px), (display-mode:standalone)`) — *not* by injection (injected CSS only re-applies on a full WebView reload, and this needs box-sizing/padding):
+   - *Position:* no `bottom:` offset, and don't lean on `env(safe-area-inset-bottom)` — once viewport-fit=cover is injected it resolves to ~34px and over-raises the nav. Set the gap with `.slice-bnav-content { padding-bottom: 24px }` → buttons sit ~32px off the screen edge.
+   - *Shadow clip:* the dock's horizontal clip (`overflow-x:clip`) **and** the L/R fade mask (`mask-clip:border-box`) both crop the active button's drop-shadow. **iOS WebKit does NOT honour `mask-clip:no-clip` or single-axis `overflow:clip`** — so "just clip horizontally" doesn't work (this cost 3 rounds). Instead make the shadow sit physically inside the box: `.slice-bnav-viewport { box-sizing:content-box; height:80px; padding-bottom:48px; margin-bottom:-48px }`. The padding grows the clip+mask region downward past the shadow; the negative margin cancels it in flow so the nav doesn't move; `height:80px` keeps the items centered exactly as before.
 8. **Overscroll.** `bounces={false}` (WebView prop) + injected `overscroll-behavior:none` kills vertical + horizontal rubber-band.
 
 ## Limits (when to graduate to Path B)
-The WebView re-skins the web proto: gestures/motion are the web's, and safe-area handling is patched with injected CSS reaching into the proto's internals (fragile across proto changes). Off-network needs public hosting. **Path B (native RN rewrite)** owns the status bar, safe areas, and nav layout natively — no probes, no injected CSS.
+The WebView re-skins the web proto: gestures/motion are the web's, and the status bar is kept in sync by a JS luminance probe + postMessage (not native). The proto itself owns its mobile layout — the `@media (max-width:600px), (display-mode:standalone)` blocks handle the bottom-nav position/shadow, the status reserve, and hiding the fake gesture bar — so the injected CSS is now minimal (viewport-fit + overscroll only). Off-network needs public hosting. **Path B (native RN rewrite)** owns the status bar, safe areas, and nav layout natively — no probes, no injected CSS.
