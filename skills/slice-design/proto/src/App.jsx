@@ -501,7 +501,7 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
                       <div
                         style={{
                           height: isMobile
-                            ? 'max(44px, env(safe-area-inset-top, 0px))'
+                            ? 'max(76px, calc(env(safe-area-inset-top, 0px) + 16px))'
                             : '54px',
                           flexShrink: 0,
                           background: reserveBg,
