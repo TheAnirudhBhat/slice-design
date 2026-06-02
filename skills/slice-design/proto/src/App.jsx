@@ -489,12 +489,20 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
                         flexDirection: 'column',
                       }}
                     >
-                      {/* 54px status-bar reserve — paints white on scroll for
-                         non-Pay pods so the cards scrolling under the AppBar
-                         don't visibly bleed past it. */}
+                      {/* Status-bar reserve — paints white on scroll for non-Pay
+                         pods so cards scrolling under the AppBar don't bleed past it.
+                         Desktop/web: flat 54px to match the MotionStatusBar overlay.
+                         Mobile (real device / WebView / iOS standalone): the REAL top
+                         safe-area inset (env), floored at 44px for when env under-
+                         resolves. The earlier max(88, env+28) over-padded — the app
+                         bar sat too far below the status bar. env gives the exact
+                         status-bar / Dynamic-Island height when viewport-fit=cover is
+                         set (the Expo WebView injects it). */}
                       <div
                         style={{
-                          height: 54,
+                          height: isMobile
+                            ? 'max(44px, env(safe-area-inset-top, 0px))'
+                            : '54px',
                           flexShrink: 0,
                           background: reserveBg,
                           // Instant (no transition): must opacify with the AppBar so
