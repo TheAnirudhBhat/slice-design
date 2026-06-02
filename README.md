@@ -72,6 +72,18 @@ The proto ships an **opt-in** debug panel: a right-docked design-review surface 
 
 This is the reusable exploration-screen framework (`src/components/DebugPanel.jsx` + the `App({ debug, debugContent })` props). Full write-up in `references/reference_project_workflow.md`.
 
+### On a real phone (Expo Go)
+
+To feel the proto **edge-to-edge on a real phone**, wrap it in a thin Expo app (Path A): a one-screen Expo project whose only view is a full-bleed `react-native-webview` pointing at the proto over your LAN. This buys true edge-to-edge plus an OS status bar whose icons track the on-screen pod (black on the white pods, white on the V-500 Valentino home) — neither of which an installed PWA managed reliably.
+
+```bash
+cd skills/slice-design/proto && npm run dev -- --host   # serve the proto LAN-exposed (note the Mac's IP + port)
+# then in the Expo app: set PROTO_URL to http://<mac-lan-ip>:<port>, run `npx expo start` (Metro on :8081),
+# and scan the QR with the iOS Camera (phone + Mac on the same wifi).
+```
+
+The Expo app isn't part of this repo — **`references/reference_expo_on_device.md`** has the drop-in `App.js`, the scaffold, and every solved gotcha: the SDK-must-match-Expo-Go pin (the first thing that bites), the status-bar luminance probe, the edge-to-edge WebView flags, and the iOS bottom-nav shadow-clip fix (`box-sizing` + padding + negative margin, because WebKit ignores `mask-clip:no-clip`).
+
 ## Using the build / judge side (`slice-design`)
 
 Triggers:
@@ -98,6 +110,7 @@ Before claiming any spec value matches DLS, the skill MUST fetch the published v
 - `reference_motion.md` — named durations, easings, choreographies.
 - `reference_web_proto.md` — how to start a new slice web proto.
 - `reference_project_workflow.md` — how to RUN a multi-round proto engagement: the extension-seam project model, deploy-by-vendoring, the agentation feedback loop, working discipline, and the reusable debug-view / exploration-screen framework.
+- `reference_expo_on_device.md` — view the proto **edge-to-edge on a real phone** via Expo Go (Path A WebView wrapper): the drop-in `App.js`, LAN + SDK-pin setup, status-bar colour sync, and every solved on-device gotcha.
 
 ## Using the calibration loop (`slice-design-calibrate`)
 
@@ -155,6 +168,7 @@ slice-design-suite/
 │   │       ├── reference_motion.md
 │   │       ├── reference_web_proto.md
 │   │       ├── reference_project_workflow.md     ← how to run a proto engagement + debug-panel framework
+│   │       ├── reference_expo_on_device.md        ← view the proto edge-to-edge on a real phone (Expo Go)
 │   │       ├── reference_dls_screen_layouts.md
 │   │       ├── reference_dls_<component>.md     ← 30+ component specs
 │   │       ├── feedback_*.md                    ← workflow / process rules
@@ -181,7 +195,7 @@ slice-design-suite/
 
 Calibrated through **2026-05-29 R24 cont-23** — full L1 routing scaffold (Profile, Transaction Detail), iPhone 16 Pro phone size (393×852), white-on-scroll AppBar+status reserve, drag-vs-click guard on swipeable list rows, canonical avatars (44×44 visual / 48×48 hit, no ring), canonical-fetch-first meta-rule. 100+ promoted rules. Active development.
 
-**2026-06-02** — added the project-workflow reference (`reference_project_workflow.md`), the opt-in debug-panel / exploration-screen framework in the proto (`DebugPanel.jsx` + `App({ debug, debugContent })`), and velocity-aware pager momentum.
+**2026-06-02** — added the project-workflow reference (`reference_project_workflow.md`), the opt-in debug-panel / exploration-screen framework in the proto (`DebugPanel.jsx` + `App({ debug, debugContent })`), and velocity-aware pager momentum. Also: **view the proto edge-to-edge on a real phone via Expo Go** (`reference_expo_on_device.md`) plus the on-device fixes it surfaced — mobile bottom-nav position + drop-shadow clip, `dragDirectionLock` (no L/R drift on a vertical drag), and an opaque bottom safe-area (`BottomFade bottom:0`).
 
 ## License
 
