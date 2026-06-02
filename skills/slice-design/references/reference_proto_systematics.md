@@ -726,6 +726,11 @@ imperceptible), and the **custom StatusBar is hidden** so the real OS status bar
 over the screen's top reserve. Desktop keeps the bezel + contain-fit.
 - **Decision (2026-05-30): PWA, not Expo.** A react-native-webview wrapper buys nothing
   over a PWA for a proto (both render the same web app); true-native is an RN rewrite.
+  **Revisited 2026-06-02 — Expo Path A was built and proved worth it.** An installed PWA
+  still couldn't get reliable edge-to-edge + status-bar colour control on the user's phone;
+  the Expo WebView wrapper nails both (RN-driven `expo-status-bar` + `contentInsetAdjustment
+  Behavior=never`). So the wrapper DOES buy something a PWA can't: native chrome control.
+  Full how-to in `reference_expo_on_device.md`. (Path B / full RN rewrite still deferred.)
 - **PWA bits** (so "Add to Home Screen" launches chrome-less): `public/manifest.webmanifest`
   (`display:standalone`) + `<meta apple-mobile-web-app-capable>` + `viewport-fit=cover`.
 - **Deploy:** Vercel → Root Directory `skills/slice-design/proto`, framework preset Vite.
@@ -772,11 +777,19 @@ clears a Dynamic Island (~59px), and treat env as a bonus that only grows it.**
   reserve, the explore-pod bleed pull (so heroes still reach y=0 — keep these in lockstep),
   and the bleed app-bar `padding-top`.
 - **Bottom (nav):** the leftover gap is the button row CENTERING inside the 96px
-  `.slice-bnav-viewport`, NOT padding — shrink the viewport (e.g. 80px) + symmetrise
-  `.slice-bnav-slot` padding to pull the active button to ~8px above the screen bottom.
-  Carry the OS indicator via `.slice-bnav-content { padding-bottom: max(0, env-bottom - slot) }`
-  or just `env-bottom`. The fake home-indicator gesture band is `display:none` on
-  `@media (max-width:600px),(display-mode:standalone)` (OS draws its own).
+  `.slice-bnav-viewport`, NOT padding — shrink the viewport (80px) + symmetrise
+  `.slice-bnav-slot` padding. **Position (cont/2026-06-02): buttons sit ~32px above the
+  screen bottom — NOT 8px.** 8px clipped the active button's drop-shadow at the edge; set
+  the gap with a FIXED `.slice-bnav-content { padding-bottom: 24px }`, NOT `env-bottom`
+  (under viewport-fit=cover env resolves to ~34px and over-raises the nav). **Shadow clip
+  (the part 8px hid): the viewport's L/R fade mask (`mask-clip:border-box`) + `overflow-x:
+  clip` both crop the shadow, and iOS WebKit ignores `mask-clip:no-clip` + single-axis
+  `overflow:clip`** — so grow the box past the shadow instead: `.slice-bnav-viewport {
+  box-sizing:content-box; height:80px; padding-bottom:48px; margin-bottom:-48px }` (the
+  negative margin cancels it in flow, so nothing moves). Detail + the general technique in
+  `reference_expo_on_device.md` gotcha #7 and the rule at the foot of this file. The fake
+  home-indicator gesture band is `display:none` on `@media (max-width:600px),(display-mode:
+  standalone)` (OS draws its own).
 - **Can't reproduce headless** (Chrome reports env=0 too), so you cannot verify the gap
   locally — reason from the floor, ship, and have the user re-test on the real PWA (and
   REOPEN the installed PWA, not refresh — it caches hard).
@@ -799,3 +812,41 @@ dark art); a LIGHT hero bleeding into the notch just looks like a mis-positioned
 edge. Fix: drop it from `heroBleed` so it aligns to the content top edge (below the
 reserve). It can still keep a transparent app bar (so the title floats over the mesh) —
 the bleed (pod pull) and the transparency (isGradientFY) are independent switches.
+
+## RULE (Expo on-device loop, 2026-06-02): a clip/mask that crops a child's drop-shadow — grow the box, don't disable the clip
+
+When a container both **clips** (`overflow:clip/hidden`) or **masks** (`-webkit-mask-image`,
+e.g. the bottom-nav L/R fade) AND holds a child with a `box-shadow` (the active dock
+button), the shadow gets cropped to the box. The obvious escapes **don't work on iOS
+WebKit**: `mask-clip:no-clip` is ignored, and single-axis `overflow-x:clip; overflow-y:
+visible` is treated as clipping BOTH axes. (Cost 3 rounds of guessing before the user's
+PNG made it obvious.)
+
+**Fix that holds everywhere — make the shadow sit physically INSIDE the box, then cancel
+the size in flow:**
+```css
+.box {
+  box-sizing: content-box;  /* height stays the visible row area -> items don't reflow */
+  height: 80px;
+  padding-bottom: 48px;     /* grows the border-box (= clip + mask region) past the shadow */
+  margin-bottom: -48px;     /* cancels the growth in layout -> on-screen position unchanged */
+}
+```
+`box-sizing:content-box` is the load-bearing bit (keeps `height` = the row area); the
+padding extends the clip/mask region downward; the negative margin means the element still
+occupies only its original height in flow. General — any masked/clipped container with a
+shadowed child, not just the nav.
+
+## RULE (Expo on-device loop, 2026-06-02): on a real phone a PNG screenshot is GROUND TRUTH — headless Chrome and injected CSS will mislead you
+
+Extends "verify in a real browser" to on-device work:
+- **Headless Chrome misrenders the mobile cover-scale** (`useFitScale` cover math + `100dvh`),
+  so its screenshot does NOT match the phone — never tune mobile geometry against it.
+- **WebView-injected CSS only re-applies on a FULL reload.** Fast Refresh / HMR keeps the OLD
+  injected page, so an injected "fix" silently isn't live. Therefore **mobile/standalone
+  layout belongs in the proto's own `@media (max-width:600px),(display-mode:standalone)`
+  blocks, NOT in the Expo wrapper's injected CSS** — the wrapper injects only viewport-fit +
+  overscroll + the status-bar probe.
+- When a mobile layout bug is reported, **ask for a power+volume PNG screenshot** — the user's
+  HEIC shares can't be converted locally (sips/qlmanage/imagemagick all failed), and one real
+  PNG ended a multi-round guessing loop instantly. See `reference_expo_on_device.md`.
