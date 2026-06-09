@@ -8,6 +8,8 @@ type: reference
 
 The fastest way to *feel* a slice web proto on a real phone, edge-to-edge, with no native rewrite. This is **Path A: a tiny Expo app whose only screen is a full-bleed WebView** pointing at the running web proto over the LAN. (**Path B** = a true React Native rewrite — native gestures + native safe areas; do that when the wrapper's limits bite.)
 
+> **EXPLICIT-ONLY — do not default to this.** Only set up or run the Expo on-device flow when the user explicitly asks for it ("run expo", "expo slice", "on my phone", "in Expo Go", "on-device"). It needs a phone, a matching Expo Go SDK, two dev servers, and a shared network it can't always get (corporate wifi / VPN frequently block it). For ANY other "run / open / view the proto" request, the default is the **local web proto** (`npm run dev`) opened **with the debug view** (`localhost:<port>/?debug` — base proto + debug panel side by side). Reach for Expo only on an explicit on-device request.
+
 ## The model
 - **Two dev servers on the Mac:**
   - Proto (Vite), LAN-exposed: `npm run dev -- --host --port 8788` → reachable at `http://<mac-lan-ip>:8788` (`ipconfig getifaddr en0`).

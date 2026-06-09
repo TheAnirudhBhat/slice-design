@@ -14,6 +14,9 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+// Shared dev-chrome control primitives (Group/Chip/palette) live in
+// ControlPanel.jsx — single source for the debug panel + playground.
+import { C, Group, Chip } from './ControlPanel.jsx';
 
 const POD_LABELS = {
   banking: 'Banking',
@@ -23,41 +26,6 @@ const POD_LABELS = {
   activity: 'Activity',
 };
 
-const C = {
-  bg: '#FFFFFF',
-  border: '#E6E9ED',
-  text: '#171A1F',
-  textDim: '#6B7280',
-  chipBg: '#F2F4F7',
-  chipActiveBg: '#171A1F',
-  chipActiveText: '#FFFFFF',
-  accent: '#D30AD7',
-};
-
-function Group({ title, children }) {
-  return (
-    <div style={{ marginBottom: 20 }}>
-      <div style={{
-        fontSize: 11, fontWeight: 600, letterSpacing: '0.6px',
-        textTransform: 'uppercase', color: C.textDim, marginBottom: 8,
-      }}>{title}</div>
-      {children}
-    </div>
-  );
-}
-
-function Chip({ active, onClick, children }) {
-  return (
-    <button onClick={onClick} style={{
-      padding: '6px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
-      font: 'inherit', fontSize: 13, fontWeight: 500,
-      background: active ? C.chipActiveBg : C.chipBg,
-      color: active ? C.chipActiveText : C.text,
-      transition: 'background 120ms ease, color 120ms ease',
-    }}>{children}</button>
-  );
-}
-
 export default function DebugPanel({
   width = 360,
   pods = [],
@@ -65,6 +33,9 @@ export default function DebugPanel({
   onJumpPod,
   theme = 'light',
   onToggleTheme,
+  personas = [],
+  activePersona,
+  onPersonaChange,
   phoneInfo,
   onClose,
   children,
@@ -114,6 +85,26 @@ export default function DebugPanel({
             ))}
           </div>
         </Group>
+
+        {personas.length > 0 && (
+          <Group title="Persona">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {personas.map((p) => (
+                <Chip key={p.id} active={p.id === activePersona} onClick={() => onPersonaChange?.(p.id)}>
+                  {p.label}
+                </Chip>
+              ))}
+            </div>
+            {(() => {
+              const p = personas.find((x) => x.id === activePersona);
+              return p?.description ? (
+                <div style={{ fontSize: 12, color: C.textDim, marginTop: 8, lineHeight: '16px' }}>
+                  {p.description}
+                </div>
+              ) : null;
+            })()}
+          </Group>
+        )}
 
         {phoneInfo && (
           <Group title="Device">

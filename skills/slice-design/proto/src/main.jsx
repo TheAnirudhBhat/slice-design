@@ -50,12 +50,31 @@ function MaybeAgentation() {
 // Standalone skill proto = clean app view. The debug panel (the proto's second
 // view) is OPT-IN: enable it with the ?debug URL param for skill-author testing.
 // A derived project enables it in its own wrapper: <App debug debugContent={...} />.
-const debugEnabled =
-  typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('debug');
+const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams();
+const debugEnabled = params.has('debug');
+
+// ?playground → the canonical-URL gallery (dev chrome, lazy so the clean app
+// path bundles nothing extra). ?playground=screen:<pod> → the FULL app at that
+// pod (the canonical per-screen screenshot URL).
+const playgroundParam = params.get('playground');
+const Playground = React.lazy(() => import('./playground/Playground.jsx'));
+
+let root;
+if (params.has('playground') && !(playgroundParam || '').startsWith('screen:')) {
+  root = (
+    <React.Suspense fallback={null}>
+      <Playground initialEntry={playgroundParam || undefined} />
+    </React.Suspense>
+  );
+} else if ((playgroundParam || '').startsWith('screen:')) {
+  root = <App initialPod={playgroundParam.slice('screen:'.length)} />;
+} else {
+  root = <App debug={debugEnabled} initialDebugOpen={debugEnabled} />;
+}
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App debug={debugEnabled} initialDebugOpen={debugEnabled} />
+    {root}
     <MaybeAgentation />
   </React.StrictMode>,
 );

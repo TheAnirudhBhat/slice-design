@@ -17,7 +17,7 @@
 
 import React, { useRef } from 'react';
 import { AppBar, usePageScroll } from '../../components/AppBar.jsx';
-import { TEXT_PRIMARY, TEXT_TERTIARY, SURFACE, OUTLINE_SUBTLE, PAGE_BG } from '../../tokens.js';
+import { TEXT_PRIMARY, TEXT_TERTIARY, SURFACE, OUTLINE_SUBTLE, PAGE_BG, WHITE } from '../../tokens.js';
 import { useTheme } from '../../theme-context.js';
 
 const POSITIVE = 'var(--positive)';
@@ -46,7 +46,7 @@ function Switch({ on }) {
           width: 16,
           height: 16,
           borderRadius: 100,
-          background: '#FFFFFF',
+          background: WHITE, // knob stays true white on both the V-500 on-track and grey off-track
           boxShadow: '0 1px 2px rgba(0,0,0,0.15)',
           transition: 'left 200ms cubic-bezier(0.25,0.1,0.25,1)',
         }}

@@ -22,13 +22,13 @@ import React, { useEffect, useRef } from 'react';
 import { AppBar, usePageScroll } from '../../components/AppBar.jsx';
 import BottomFade from '../../components/BottomFade.jsx';
 import { useL1 } from '../../components/L1Stack.jsx';
-import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, OUTLINE_SUBTLE, BLUE_500, SLATE_10, SURFACE } from '../../tokens.js';
+import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, OUTLINE_SUBTLE, BLUE_500, SLATE_10, SURFACE, WHITE } from '../../tokens.js';
 import { CreditCardIcon, ElectricityIcon, MobileIcon, MoreIcon } from '../../icons/BillIcons.jsx';
 
 // ---- Tokens ----
 const CARD_BG = SURFACE;
 const CARD_SHADOW = '0px 4px 24px 0px rgba(0,0,0,0.08)';
-const CARD_BORDER = '1px solid rgba(0,0,0,0.05)';
+const CARD_BORDER = `1px solid ${OUTLINE_SUBTLE}`;
 const CARD_RADIUS = 16;
 const PAGE_PAD = 24;
 const CARD_PAD = 24;
@@ -66,7 +66,7 @@ function TagInfo({ children }) {
     <span
       style={{
         ...T.tagPill,
-        color: '#FFFFFF',
+        color: WHITE,
         background: BLUE_500,
         padding: '4px 8px',
         borderRadius: 100,

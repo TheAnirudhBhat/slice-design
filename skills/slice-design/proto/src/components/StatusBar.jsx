@@ -18,7 +18,7 @@ const TIME_CENTER = 60;          // "9:41" near the left edge
 const ICONS_CENTER = 402 - 62;   // icons cluster near the right edge
 
 const DARK = 'rgba(0,0,0,0.85)';
-const LIGHT = '#FFFFFF';
+const LIGHT = '#FFFFFF'; // dls-lint-ok: status-bar text over dark pages — true white, theme-invariant (kept literal beside DARK, its non-token sibling)
 
 // Find which page is under the element's center. Pager translates the row by
 // `currentX`; page i then covers viewport [i*pageWidth + currentX, +pageWidth].
@@ -150,8 +150,10 @@ export default function MotionStatusBar({ pagerX, pages, pageWidth, time = '9:41
         <motion.div
           style={{
             // iOS status bar uses the SYSTEM font (SF Pro), not Rubik — match it.
+            // dls-lint-disable: iOS hardware chrome mimics the OS face/weight, not slice UI
             fontFamily: '-apple-system, "SF Pro Text", system-ui, sans-serif',
             fontWeight: 600,
+            // dls-lint-enable
             fontSize: 16,
             letterSpacing: '-0.3px',
             color: timeColor,

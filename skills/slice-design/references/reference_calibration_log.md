@@ -1882,3 +1882,20 @@ Source: R24 cont-37, 2026-05-30.
 **RULE for future calibration rounds:** before seeding, run every mockup through `reference_anti_patterns.md` + use canonical assets (`slice-design-suite/illustrations/`, e.g. `dls_success_tick`) and a status-bar-reserved AppBar. A mockup that isn't itself slice-compliant produces frustration + off-topic "neither"s, not calibration signal. Fix the calibration `dls/primitives.jsx` AppBar (add the 54px status reserve) before the next round.
 
 Source: R19 calibration web round, 2026-06-02. 11 picks; 1 promoted, 4 confirmed, 6 dropped/noise.
+
+---
+
+## 2026-06-10 — Workflow port from aibanker-design (tooling round, not an A/B round)
+
+User-directed maintenance ("add all of it"): the slice-design skill inherited the proven mechanics of the aibanker-design playground workflow. No visual rules changed — every calibrated value stands. What changed is ENFORCEMENT and EXPLORATION:
+
+1. **`lint` sub-command** (`scripts/lint.mjs` + `reference_lint.md`) — mechanical floor under judge/audit. Token map generated at runtime from `tokens.js` + `index.css` (never hardcoded — the aibanker design-lint's stale-map flaw, fixed). Initial sweep: 45 findings → 3 false-positive classes fixed in the script, 19 genuine fixes (raw `#FFFFFF` on V-500/Blue-500 → `WHITE`; `rgba(0,0,0,0.05)` card borders → `OUTLINE_SUBTLE`), 9 intentional values pragma'd with reasons (stage chrome, iOS status-bar face, reveal caption). Proto now lint-clean (0 errors). NO new tokens created; NO visual change (token values are identical to the literals they replaced).
+2. **`cascade` sub-command** (`reference_cascade.md`) — propagation pipeline for confirmed changes (reference → digest → log → proto → snapshot → seam projects), blast radius confirmed before writes. Exists to prevent recurrence of the 2026-05-30 stale-reference burn.
+3. **Drift check** (`scripts/check-drift.sh`) — installed skill vs suite repo diff, wired into `status` alongside `lint --refs` (reference-integrity: orphans, missing citations, superseded-without-pointer).
+4. **State exploration** (`reference_state_exploration.md`) — ControlPanel/useControlPanel dev-chrome primitives (DebugPanel refactored to share them, no visual change); user-state presets (canonical / new-user / high-balance / behind) via `UserStateContext`, switched from the debug panel Persona group; shared realistic-INR fixtures (`data/fixtures.js`). Banking L0 + nav balance chip wired as the exemplar — `canonical` preset reproduces ₹45,800 etc. exactly, so the default proto is pixel-identical. Other pods migrate opportunistically or via cascade.
+5. **Playground** (`/?playground`, lazy chunk) — canonical URLs for tokens/type/avatar/appbar/txn-rows + `screen:<pod>` full-app links; A/B material source for future calibration rounds (and per the R19 meta-lesson, playground entries are built from REAL proto components, so calibration mockups inherit compliance).
+6. **Done-gate trio** (build → lint → look) added to `reference_proto_systematics.md` post-build verification; preset-flip check added for state-reading screens.
+
+SKILL.md bumped 2.2.0 → 2.3.0 (new `lint` + `cascade` sub-command rows, judge/audit lint-first wiring, status drift+refs wiring, quick-reference rows).
+
+Source: aibanker-design repo review (its `design-lint` + `cascade` skills, ControlPanel/userStatePresets pattern), session 2026-06-10.

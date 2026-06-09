@@ -20,7 +20,7 @@ import { useL1 } from '../../components/L1Stack.jsx';
 import Avatar from '../../components/Avatar.jsx';
 import formatINR from '../../utils/formatINR.js';
 
-import { BRAND_BG, WHITE_10, WHITE_20, WHITE_30 } from '../../tokens.js';
+import { BRAND_BG, WHITE, WHITE_10, WHITE_20, WHITE_30 } from '../../tokens.js';
 
 const USER_AVATAR_URL = '/assets/avatar_only.png';
 const UPI_ID = 'rajan@sliceaxis';
@@ -64,7 +64,7 @@ function AppBar({ onAvatarTap }) {
         style={{
           background: 'transparent',
           border: `1px solid ${WHITE_20}`,
-          color: '#FFFFFF',
+          color: WHITE,
           padding: '8px 16px',
           borderRadius: 100,
           fontFamily: 'Rubik, sans-serif',
@@ -143,7 +143,7 @@ function AmountHero({ amount }) {
           fontSize,
           lineHeight: '96px',
           letterSpacing: '-0.8px',
-          color: '#FFFFFF',
+          color: WHITE,
           whiteSpace: 'nowrap',
           transition: 'font-size 220ms cubic-bezier(0.25,0.1,0.25,1)',
         }}
@@ -181,7 +181,7 @@ function AmountHero({ amount }) {
             fontSize: 12,
             lineHeight: '16px',
             letterSpacing: '0.24px',
-            color: '#FFFFFF',
+            color: WHITE,
           }}
         >
           ID: {UPI_ID}
@@ -226,7 +226,7 @@ function KeypadKey({ value, onTap }) {
           />
         </svg>
       ) : value === '.' ? (
-        <span style={{ fontFamily: 'Rubik, sans-serif', fontSize: 24, color: '#FFFFFF', lineHeight: 1 }}>
+        <span style={{ fontFamily: 'Rubik, sans-serif', fontSize: 24, color: WHITE, lineHeight: 1 }}>
           •
         </span>
       ) : (
@@ -237,7 +237,7 @@ function KeypadKey({ value, onTap }) {
             fontSize: 20,
             lineHeight: '24px',
             letterSpacing: '0.4px',
-            color: '#FFFFFF',
+            color: WHITE,
           }}
         >
           {value}
@@ -293,7 +293,7 @@ function RequestTransferRow() {
         style={{
           flex: 1,
           background: WHITE_20,
-          color: '#FFFFFF',
+          color: WHITE,
           border: 'none',
           padding: '12px 24px',
           borderRadius: 100,
@@ -313,7 +313,7 @@ function RequestTransferRow() {
         style={{
           flex: 1,
           background: WHITE_20,
-          color: '#FFFFFF',
+          color: WHITE,
           border: 'none',
           padding: '12px 24px',
           borderRadius: 100,

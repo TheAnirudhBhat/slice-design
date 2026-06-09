@@ -1,7 +1,7 @@
 ---
 name: slice-design
 description: Use whenever the user is creating, designing, judging, building, iterating, or critiquing any slice screen, flow, component, or visual asset — Figma builds, web protos, motion design, anti-pattern checks, DLS 2.0 component usage, brand voice review, and any fintech/UPI/banking/credit/payments UI work that targets slice. Trigger this skill even when the user doesn't explicitly say "slice" — Figma URLs in conversation, mentions of DLS, UPI flows, Atom, Spark, Monies, Fire, payment screens, balance screens, credit cards, super card, brand-immersive Valentino purple surfaces, "design audit", "is this on-brand", or any visual judgment task on consumer fintech mobile UI all warrant invoking this skill. Also fires for build / iterate / judge / audit / recipe / proto / motion / explore / extract / status / calibrate / sweep sub-commands. (Renamed from slice-dls 2026-05-17.)
-version: 2.2.0
+version: 2.3.0
 user-invocable: true
 ---
 
@@ -46,6 +46,7 @@ Three things always true, worth stating here:
 - **The skill proto (`~/.claude/skills/slice-design/proto/`) is upstream "main" + READ-ONLY during project work.** Projects inherit it live and build on top via the seam; never edit the skill proto to satisfy a project (unlink the component into the project instead — `link-kit.sh materialize`). Promote to the skill proto only via deliberate maintenance with a calibration-log entry.
 - **Compose from cache; self-audit before you show.** Copy chrome from `proto-snapshot/code/` — don't re-hand-build from memory (that reintroduces fixed bugs). Screenshot your own output and diff against canonical before handing it over.
 - **agentation is a baseline dependency** (like npm): every slice proto must have `agentation@^3.0.2` installed + `<Agentation/>` wired as a sibling of `<App/>`; without it icons / DLS primitives / click-annotation break. Scaffold it first on `/proto`. See `reference_web_proto.md`.
+- **Done-gate trio for every proto change**: build passes → `lint` 0 errors → look at the affected surface. State-reading screens also get flipped through all user-state presets (debug panel → Persona). Playground URLs (`/?playground=…`, `/?playground=screen:<pod>`) are the canonical screenshot targets. See `reference_proto_systematics.md` + `reference_state_exploration.md`.
 
 Maintenance companion: **slice-design-calibrate** (`/update-slice-design`) — the A/B-pair + sweep loop that keeps these rules honest. Two skills, one product.
 
@@ -96,6 +97,9 @@ Don't load all references at once. Read on demand. **Per-pod aggregator files ar
 | Theming / dark mode | `references/reference_theming.md` (dark tokens, icon-vs-illustration theme-safety, CSS-var mechanism, Figma dark refs, theme-switch motion, dark gotchas). Bottom-nav dark colours → `reference_dls_bottom_nav.md`; Activity states/avatars → `reference_pod_activity.md`. |
 | Composing a full screen layout | `references/reference_dls_screen_layouts.md` (every L0/L1/L2/empty/error recipe) |
 | Anti-pattern check before shipping | `references/reference_anti_patterns.md` |
+| **Mechanical compliance sweep** (`lint`, raw values / brand voice / INR / Rubik; also step 1 of judge/audit on code) | `references/reference_lint.md` + `scripts/lint.mjs` |
+| **Propagating a confirmed change** (`cascade` — reference → digest → log → proto → snapshot → projects) | `references/reference_cascade.md` |
+| **State exploration** (control panels, user-state presets, playground URLs, variant-vs-state doctrine) | `references/reference_state_exploration.md` |
 | Verifying a spec matches DLS (before asserting any value) | `references/reference_canonical_fetch.md` (R24 meta-rule — fetch the published variant via Figma MCP; never eyeball a screenshot) |
 | Specific component spec | `references/reference_dls_<component>.md` (~40 files: appbar, avatar, amount_display, buttons, button_group, cards, chips, accordion, badge, bottom_nav, bottomsheet, carousel, controls, corner_radius, colors, dates_time, dialer, dividers, dot_indicator, elevation, error_states, file_upload, footer_header, iconography, input_field, list_items, phone_shell, pills, pin_field, progress, search, section_header, slider, snackbar, spacing, tabs, tags, tooltip, top_header, user_action_banners) |
 | Motion vocabulary | `references/reference_motion.md` |
@@ -112,14 +116,16 @@ When the user opens a task with one of these verbs (or types them), follow the m
 |---|---|---|---|
 | `build [screen]` | Build | Plan → resolve gallery IDs → 1 `use_figma` call → screenshot verify | this file + `feedback_*.md` + relevant `reference_dls_*.md` |
 | `iterate [frame]` | Build | Clone existing frame, swap props for variants — never hand-build elements | `feedback_reuse_existing.md` |
-| `judge [frame]` | Evaluate | "Is this slice?" review against calibrated rules + anti-patterns | `reference_calibrated_digest.md` (current quick-scan index) + `reference_anti_patterns.md`; pull the topical `reference_dls_*.md` for exact specs |
-| `audit [frame]` | Evaluate | Walk every calibrated rule against the frame, list violations | `reference_calibrated_digest.md` (current) + `reference_anti_patterns.md` + topical `reference_dls_*.md` |
+| `judge [frame]` | Evaluate | "Is this slice?" review against calibrated rules + anti-patterns. **Code targets: run `lint` FIRST** (deterministic floor), judgment on top | `reference_calibrated_digest.md` (current quick-scan index) + `reference_anti_patterns.md`; pull the topical `reference_dls_*.md` for exact specs; `reference_lint.md` for code |
+| `audit [frame]` | Evaluate | Walk every calibrated rule against the frame, list violations. **Code targets: run `lint` FIRST** | `reference_calibrated_digest.md` (current) + `reference_anti_patterns.md` + topical `reference_dls_*.md`; `reference_lint.md` for code |
+| `lint [path]` | Evaluate | Mechanical DLS sweep (`node scripts/lint.mjs`): raw values vs generated token map, brand voice, INR format, Rubik/weights, emoji. Report → confirm → per-category commits → build gate | `reference_lint.md` |
+| `cascade [change]` | Maintain | Propagate a confirmed change through reference → digest → log → proto → snapshot → seam projects. Blast radius shown + confirmed first; `--dry-run` supported; verify trio after | `reference_cascade.md` |
 | `recipe [screen-type]` | Build | Return the calibrated recipe (L0 / balance L1 / confirm / pay / etc.) | `reference_dls_screen_layouts.md` |
 | `proto [name]` | Build | Scaffold a new slice web proto with DLS primitives | `reference_web_proto.md` |
 | `motion [target]` | Enhance | Apply slice motion choreography (Spark reveal, push left/right, campaign-pill reveal) | `reference_motion.md` |
 | `explore [brief]` | Enhance | Propose novel patterns; HARD rules locked, soft remixed. Pull emil-design-eng techniques. | `reference_exploration_patterns.md`, `reference_motion.md` |
 | `extract [path]` | Maintain | Sweep a project / recent Figma for patterns to promote into the skill. Outputs a diff. | `reference_calibration_log.md` (append on commit) |
-| `status` | Maintain | Show current calibration round + active project memory + drift candidates. | — |
+| `status` | Maintain | Show current calibration round + active project memory + drift candidates. Also run `scripts/check-drift.sh` (installed vs suite repo) + `node scripts/lint.mjs --refs` (orphans, missing citations, superseded hygiene). | — |
 | `calibrate` / `sweep` | Maintain | Calibrate = A/B pair loop. Sweep = batch reference-frame extraction. Both via `slice-design-calibrate`. | (suite companion) |
 
 If the user invokes `calibrate` or `sweep`, hand off to `slice-design-calibrate`. Don't duplicate those flows here.
@@ -169,7 +175,7 @@ If someone could look at a screen and say "AI made this slice mockup" without do
 
 **Iterating (`iterate`):** SCREENSHOT base → INSPECT node tree → PLAN each variation (map EVERY new element to a DLS component) → CLONE the base frame into a named Section → MODIFY via `importComponentSetByKeyAsync` (never hand-build) → VERIFY each + slop test.
 
-**Judging (`judge` / `audit`):** SCREENSHOT → SCAN `reference_calibrated_digest.md` mentally → REPORT in a **Before / After / Why** table, severity-tagging each row **(hard)** = absolute ban / brand-voice violation, **(soft)** = unjustified deviation from default, **(minor)** = polish. Cite the reference file + section for each (hard)/(soft) row.
+**Judging (`judge` / `audit`):** if the target is CODE (proto / seam project), run `node scripts/lint.mjs <path>` FIRST — its findings are **(hard)** rows cited as `lint:<category>`; don't re-derive mechanically what the script proved. Then SCREENSHOT → SCAN `reference_calibrated_digest.md` mentally → REPORT in a **Before / After / Why** table, severity-tagging each row **(hard)** = absolute ban / brand-voice violation / lint error, **(soft)** = unjustified deviation from default, **(minor)** = polish. Cite the reference file + section (or lint category) for each (hard)/(soft) row.
 
 ## Gallery + Figma build
 

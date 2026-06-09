@@ -270,11 +270,20 @@ Mnemonic: **touch-action = which axes the browser may pan (set both); overscroll
 
 ## Post-build verification (run before claiming done)
 
+### The done-gate trio (2026-06-10 — run for EVERY change, not just new screens)
+
+1. ☐ **Build** — `npm run build` passes in the proto (and any touched project).
+2. ☐ **Lint** — `node scripts/lint.mjs` reports 0 errors (`--refs` too if references changed). See `reference_lint.md`.
+3. ☐ **Look** — screenshot/visual check of the affected surface (playground URL `/?playground=screen:<pod>` is the canonical target). Skip only if the user has asked not to drive a browser — and say so in the report.
+
+### Full new-screen verification (on top of the trio)
+
 1. ☐ Visual check against the canonical Figma screenshot. Walk the chrome list from pre-build step 3 and confirm each element is visible and positioned correctly.
 2. ☐ Drag from this pod to every neighbor pod (left + right). Verify the status bar + nav variants flip correctly mid-drag. No invisible elements.
 3. ☐ Resize the browser. Verify the phone shell remains centered AND fits.
 4. ☐ Open agentation toolbar (bottom-right). Verify it renders and accepts clicks.
 5. ☐ For every PNG asset referenced in the L0: `file <path>` shows a valid PNG with non-trivial dimensions (not 0×0 or 1.6KB transparent).
+6. ☐ If the screen reads user-state data: flip through ALL presets (canonical / new-user / high-balance / behind) in the debug panel — empty, lakh+, and overdue are the states a canonical frame never exercises (`reference_state_exploration.md`).
 
 If any check fails → fix before claiming done, AND surface why the skill didn't catch it earlier (add a new line to this file).
 
@@ -289,7 +298,7 @@ If any check fails → fix before claiming done, AND surface why the skill didn'
   visuallyActive={visuallyActive}  // mid-drag
   onChange={handleNavChange}        // commit
   onVisualChange={handleNavVisualChange}  // mid-drag
-  balance="₹3K"
+  balance={userState.navChip}      // from the active user-state preset (canonical = "₹3K")
   pagerX={pagerX}                  // shared motion value for per-slot variant
   pages={PAGES_META}               // [{pod, variant}, ...]
 />
@@ -707,6 +716,8 @@ If any item fails → fix before claiming done, AND surface why the skill didn't
 ---
 
 # Running the proto on a real iPhone (cont-38, 2026-05-30)
+
+**EXPLICIT-ONLY (rule, 2026-06-06):** on-device / Expo is the exception, never the default. Only run it when the user explicitly asks ("run expo", "on my phone", "expo slice", "on-device"). For every other "run / view the proto" request, default to the **local web proto + debug view** (`npm run dev` → open `localhost:<port>/?debug`). The Expo wrapper specifics live in `reference_expo_on_device.md`.
 
 ## The `100vh` bottom-cutoff (fix it before anything else)
 On iOS Safari `100vh` is the **larger, toolbar-hidden** height, so a stage sized

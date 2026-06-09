@@ -1,3 +1,8 @@
+## Tooling & Process (2026-06-10, ported from the aibanker-design workflow)
+- [reference_lint.md](reference_lint.md) — `lint` sub-command: mechanical DLS sweep (`scripts/lint.mjs`, token map generated from tokens.js/index.css at runtime); mechanical-vs-judgment doctrine; judge/audit run it first on code targets
+- [reference_cascade.md](reference_cascade.md) — `cascade` sub-command: propagate a confirmed change through reference → digest → log → proto → snapshot → seam projects, blast-radius confirmed first, verify trio after
+- [reference_state_exploration.md](reference_state_exploration.md) — ControlPanel/useControlPanel, user-state presets (canonical/new-user/high-balance/behind), playground canonical URLs, variant-vs-state doctrine, browser-tool choice
+
 ## Design Rules
 - [reference_canonical_fetch.md](reference_canonical_fetch.md) — **R24 meta-rule** Before claiming any spec matches DLS, fetch the published variant via `search_design_system` + `figma_get_library_component_by_key`. No guessing from screenshots.
 - [feedback_dls_design.md](feedback_dls_design.md) — Always use DLS 2.0 tokens, never raw hex

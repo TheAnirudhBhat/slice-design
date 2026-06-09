@@ -24,7 +24,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AppBar, EyeOpenGlyph, EyeClosedGlyph, usePageScroll } from '../../components/AppBar.jsx';
 import BottomFade from '../../components/BottomFade.jsx';
 import { useL1 } from '../../components/L1Stack.jsx';
-import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, OUTLINE_SUBTLE, V_500, POSITIVE, SURFACE } from '../../tokens.js';
+import { useUserState } from '../../user-state.js';
+import formatINR from '../../utils/formatINR.js';
+import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, OUTLINE_SUBTLE, V_500, POSITIVE, SURFACE, WHITE } from '../../tokens.js';
 
 // ---- Tokens ----
 const CARD_BG = SURFACE;
@@ -72,6 +74,10 @@ function MoniesMark({ height = 36, color = 'currentColor' }) {
 
 // ---- Savings hero — L0 Large card ----
 function SavingsHero({ balanceHidden }) {
+  // Exemplar of the user-state pattern (reference_state_exploration.md): the
+  // balance comes from the active preset, not a hardcoded string — the
+  // canonical preset reproduces the calibrated ₹45,800 exactly.
+  const { savingsBalance, account } = useUserState();
   return (
     <div
       style={{
@@ -96,7 +102,7 @@ function SavingsHero({ balanceHidden }) {
             fontWeight: 500,
           }}
         >
-          Savings ••••5732
+          Savings {account.savingsMask}
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -111,7 +117,7 @@ function SavingsHero({ balanceHidden }) {
               whiteSpace: 'nowrap',
             }}
           >
-            {balanceHidden ? '₹•••••' : '₹45,800'}
+            {balanceHidden ? '₹•••••' : `₹${formatINR(savingsBalance)}`}
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, minHeight: 24 }}>
@@ -180,7 +186,7 @@ function SavingsHero({ balanceHidden }) {
           <button
             style={{
               background: V_500,
-              color: '#FFFFFF',
+              color: WHITE,
               border: 'none',
               borderRadius: 100,
               padding: '8px 16px',

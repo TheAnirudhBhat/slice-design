@@ -28,7 +28,7 @@ import React, { useRef } from 'react';
 import { AppBar, usePageScroll } from '../../components/AppBar.jsx';
 import Avatar from '../../components/Avatar.jsx';
 import { useL1 } from '../../components/L1Stack.jsx';
-import { V_500, TEXT_PRIMARY, TEXT_TERTIARY, PAGE_BG } from '../../tokens.js';
+import { V_500, TEXT_PRIMARY, TEXT_TERTIARY, PAGE_BG, WHITE } from '../../tokens.js';
 
 const PAGE_PAD = 24;
 
@@ -252,7 +252,7 @@ export default function ProfileL1({ onClose }) {
             style={{
               width: `calc(100% - ${PAGE_PAD * 2}px)`,
               background: V_500,
-              color: '#FFFFFF',
+              color: WHITE,
               border: 'none',
               borderRadius: 100,
               padding: '12px 24px',

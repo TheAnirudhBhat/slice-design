@@ -22,6 +22,8 @@ import TxnDetailL1 from './pods/activity/TxnDetailL1.jsx';
 import AppSettingsL1 from './pods/profile/AppSettingsL1.jsx';
 import L1Stack from './components/L1Stack.jsx';
 import { ThemeContext } from './theme-context.js';
+import { UserStateContext } from './user-state.js';
+import { USER_STATE_PRESETS, getPreset } from './data/userStatePresets.js';
 
 // L1 registry — name → component or { Component, slideFrom }. Each L0 calls
 // `useL1().push(name, props)` to open an L1; L1 components receive `onClose`
@@ -74,7 +76,7 @@ const REVEAL_SLIDE = {
 };
 const REVEAL_ICON = { toDark: '/assets/theme_moon.svg', toLight: '/assets/theme_sun.svg' };
 const REVEAL_LABEL = { toDark: 'Switching to dark mode', toLight: 'Switching to light mode' };
-const REVEAL_TEXT = { toDark: 'rgba(255,255,255,0.95)', toLight: 'rgba(0,0,0,0.9)' }; // caption over the solid fill
+const REVEAL_TEXT = { toDark: 'rgba(255,255,255,0.95)', toLight: 'rgba(0,0,0,0.9)' }; // dls-lint-ok: caption over the solid reveal fill (known colour), not a themed surface
 
 // R24 cont-13: map from pod → component constructor (not pre-instantiated JSX)
 // so we can hand each L0 a per-pod `onScrollChange` callback at render time.
@@ -140,6 +142,7 @@ function ThemeToggle({ theme, onToggle }) {
         width: 44,
         height: 44,
         borderRadius: 100,
+        // dls-lint-disable: stage chrome — always-white pill on the non-theming proto stage
         background: '#FFFFFF',
         border: '1px solid rgba(0,0,0,0.06)',
         boxShadow: '0px 4px 16px rgba(0,0,0,0.12)',
@@ -152,6 +155,7 @@ function ThemeToggle({ theme, onToggle }) {
         // proto stage, which doesn't theme), so this is the on-light tertiary value
         // — NOT var(--text-tertiary), which would flip to white-on-white in dark.
         color: 'rgba(0,0,0,0.5)',
+        // dls-lint-enable
         WebkitTapHighlightColor: 'transparent',
       }}
     >
@@ -315,6 +319,11 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
   const [active, setActive] = useState(initialPod);
   const [visuallyActive, setVisuallyActive] = useState(initialPod);
   const [theme, setTheme] = useState('light'); // light | dark — flips data-theme on the stage
+  // User-state preset (canonical | new-user | high-balance | behind) — switched
+  // from the debug panel's Persona group. Pods read it via useUserState();
+  // default 'canonical' reproduces the calibrated screens exactly.
+  const [persona, setPersona] = useState('canonical');
+  const userState = getPreset(persona).state;
   // Theme-switch reveal: flip data-theme instantly, then play the canonical
   // gradient-cover reveal (see REVEAL_* above) — moon/"to dark" slides up, sun/
   // "to light" slides down. `dir` drives the gradient, icon, caption + direction.
@@ -416,7 +425,7 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
         height: '100dvh',
         // Desktop stage = white (phone floats on it). Full-bleed mobile = page bg,
         // so the cover-scaled screen blends edge-to-edge (no white sliver).
-        background: isMobile ? 'var(--page-bg)' : '#FFFFFF',
+        background: isMobile ? 'var(--page-bg)' : '#FFFFFF', // dls-lint-ok: desktop stage bg, not an app surface
         overflow: 'hidden',
         display: 'flex',
         justifyContent: 'center',
@@ -442,6 +451,7 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
           {/* ThemeContext lets L1 screens (App Settings "Dark mode" switch) trigger
              the same theme-switch transition as the dev toggle. */}
           <ThemeContext.Provider value={{ theme, toggleTheme: handleThemeToggle }}>
+          <UserStateContext.Provider value={userState}>
           {/* L1Stack provides useL1() to all descendants. L1 overlays render
              above the L0 pager via AnimatePresence + slide-in motion. */}
           <L1Stack registry={{ ...L1_REGISTRY, ...extraL1 }} onOpenChange={setL1Open}>
@@ -540,7 +550,7 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
               visuallyActive={visuallyActive}
               onChange={handleNavChange}
               onVisualChange={handleNavVisualChange}
-              balance="₹3K"
+              balance={userState.navChip}
               pagerX={pagerX}
               pages={pagesMeta}
             />
@@ -601,6 +611,7 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
               )}
             </AnimatePresence>
           </L1Stack>
+          </UserStateContext.Provider>
           </ThemeContext.Provider>
         </PhoneFrame>
       </div>
@@ -613,15 +624,17 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
           onClick={() => setDebugOpen((o) => !o)}
           aria-label="toggle debug panel"
           style={{
+            // dls-lint-disable: dev chrome — debug toggle on the proto stage, theme-independent by design
             position: 'fixed', left: 16, bottom: 16, zIndex: 1001,
             display: 'flex', alignItems: 'center', gap: 6,
             padding: '6px 12px', borderRadius: 100, cursor: 'pointer',
             border: '1px solid rgba(0,0,0,0.08)', background: 'rgba(255,255,255,0.92)',
             backdropFilter: 'blur(8px)', boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
             font: '500 12px Rubik, system-ui, sans-serif', color: '#171A1F',
+            // dls-lint-enable
           }}
         >
-          <span style={{ width: 7, height: 7, borderRadius: 100, background: debugOpen ? '#D30AD7' : '#9AA1AB' }} />
+          <span style={{ width: 7, height: 7, borderRadius: 100, background: debugOpen ? '#D30AD7' : '#9AA1AB' }} /> {/* dls-lint-ok: dev chrome */}
           debug
         </button>
       )}
@@ -633,6 +646,9 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
             onJumpPod={handleNavChange}
             theme={theme}
             onToggleTheme={handleThemeToggle}
+            personas={USER_STATE_PRESETS}
+            activePersona={persona}
+            onPersonaChange={setPersona}
             phoneInfo={`${PHONE_WIDTH} × ${PHONE_HEIGHT} · scale ${(isMobile ? coverScale : fitScale).toFixed(2)}`}
             onClose={() => setDebugOpen(false)}
           >
