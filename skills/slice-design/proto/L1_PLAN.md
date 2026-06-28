@@ -102,7 +102,7 @@ L0 components receive `pushL1` via context (`L1Context`) so they don't need to d
 
 ## Refresh trigger
 
-When each L1 lands and looks right per user, append to the calibration log and re-snapshot the proto into `references/proto-snapshot/`.
+When each L1 lands and looks right per user, append to the calibration log.
 
 ---
 

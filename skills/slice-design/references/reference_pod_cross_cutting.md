@@ -8,7 +8,7 @@ type: reference-aggregator
 
 These rules apply regardless of pod. They're the HARD rules — slice doesn't compromise on these even in exploration mode. The source-of-truth refs (`reference_anti_patterns.md`, `reference_dls_colors.md`, `reference_motion.md`, etc.) stay authoritative; this file is the daily reference for `judge` / `audit` / brand-voice tasks where you need all the hard rules visible at once.
 
-**Synthesizes**: `SKILL.md` (Defaults, Absolute bans, slice-slop test, Working modes) + `reference_anti_patterns.md` + `reference_dls_colors.md` + `reference_dls_spacing.md` + `reference_dls_corner_radius.md` + `reference_dls_elevation.md` + `reference_dls_iconography.md` + `reference_motion.md` + `reference_accessibility.md` + `reference_performance.md` + `reference_craft_principles.md` + `feedback_assets.md` + `reference_calibrated_digest.md`.
+**Synthesizes**: `SKILL.md` (Defaults, Absolute bans, slice-slop test, Working modes) + `reference_anti_patterns.md` + `reference_dls_colors.md` + `reference_dls_spacing.md` + `reference_dls_corner_radius.md` + `reference_dls_elevation.md` + `reference_dls_iconography.md` + `reference_motion.md` + `reference_accessibility.md` + `reference_performance.md` + `reference_craft_principles.md` + `reference_calibrated_digest.md`.
 
 ---
 
@@ -372,7 +372,7 @@ These are the WHY behind every calibrated rule. Fall back to them when no rule c
 - **Asymmetric press / release** — slow press when deliberate (hold-to-confirm), fast release always (~200ms ease-out). Already in Sheet present (280ms) + dismiss (240ms).
 - **Naming creates identity** — `atom`, `spark`, `monies`, `fire` carry the brand more than any UI element. Sacrifice discoverability for memorability where appropriate.
 - **Handle edge cases invisibly** — UPI ID pill re-expands when alone; payment confirmation pink-immersion only on rewarded txns; bottom sheet no handle dismisses via scrim. The UI just works.
-- **Never substitute user-provided assets** (from feedback_assets.md) — Claude defaults to generating SVGs that are always wrong. If an asset isn't loading, ASK the user. Don't silently swap.
+- **Never substitute user-provided assets** — Claude defaults to generating SVGs that are always wrong. If an asset isn't loading, ASK the user. Don't silently swap.
 
 ---
 

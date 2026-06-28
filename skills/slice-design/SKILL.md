@@ -44,7 +44,7 @@ Any new proto, new L0, or cross-cutting chrome (status bar, nav, app bar, shell)
 
 Three things always true, worth stating here:
 - **The skill proto (`~/.claude/skills/slice-design/proto/`) is upstream "main" + READ-ONLY during project work.** Projects inherit it live and build on top via the seam; never edit the skill proto to satisfy a project (unlink the component into the project instead — `link-kit.sh materialize`). Promote to the skill proto only via deliberate maintenance with a calibration-log entry.
-- **Compose from cache; self-audit before you show.** Copy chrome from `proto-snapshot/code/` — don't re-hand-build from memory (that reintroduces fixed bugs). Screenshot your own output and diff against canonical before handing it over.
+- **Compose from cache; self-audit before you show.** Copy chrome from the live proto (`proto/src/` + `proto/public/assets/`) — don't re-hand-build from memory (that reintroduces fixed bugs). Screenshot your own output and diff against canonical before handing it over.
 - **agentation is a baseline dependency** (like npm): every slice proto must have `agentation@^3.0.2` installed + `<Agentation/>` wired as a sibling of `<App/>`; without it icons / DLS primitives / click-annotation break. Scaffold it first on `/proto`. See `reference_web_proto.md`.
 - **Done-gate trio for every proto change**: build passes → `lint` 0 errors → look at the affected surface. State-reading screens also get flipped through all user-state presets (debug panel → Persona). Playground URLs (`/?playground=…`, `/?playground=screen:<pod>`) are the canonical screenshot targets. See `reference_proto_systematics.md` + `reference_state_exploration.md`.
 
@@ -119,7 +119,7 @@ When the user opens a task with one of these verbs (or types them), follow the m
 | `judge [frame]` | Evaluate | "Is this slice?" review against calibrated rules + anti-patterns. **Code targets: run `lint` FIRST** (deterministic floor), judgment on top | `reference_calibrated_digest.md` (current quick-scan index) + `reference_anti_patterns.md`; pull the topical `reference_dls_*.md` for exact specs; `reference_lint.md` for code |
 | `audit [frame]` | Evaluate | Walk every calibrated rule against the frame, list violations. **Code targets: run `lint` FIRST** | `reference_calibrated_digest.md` (current) + `reference_anti_patterns.md` + topical `reference_dls_*.md`; `reference_lint.md` for code |
 | `lint [path]` | Evaluate | Mechanical DLS sweep (`node scripts/lint.mjs`): raw values vs generated token map, brand voice, INR format, Rubik/weights, emoji. Report → confirm → per-category commits → build gate | `reference_lint.md` |
-| `cascade [change]` | Maintain | Propagate a confirmed change through reference → digest → log → proto → snapshot → seam projects. Blast radius shown + confirmed first; `--dry-run` supported; verify trio after | `reference_cascade.md` |
+| `cascade [change]` | Maintain | Propagate a confirmed change through reference → digest → log → proto → seam projects. Blast radius shown + confirmed first; `--dry-run` supported; verify trio after | `reference_cascade.md` |
 | `recipe [screen-type]` | Build | Return the calibrated recipe (L0 / balance L1 / confirm / pay / etc.) | `reference_dls_screen_layouts.md` |
 | `proto [name]` | Build | Scaffold a new slice web proto with DLS primitives | `reference_web_proto.md` |
 | `motion [target]` | Enhance | Apply slice motion choreography (Spark reveal, push left/right, campaign-pill reveal) | `reference_motion.md` |
@@ -175,7 +175,7 @@ If someone could look at a screen and say "AI made this slice mockup" without do
 
 **Iterating (`iterate`):** SCREENSHOT base → INSPECT node tree → PLAN each variation (map EVERY new element to a DLS component) → CLONE the base frame into a named Section → MODIFY via `importComponentSetByKeyAsync` (never hand-build) → VERIFY each + slop test.
 
-**Judging (`judge` / `audit`):** if the target is CODE (proto / seam project), run `node scripts/lint.mjs <path>` FIRST — its findings are **(hard)** rows cited as `lint:<category>`; don't re-derive mechanically what the script proved. Then SCREENSHOT → SCAN `reference_calibrated_digest.md` mentally → REPORT in a **Before / After / Why** table, severity-tagging each row **(hard)** = absolute ban / brand-voice violation / lint error, **(soft)** = unjustified deviation from default, **(minor)** = polish. Cite the reference file + section (or lint category) for each (hard)/(soft) row.
+**Judging (`judge` / `audit`):** if the target is CODE (proto / seam project), run `node scripts/lint.mjs <path>` FIRST — its findings are **(hard)** rows cited as `lint:<category>`; don't re-derive mechanically what the script proved. Then SCREENSHOT → SCAN `reference_calibrated_digest.md` mentally → REPORT: lead with a one-line tally **`(hard) N · (soft) M · (minor) K`**, then a **Before / After / Why** table, severity-tagging each row **(hard)** = absolute ban / brand-voice violation / lint error, **(soft)** = unjustified deviation from default, **(minor)** = polish. Cite the reference file + section (or lint category) for each (hard)/(soft) row.
 
 ## Gallery + Figma build
 

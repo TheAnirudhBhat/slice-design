@@ -363,9 +363,9 @@ test flows, one-off concept mocks, or their assets inside it — unless the user
 
 - New screen / flow / concept exploration → its own project under
   `~/claude/slice/projects/<name>/` (or wherever the user points). Self-contained.
-- Reuse the design system by COPYING from `references/proto-snapshot/code/` +
-  `proto-snapshot/assets/` into the exploration project (that snapshot exists
-  exactly for "grab a component into another project"). Don't re-fetch Figma or
+- Reuse the design system by COPYING from the live proto (`proto/src/` +
+  `proto/public/assets/`) into the exploration project (the live proto is the
+  always-current source for "grab a component into another project"). Don't re-fetch Figma or
   re-hand-build StatusBar / AppBar / Avatar / phone shell / tokens — they're cached.
 - The ONLY things that land in the skill proto are deliberate updates to the
   canonical app, made on explicit request.
@@ -384,7 +384,7 @@ with agentation wired by default. It's the click-to-annotate feedback layer;
 without it the user can't point at elements and the iteration loop breaks.
 
 Implication for HOW to scaffold a standalone/exploration proto:
-- **Scaffold as a Vite app, copied from `references/proto-snapshot/`** (which
+- **Scaffold as a Vite app, copied from the live proto (`proto/`)** (which
   already has `agentation@^3.0.2` in package.json + `<Agentation />` rendered as
   a sibling of `<App />` in `main.jsx`). Then drop the new screens in.
 - **Do NOT default to a single-file CDN `index.html`.** Agentation ships only
@@ -395,7 +395,7 @@ Implication for HOW to scaffold a standalone/exploration proto:
 
 Standard standalone-proto scaffold:
 ```
-cp -R references/proto-snapshot/code  ~/claude/slice/projects/<name>/src-ish
+cp -R ~/.claude/skills/slice-design/proto  ~/claude/slice/projects/<name>  # then delete node_modules/ + dist/ inside the copy
 # keep package.json (has agentation, vite, react), main.jsx (<App/> + <Agentation/>)
 # replace pods/screens with the new work; npm install; npm run dev
 ```
@@ -460,7 +460,7 @@ non-negotiable #2).
 - [ ] **A label + value pair is a LIST ITEM.** "You pay … ₹X" type rows are a
       DLS list item (leading label, trailing value, center-aligned), not two
       free-floating `<div>`s you align by hand. Reach for the list-item
-      component from the snapshot. (cont-26)
+      component from the live proto. (cont-26)
 
 **Layout & composition gates (R24 cont-31 — each one was a separate correction this round):**
 - [ ] **DATA IS NOT IN A BOX.** Transaction / payment / summary / confirmation
@@ -518,7 +518,7 @@ non-negotiable #2).
 **Before showing the user (the self-audit — SKILL.md #2):**
 - [ ] `npm run build` is clean (0 errors).
 - [ ] Screenshot your own output and diff it against the canonical Figma frame
-      (or the snapshot spec) side-by-side. Fix every diff you can see.
+      (or the canonical proto spec) side-by-side. Fix every diff you can see.
 - [ ] If the browser is unavailable, SAY SO and do a careful manual spec diff
       instead — never silently ship the unaudited first build.
 
@@ -630,25 +630,22 @@ Why: a project's copied files silently drift from the evolving skill app → the
 
 Skipping these produces "kinda mid" output that then takes 20 correction rounds to fix (root cause of R24 cont-25→29). Do these every time:
 
-1. **Compose from cache — don't rebuild chrome.** The proto + `references/proto-snapshot/` are a read-through cache of the canonical app. For ANY new screen/flow, COPY the StatusBar / AppBar / Avatar / phone shell / tokens / Primary button from `proto-snapshot/code/` and `proto-snapshot/assets/`. Don't re-hand-build them from memory — that's how you reintroduce already-fixed bugs (cropped wifi, wrong chevron, 52px button, lowercase CTA). If you catch yourself typing `<svg>` for a glyph or `borderRadius` for a button that already exists in the snapshot, STOP and copy.
-2. **Self-audit before you show.** The loop is: fetch canonical → build → **screenshot your own output → compare against canonical side-by-side → fix the diffs → THEN show the user.** The most expensive failures are all things a 10-second self-screenshot catches (font not inheriting, double header, off button height). Never hand the user the first build as if it's done. If the browser is genuinely unavailable, say so and fall back to `npm run build` + a careful manual diff against the snapshot spec — don't silently skip the audit.
+1. **Compose from cache — don't rebuild chrome.** The live proto (`proto/src/` + `proto/public/assets/`) is a read-through cache of the canonical app. For ANY new screen/flow, COPY the StatusBar / AppBar / Avatar / phone shell / tokens / Primary button from `proto/src/` and `proto/public/assets/`. Don't re-hand-build them from memory — that's how you reintroduce already-fixed bugs (cropped wifi, wrong chevron, 52px button, lowercase CTA). If you catch yourself typing `<svg>` for a glyph or `borderRadius` for a button that already exists in the proto, STOP and copy.
+2. **Self-audit before you show.** The loop is: fetch canonical → build → **screenshot your own output → compare against canonical side-by-side → fix the diffs → THEN show the user.** The most expensive failures are all things a 10-second self-screenshot catches (font not inheriting, double header, off button height). Never hand the user the first build as if it's done. If the browser is genuinely unavailable, say so and fall back to `npm run build` + a careful manual diff against the canonical spec — don't silently skip the audit.
 
 When you skip these, you outsource QA to the user one screenshot at a time — the "death by a thousand corrections" anti-pattern. The new-screen pre-flight checklist (cont-30, above) operationalizes both.
 
-## LIVE proto + snapshot — workspace, run, refresh
+## LIVE proto — workspace, run
 
 The slice-app-proto LIVES INSIDE the skill:
 
 ```
 ~/.claude/skills/slice-design/
-  ├── proto/                    ← LIVE working proto (R23 cont-23)
-  │   ├── src/                    (App, components, icons, pods)
-  │   ├── public/assets/          (canonical PNGs + SVGs from Figma)
-  │   ├── package.json, vite.config.js, etc.
-  │   └── ARCHITECTURE.md
-  └── references/
-      └── proto-snapshot/       ← FROZEN snapshot at R23 cont-22
-          ├── code/, assets/, manifests/, INDEX.md, README.md
+  └── proto/                    ← LIVE working proto (canonical app, always current)
+      ├── src/                    (App, components, icons, pods)
+      ├── public/assets/          (canonical PNGs + SVGs from Figma)
+      ├── package.json, vite.config.js, etc.
+      └── ARCHITECTURE.md
 ```
 
 **Run the live proto:**
@@ -661,10 +658,10 @@ Boots to the working R23 state: all 5 pods (Banking, Explore, Pay/Valentino, Cre
 
 **When to use which:**
 - **Editing / iterating** → work in `proto/` (live source; changes are immediate).
-- **Recreating one component elsewhere** → check `references/proto-snapshot/INDEX.md` first (curated catalog with Figma node IDs + calibration-history per item); copy from `proto-snapshot/code/` for the R23 cont-22 known-good baseline.
+- **Recreating one component elsewhere** → copy from the live proto (`proto/src/` + `proto/public/assets/`) for the canonical known-good baseline; check `reference_calibration_log.md` for the per-item calibration history.
 - **Researching WHY a line is the way it is** → this file (meta-rules) + `reference_calibration_log.md` (round-by-round audit).
 
-**Refresh cadence:** snapshot is frozen at R23 cont-22 (2026-05-29). Re-snapshot the live proto into `references/proto-snapshot/` when: a major round lands and the user calls the proto "in a decent state"; a new pod / cross-cutting component is added; the asset library grows by 10+ items. Re-snapshot script: re-run the file-copy commands in `meta/INTEGRATION_PLAN.md`.
+**Always-current source:** there is no separate snapshot to refresh — the live `proto/` IS the canonical source, always current. Projects inherit it via the seam (symlink kit), so a change in the proto reaches every linked project for free; vendored deploys re-vendor. (Earlier rounds kept a frozen `references/proto-snapshot/` copy; it was removed 2026-06-28 because it drifted stale and the inherit-by-seam model superseded copy-from-snapshot.)
 
 ## Asset reuse — copy first; generate a flagged placeholder only when truly missing
 

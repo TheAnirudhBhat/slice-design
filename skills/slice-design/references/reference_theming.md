@@ -146,7 +146,7 @@ The recurring, anger-inducing failure: **making up icons** (hand-drawing bill
 glyphs, tracing the BHIM-UPI mark into polygons). The rule:
 - **Use the official slice DLS icon, full stop.** Library = Figma DLS 2.0 Copy
   node **`582:257`**. **Most icons are ALREADY in the proto** (`public/assets/`,
-  `public/assets/icons/`, plus `icons/NavIcons.jsx` / `SliceIcons.jsx`) — check
+  `public/assets/icons/`, plus `icons/NavIcons.jsx`) — check
   there first; you usually already have it.
 - **Missing → DUMMY placeholder**, never an approximation. A neutral rounded-box
   placeholder + tell the user the file path to drop the real asset. Do NOT trace

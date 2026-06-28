@@ -1,16 +1,12 @@
 ## Tooling & Process (2026-06-10, ported from the aibanker-design workflow)
 - [reference_lint.md](reference_lint.md) — `lint` sub-command: mechanical DLS sweep (`scripts/lint.mjs`, token map generated from tokens.js/index.css at runtime); mechanical-vs-judgment doctrine; judge/audit run it first on code targets
-- [reference_cascade.md](reference_cascade.md) — `cascade` sub-command: propagate a confirmed change through reference → digest → log → proto → snapshot → seam projects, blast-radius confirmed first, verify trio after
+- [reference_cascade.md](reference_cascade.md) — `cascade` sub-command: propagate a confirmed change through reference → digest → log → proto → seam projects, blast-radius confirmed first, verify trio after
 - [reference_state_exploration.md](reference_state_exploration.md) — ControlPanel/useControlPanel, user-state presets (canonical/new-user/high-balance/behind), playground canonical URLs, variant-vs-state doctrine, browser-tool choice
 
 ## Design Rules
 - [reference_canonical_fetch.md](reference_canonical_fetch.md) — **R24 meta-rule** Before claiming any spec matches DLS, fetch the published variant via `search_design_system` + `figma_get_library_component_by_key`. No guessing from screenshots.
-- [feedback_dls_design.md](feedback_dls_design.md) — Always use DLS 2.0 tokens, never raw hex
-- [feedback_figma_first.md](feedback_figma_first.md) — Match Figma specs 1:1, never improvise
 - [feedback_reuse_existing.md](feedback_reuse_existing.md) — Never recreate components, always reuse
 - [feedback_design_mode.md](feedback_design_mode.md) — "design mode" = frontend-only, preview route for variants
-- [feedback_transitions.md](feedback_transitions.md) — Push left/right for nav, slide up/down for overlays
-- [feedback_assets.md](feedback_assets.md) — Never substitute user-provided assets
 
 ## Patterns
 - [reference_dls_screen_layouts.md](reference_dls_screen_layouts.md) — L0/L1/L2/Form/Confirmation/Activity recipes, composition rules, HTML scaffold

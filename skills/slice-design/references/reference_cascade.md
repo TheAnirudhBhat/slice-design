@@ -15,14 +15,13 @@ calibration decision / user-confirmed change
   → reference_calibrated_digest.md  (quick-scan index row)
   → reference_calibration_log.md    (append entry; mark old entry superseded-by)
   → proto code (proto/src/…)        (the built canonical)
-  → references/proto-snapshot/      (cached chrome the next build copies from)
   → seam projects                   (linked kit = free; VENDORED deploys = re-vendor)
 ```
 
 | Change at | Cascade reaches |
 |---|---|
-| Token (colour/var) | `index.css` + `tokens.js`, every topical ref citing the value, digest row, proto call sites, snapshot, vendored projects |
-| Component spec (e.g. avatar tone, app-bar anatomy) | `reference_dls_<component>.md`, pod aggregator(s) mentioning it, digest, the component in `proto/src/components/`, every pod using it, snapshot |
+| Token (colour/var) | `index.css` + `tokens.js`, every topical ref citing the value, digest row, proto call sites, vendored projects |
+| Component spec (e.g. avatar tone, app-bar anatomy) | `reference_dls_<component>.md`, pod aggregator(s) mentioning it, digest, the component in `proto/src/components/`, every pod using it |
 | Screen recipe | pod aggregator + `reference_dls_screen_layouts.md`, digest, the pod L0/L1 in proto, flows refs if the journey changes |
 | Motion | `reference_motion.md`, `reference_interaction_layer.md`, digest, any proto choreography implementing it |
 | Brand voice / copy rule | SKILL.md defaults/bans (if HARD), `reference_pod_cross_cutting.md`, digest, every proto string instance |
@@ -41,7 +40,7 @@ calibration decision / user-confirmed change
 4. **Update the topical reference FIRST** (it's the live spec — precedence
    rule 1), then digest, then log (append new entry + mark the superseded one
    "superseded by R<n>" — never leave two live values for one fact).
-5. **Cascade to code**: proto, then snapshot, then seam projects. Use
+5. **Cascade to code**: proto, then seam projects. Use
    Edit/grep — never rewrite whole files. Honor every standing rule at each
    edit site (tokens only, reuse-never-recreate, lowercase brand names,
    sentence case, Indian grouping).

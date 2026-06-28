@@ -10,7 +10,7 @@ This digest is the canonical "what we know is slice" quick-scan INDEX. When buil
 
 ## Meta-rules (read first)
 - **Canonical-fetch-first**: never assert a spec value ("this matches canonical") without pulling it in the same turn — `search_design_system` then `figma_get_library_component_by_key({format:'full', includeVisualSpecs:true})`. Eyeballing a screenshot or recalling from memory is the #1 source of error
-- **Compose from cache, don't rebuild**: reuse the known-good component/asset from `references/proto-snapshot/` and the proto's `src/` — re-deriving chrome from memory reintroduces already-fixed bugs
+- **Compose from cache, don't rebuild**: reuse the known-good component/asset from the live proto (`proto/src/` + `proto/public/assets/`) — re-deriving chrome from memory reintroduces already-fixed bugs
 - **Self-audit before showing**: build clean + screenshot/inspect your own output (incl. `document.fonts` + network) before handing it over; don't make the user your QA
 - **Asset reuse order**: copy from cache → fetch from Figma → (proto/working context only) auto-generate a flagged placeholder. Never approximate an icon or illustration inline
 - **When a craft problem surfaces, ask "what does canonical Figma do here?"** — be more faithful to DLS, not more clever. An over-correction shipped into the skill is worse than the original miss
