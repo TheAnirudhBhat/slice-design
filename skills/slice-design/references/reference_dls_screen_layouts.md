@@ -507,7 +507,7 @@ This is the canonical Payments L0. **It is NOT the "Pay screen" form** described
    - Top-right: voice/audio icon (white, in circle outline) + photo Avatar trailing
 3. **Centred hero stack:**
    - Massive `₹0` Display/Large in white (₹ matches digit weight — NEVER subscript)
-   - **UPI ID chip** below amount: transparent-white pill (radius circle) with `UPI ID: rajan@sliceaxis` + chevron-right, leading "UPI" coloured logo glyph
+   - ~~**UPI ID chip** below amount~~ — SUPERSEDED (R19, and the proto since cal:2026-10-06): the UPI ID is the rightmost pill of the Action pills row under the app bar; nothing sits under the amount. See `reference_pod_payments.md` Valentino home anatomy.
 4. **Custom slice keypad** centred lower-half: 1-2-3 / 4-5-6 / 7-8-9 / . / 0 / ‹backspace. White numerals, 3-column grid, generous tap targets. (Contrast with PIN entry which uses system keyboard.)
 5. **Two Tertiary pill buttons bottom-anchored side-by-side, gap 12px**: `Request` + `Transfer` (transparent-white fill, white text, white-subtle outline)
 6. **Floating bottom dock** — central QR-scan icon prominent (large white circle + V-500 glyph) as the pod's signature action

@@ -6,7 +6,7 @@
 // Constants (WHITE, V_500, WHITE_10/20/30) do NOT change across themes:
 //   • WHITE — true white (e.g. glyphs on the V-500 immersive surface)
 //   • V_500 — brand purple (Pay/Valentino stays V-500 in dark too)
-//   • WHITE_10/20/30 — white-alpha chrome that always sits on V-500
+//   • WHITE_05/10/20/30/70 — white-alpha chrome that always sits on V-500
 //
 // ⚠️ DARK VALUES ARE PLACEHOLDERS (2026-05-30) — pending the real DLS dark-mode
 // variables from Figma (get_variable_defs on a selected dark frame). Swap them in
@@ -15,9 +15,11 @@
 // Constants (theme-invariant)
 export const WHITE = '#FFFFFF';
 export const V_500 = '#D30AD7';
+export const WHITE_05 = 'rgba(255,255,255,0.05)'; // Alpha/White/a05 — action-pill stroke
 export const WHITE_10 = 'rgba(255,255,255,0.10)';
 export const WHITE_20 = 'rgba(255,255,255,0.20)';
 export const WHITE_30 = 'rgba(255,255,255,0.30)';
+export const WHITE_70 = 'rgba(255,255,255,0.70)'; // Text&Icons/On color/Secondary (Alpha/White/a70)
 
 // Themed surfaces
 export const PAGE_BG = 'var(--page-bg)';   // page background (white → dark)

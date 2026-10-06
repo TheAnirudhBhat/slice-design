@@ -64,16 +64,16 @@ These rules apply at the L0 surface (dialer). Downstream flows (Pay person, Pay 
      - audio/voice icon button — `36×36` circle, transparent bg + 1px `rgba(255,255,255,0.30)` border, contains `valentino_audio_icon.svg` at 18×18.
      - photo avatar button — `40×40` hit area containing `36×36` photo avatar (border `1px rgba(255,255,255,0.30)`). Avatar is `/assets/avatar_only.png`.
    - App bar padding: `4px top/bottom`, `16px left/right`.
-3. **Hero amount** (centered, `flex: 1`):
+3. **Action pills row** (cal:2026-10-06, Figma Valentino ✅ `10028:9340` "Pre-scan" — the user's current design; slice-wallpaper ships the same row): directly under the app bar, a 64 band — 16 above / 12 below, 24 sides, 12 between pills, scrolls sideways with no mask. Pills left → right: `[fire] 8 fires left` · `[₹] monies` (94 fixed, the empty state) · `[UPI] <upi_id>` (rightmost, the identity anchor). Pill = 36 tall, Circle radius, padding 10/16 (fire 10/14/10/12), 16px glyph box + 4 + label; fill WHITE_10 (Figma paints a raw `#D828DC` = white ~12% over V-500 → the translucent-white rule, which also holds on the dark page); stroke 1.5px Alpha/White/a05 (none on fire); label Caption 12/16 Regular + glyphs in Text&Icons/On color/Secondary (white-70; the glyphs are opaque masks tinted by the token). Glyphs: `public/assets/icons/pill_fire.svg`, `pill_monies.svg`, `pill_upi.svg` (exported from 10028:9340).
+4. **Hero amount** (centered, `flex: 1`):
    - `₹<formatted>` Display Large — Rubik Regular **80/96** with **-0.8px letter-spacing**, white. White-space: nowrap.
    - **Dynamic shrink** as digits grow (font-size by digit count): ≤3 → 80, 4 → 72, 5 → 64, 6 → 56, ≥7 → 48. Transitions over 220ms `cubic-bezier(0.25,0.1,0.25,1)`.
-   - **24px gap** between amount and UPI ID pill.
-   - **UPI ID pill** beneath amount: `rgba(255,255,255,0.10)` bg, `8/16` padding, `24px radius`. Contents (6px gap): BHIM-UPI inline SVG mark (32×14, orange + green strokes + UPI text) → `ID: <handle>` (Rubik Regular 12/16 0.24px tracking, white) → chevron-right (12×12 stroke 1.4 white).
-4. **Bottom section** (anchored, `gap:16` between rows, `padding-bottom: 8`):
+   - **No UPI chip under the amount** (user, 2026-10-06: "we have removed this and added the action pills up top"). It was the R18 placement; R19 already moved it into the pill row, the proto now matches.
+5. **Bottom section** (anchored, `gap:16` between rows, `padding-bottom: 8`):
    - **Keypad** — 4 rows × 3 cols. Rows: `[1,2,3] / [4,5,6] / [7,8,9] / [•, 0, backspace]`. Each KEY is `48×48` transparent. Digits Rubik Medium **20/24** 0.4px tracking white. **72px column gap, 8px row gap.** Keys centered. Backspace = left-chevron (24×24 stroke 2 white). `.` rendered as `•`. Tap feedback via `.slice-keypad-key:active { background: rgba(255,255,255,0.08); }`.
    - **Request | Transfer button row** — BELOW the keypad. Both buttons share row equally (`flex: 1` each), 16px gap, horizontal padding 24, white-20 bg, no border, 12px vertical / 24px horizontal padding, radius 100, Rubik Medium 16/24 0.32px tracking, white.
-5. **Bottom nav** — rendered by `App.jsx` (floating, transparent bg, page bg cascades through).
-6. **Page body padding:** `paddingBottom: 140` to clear the floating bottom nav.
+6. **Bottom nav** — rendered by `App.jsx` (floating, transparent bg, page bg cascades through).
+7. **Page body padding:** `paddingBottom: 140` to clear the floating bottom nav.
 
 ### Indian-comma + cap rule
 

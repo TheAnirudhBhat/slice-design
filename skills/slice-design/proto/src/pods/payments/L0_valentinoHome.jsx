@@ -6,21 +6,21 @@
 //   2. App bar — 64px row:
 //        LEFT  : "Check balance" pill (transparent bg + white-20 border, 14/20 Regular)
 //        RIGHT : audio/voice icon (40×40 white-20 border circle) + photo avatar
-//   3. Top Section (centered, flex-1):
+//   3. Action pills row — fire · monies · UPI ID (Figma Valentino ✅ 10028:9340
+//      "Pre-scan", cal:2026-10-06). The UPI ID moved UP here from under the amount.
+//   4. Top Section (centered, flex-1):
 //        — ₹0 Display Large (80/96 Regular, -0.8px letter-spacing)
-//        — UPI ID pill: BHIM-UPI logo + "ID: rajan@sliceaxis" + chevron-right
-//          (white-10 bg, 16/8 padding, 24px radius)
-//   4. Bottom Section (anchored, 16px gap between rows):
+//   5. Bottom Section (anchored, 16px gap between rows):
 //        — Custom keypad (4 rows × 3 cols, 20/24 Medium digits, 72px gap between cols)
 //        — Request | Transfer button row (white-20 bg, 16/24 Medium, equal flex)
-//   5. Bottom nav (rendered by App.jsx)
+//   6. Bottom nav (rendered by App.jsx)
 
 import React, { useState } from 'react';
 import { useL1 } from '../../components/L1Stack.jsx';
 import Avatar from '../../components/Avatar.jsx';
 import formatINR from '../../utils/formatINR.js';
 
-import { BRAND_BG, WHITE, WHITE_10, WHITE_20, WHITE_30 } from '../../tokens.js';
+import { BRAND_BG, WHITE, WHITE_05, WHITE_10, WHITE_20, WHITE_30, WHITE_70 } from '../../tokens.js';
 
 const USER_AVATAR_URL = '/assets/avatar_only.png';
 const UPI_ID = 'rajan@sliceaxis';
@@ -120,6 +120,94 @@ function AppBar({ onAvatarTap }) {
   );
 }
 
+// ── Action pills ─────────────────────────────────────────────────────────────
+// Figma Valentino ✅ 10028:9340 ("Pre-scan"): the user's current design, and the row
+// slice-wallpaper ships (canonical 4802:17211 there). User: "we have removed this [the
+// UPI chip under the amount] and added the action pills up top" — the UPI ID is the
+// rightmost pill, the identity anchor that never dismisses (reference_pod_payments).
+// Row: 64 band, 16 above / 12 below, 24 sides, 12 between pills; it scrolls, no mask.
+// Pill: 36 tall, Circle, 10/16 padding (fire 10/14/10/12), 16 glyph box + 4 + label.
+// Colours by variable name: label + glyphs = Text&Icons/On color/Secondary → WHITE_70.
+// The fill is a raw #D828DC in Figma = white ~12% over V-500 → the DLS translucent-white
+// rule → WHITE_10, which also holds on the dark (#090B0C) Pay page. Stroke 1.5px
+// Alpha/White/a05 (the fire pill has none).
+const PILL_TEXT = {
+  fontFamily: 'Rubik, sans-serif',
+  fontWeight: 400,
+  fontSize: 12,
+  lineHeight: '16px',
+  letterSpacing: '0.24px',
+  color: WHITE_70,
+  whiteSpace: 'nowrap',
+};
+
+// Official glyphs (exported from 10028:9340, made opaque) tinted with the token as a
+// mask, so their alpha isn't applied twice.
+function PillGlyph({ src, width = 16 }) {
+  return (
+    <span
+      aria-hidden="true"
+      style={{
+        width,
+        height: 16,
+        flexShrink: 0,
+        background: WHITE_70,
+        WebkitMask: `url(${src}) center / contain no-repeat`,
+        mask: `url(${src}) center / contain no-repeat`,
+      }}
+    />
+  );
+}
+
+function ActionPill({ label, style, children }) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      style={{
+        height: 36,
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 4,
+        padding: '0 16px',
+        background: WHITE_10,
+        border: `1.5px solid ${WHITE_05}`,
+        borderRadius: 100,
+        cursor: 'pointer',
+        outline: 'none',
+        WebkitTapHighlightColor: 'transparent',
+        ...style,
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function ActionPills({ upiId }) {
+  return (
+    <div
+      className="no-scrollbar"
+      style={{ height: 64, flexShrink: 0, display: 'flex', alignItems: 'center', gap: 12, padding: '16px 24px 12px', overflowX: 'auto' }}
+    >
+      <ActionPill label="8 fires left" style={{ padding: '0 14px 0 12px', border: 'none' }}>
+        <PillGlyph src="/assets/icons/pill_fire.svg" />
+        <span style={PILL_TEXT}>8 fires left</span>
+      </ActionPill>
+      {/* 94 fixed = the compact "no monies yet" state; the value variant is wider */}
+      <ActionPill label="monies" style={{ width: 94 }}>
+        <PillGlyph src="/assets/icons/pill_monies.svg" />
+        <span style={PILL_TEXT}>monies</span>
+      </ActionPill>
+      <ActionPill label={`UPI ID ${upiId}`}>
+        <PillGlyph src="/assets/icons/pill_upi.svg" width={31} />
+        <span style={PILL_TEXT}>{upiId}</span>
+      </ActionPill>
+    </div>
+  );
+}
+
 function AmountHero({ amount }) {
   const formatted = formatINR(amount);
   const fontSize = fontSizeForAmount(amount);
@@ -131,7 +219,6 @@ function AmountHero({ amount }) {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 24,
         minHeight: 0,
       }}
     >
@@ -150,46 +237,7 @@ function AmountHero({ amount }) {
       >
         ₹{formatted}
       </div>
-      {/* UPI ID pill — BHIM UPI mark + ID + chevron */}
-      <button
-        style={{
-          background: WHITE_10,
-          padding: '8px 16px',
-          borderRadius: 24,
-          border: 'none',
-          cursor: 'pointer',
-          outline: 'none',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 6,
-        }}
-        aria-label="UPI ID"
-      >
-        {/* UPI mark. PLACEHOLDER (dummy) until the user's exact image is dropped
-           in at public/assets/upi_pill.png — overwrite that file and it renders
-           AS-IS (no trace, no processing). Pasted-inline images aren't written
-           to disk, so the file must live in the repo to be used. */}
-        <img
-          src="/assets/upi_pill.png"
-          alt="UPI"
-          style={{ height: 12, width: 'auto', display: 'block', pointerEvents: 'none', userSelect: 'none' }}
-        />
-        <span
-          style={{
-            fontFamily: 'Rubik, sans-serif',
-            fontWeight: 400,
-            fontSize: 12,
-            lineHeight: '16px',
-            letterSpacing: '0.24px',
-            color: WHITE,
-          }}
-        >
-          ID: {UPI_ID}
-        </span>
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-          <path d="M4 2L8 6L4 10" stroke="#FFFFFF" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </button>
+      {/* No UPI chip here any more — it is the rightmost action pill (cal:2026-10-06). */}
     </div>
   );
 }
@@ -372,6 +420,7 @@ export default function L0ValentinoHome({ onScrollChange }) {
       }}
     >
       <AppBar onAvatarTap={() => push('profile')} />
+      <ActionPills upiId={UPI_ID} />
       <AmountHero amount={amount} />
       <div
         style={{
