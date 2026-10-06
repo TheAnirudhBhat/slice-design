@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
     <!-- The OS status bar is painted from theme-color: App.jsx re-writes it to the
          visible surface (page bg, V-500 on Pay) in device mode. This is the first
-         paint's value — the Pay landing pod. -->
+         paint's value — the Pay landing pod. manifest.webmanifest must NOT declare a
+         theme_color: iOS installs the home-screen app from the manifest and a static
+         one pins the bar (a white bar over V-500 Pay; aibanker's has none). -->
     <meta name="theme-color" content="#D30AD7" />
     <!-- PWA / iOS standalone: "Add to Home Screen" launches chrome-less (no Safari
          toolbars) → real OS status bar + home indicator only = true full-bleed.
