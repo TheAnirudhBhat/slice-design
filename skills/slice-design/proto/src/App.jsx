@@ -401,11 +401,19 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
 
   // Phone: the OS status bar is painted from <meta name="theme-color">, so it
   // follows the APP's surface — page bg, V-500 on Pay — not the phone's scheme.
+  // The document's own root colour follows too (user: "the Valentino should cover
+  // the whole screen… covered by some white on the top"): newer iOS can tint the
+  // bar area from the html/body background instead of theme-color, and that was
+  // hard-white (index.css) — so on Pay it read as a white band over V-500.
   useEffect(() => {
     if (!isMobile || !stageRef.current) return;
     const token = visuallyActive === 'pay' && !l1Open ? '--brand-bg' : '--page-bg';
     const color = getComputedStyle(stageRef.current).getPropertyValue(token).trim();
-    if (color) document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', color));
+    if (!color) return;
+    document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', color));
+    [document.documentElement, document.body, document.getElementById('root')].forEach((el) => {
+      if (el) el.style.backgroundColor = color;
+    });
   }, [isMobile, theme, visuallyActive, l1Open]);
 
   const handlePageIndexChange = (idx) => {
