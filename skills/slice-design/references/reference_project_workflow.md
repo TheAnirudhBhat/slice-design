@@ -83,6 +83,7 @@ Together this is a **fast design-exploration surface**: switch variants/presets 
 - **Standalone skill proto** → `<App />` (debug off) = clean app view only. The skill author can peek it with the `?debug` URL param.
 - **A derived project** → its wrapper passes `<App debug debugContent={<ProjectExplorationControls/>} />`. The `debugContent` slot is where the project injects its section-variant / preset pickers. The panel's built-in controls (theme · pod-jump · device) come for free.
 - Desktop: a column BESIDE the phone (AI Banker's layout, cal:2026-10-06) — `DEBUG_PANEL_WIDTH` 300, `DEBUG_PANEL_GAP` 40, the phone's on-screen height; phone + panel centre together as one row and `useFitScale` reserves the panel's width (was: right-docked to the page edge with the phone pushed left). Opened via a `d` key / corner toggle, both gated behind `debug`.
+- Phone (device mode): the SAME `DebugPanel` opens as a bottom sheet (`sheet` prop) on a **three-finger tap-and-hold** (500ms, 24px tolerance — `utils/useThreeFingerHold.js`, ported from aibanker-design). Theme + Reload sit first, then the project's controls, then pod and persona; any button press closes the sheet so the result shows. The hold's lift is `preventDefault`-ed (else iOS's compatibility click lands on the sheet's scrim and shuts it), and the scrim ignores clicks for its first 400ms. Never open on load on a phone (`initialDebugOpen` is the desktop column's). (cal:2026-10-06)
 
 ---
 

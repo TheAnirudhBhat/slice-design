@@ -388,7 +388,13 @@
     margin-bottom: -48px;
   }
   .slice-bnav-slot { padding-bottom: 8px; }
-  .slice-bnav-content { padding-bottom: 24px; }
+  /* cal:2026-10-06 (user, iPhone home-screen app: "consider the bottom safe area —
+     the menu bar should not stick to the bottom"): clear the REAL home indicator.
+     Prod's medallions end 38pt above the screen bottom (IMG_3802–3805) = inset 34
+     − 4 + the slot's 8; never under 24 (Safari's toolbar → inset 0). The Expo
+     WebView keeps the flat 24 (its injected inset double-counted, see above). */
+  .slice-bnav-content { padding-bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) - 4px)); }
+  [data-rn-webview] .slice-bnav-content { padding-bottom: 24px; }
 }
 
 /* Tap feedback */

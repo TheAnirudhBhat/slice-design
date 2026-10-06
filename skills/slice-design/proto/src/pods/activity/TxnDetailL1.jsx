@@ -254,7 +254,7 @@ export default function TxnDetailL1({ onClose, txn }) {
           flexDirection: 'column',
         }}
       >
-        <div style={{ height: 54, flexShrink: 0 }} />
+        <div style={{ height: 'var(--status-reserve, 54px)', flexShrink: 0 }} />
         <AppBar
           scroll={scrolled}
           variant="standard"

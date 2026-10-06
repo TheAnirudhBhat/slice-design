@@ -1914,3 +1914,15 @@ Four changes from the birthday-spark project review, each explicitly asked to la
 Flagged, not changed: the kit's `--outline-bold` (0.1 light / 0.16 dark) differs from DLS Outline/Default/Bold (Alpha/Black/a20 light / Alpha/White/a10 dark), resolved from `ncGqxiE6wUOqgOURwHx6Hp` 2026-10-06. Also: the proto's `node_modules/vite/bin/vite.js` is missing (install broken before this session); it was verified by building with a project's vite 6.4 + `--configLoader runner`.
 
 Source: birthday-spark session 2026-10-06 (agentation pins + chat).
+
+### 2026-10-06 (cont.) — device mode rebuilt (user: "optimized for mobile view… three-finger tap for the debug panel… take all the learnings from AI Banker… make the mobile proto updates in the OG slice proto as well")
+
+The user's iPhone home-screen screenshots (IMG_3807/3808) showed an opaque white status bar over the V-500 Pay page and the nav cut off at the bottom edge ("top bar should be transparent… the menu bar should not stick to the bottom").
+
+1. **No cover-crop.** `useDeviceScreen`: the 402-wide screen scales to the device WIDTH and takes the device's HEIGHT. The cover-scale of a fixed 402×874 cropped ~90px off each end at 393×659 (Safari with toolbars) and ~31px at 402×812 (home-screen app under an opaque bar) — the app bar and the nav.
+2. **Status bar reads transparent.** OPAQUE bar (`default`, kept — black-translucent bands since iOS 26.1 and forces white text) painted from `theme-color`, synced to the visible surface (page bg / V-500 on Pay / dark). `index.html` first paint = the landing pod's colour.
+3. **One top reserve.** `--status-reserve` on the stage, read by the L0 reserve and every L1 (`ProfileL1`, `AppSettingsL1`, `TxnDetailL1` were a flat 54): 54 desktop, the real inset on a device, 44 floor only in the Expo WebView.
+4. **Nav clears the home indicator.** `max(24px, env(safe-area-inset-bottom) − 4px)` → medallions end 38pt above the bottom, as prod; flat 24 in the Expo WebView.
+5. **Debug sheet on a phone.** Three-finger hold (aibanker `useThreeFingerHold`) opens `DebugPanel sheet`: theme + reload first, project controls, pod, persona; the hold's lift is preventDefault-ed so iOS's compatibility click can't shut it.
+
+Verified: WebKit iPhone renders at 393×659 + 402×812 (no crop, carousel fits), synthetic three-finger TouchEvents in Chromium (sheet opens, lift prevented, closes on a button), theme-color #FFFFFF → #D30AD7 on Pay → #090B0C dark. NOT verifiable here: the real iOS status-bar paint — device check pending (force-quit and reopen the home-screen app; re-add the icon if the bar keeps its old colour).

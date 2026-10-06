@@ -176,8 +176,8 @@ export default function ProfileL1({ onClose }) {
           flexDirection: 'column',
         }}
       >
-        {/* Reserve for the fixed status bar overlay */}
-        <div style={{ height: 54, flexShrink: 0 }} />
+        {/* Reserve for the status bar (54 on desktop, the real inset on a device) */}
+        <div style={{ height: 'var(--status-reserve, 54px)', flexShrink: 0 }} />
 
         <AppBar
           scroll={scrolled}

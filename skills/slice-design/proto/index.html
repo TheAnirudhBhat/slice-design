@@ -3,10 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#FAFAFA" />
+    <!-- The OS status bar is painted from theme-color: App.jsx re-writes it to the
+         visible surface (page bg, V-500 on Pay) in device mode. This is the first
+         paint's value — the Pay landing pod. -->
+    <meta name="theme-color" content="#D30AD7" />
     <!-- PWA / iOS standalone: "Add to Home Screen" launches chrome-less (no Safari
          toolbars) → real OS status bar + home indicator only = true full-bleed.
-         The app's mobile/device mode (App.jsx useIsMobile) renders bezel-less to match. -->
+         The app's mobile/device mode (App.jsx useIsMobile) renders bezel-less to match.
+         status-bar-style stays "default" (OPAQUE): since iOS 26.1 a black-translucent
+         bar gets a system band no CSS removes (aibanker R39, 2026-09-21). -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />

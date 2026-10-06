@@ -5,13 +5,14 @@
 //   • Phone shell rock-solid centered via position:fixed + 50/50 + translate(-50%,-50%)
 //   • Banking + Explore page bg → slate-10 so 0.05 alpha card shadows actually show
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useMotionValue, motion, AnimatePresence } from 'framer-motion';
 import BottomNav from './components/BottomNav.jsx';
 import MotionStatusBar from './components/StatusBar.jsx';
 import { MoonIcon, BulbIcon } from './icons/ThemeIcons.jsx';
 import Pager from './components/Pager.jsx';
 import DebugPanel, { DEBUG_PANEL_WIDTH, DEBUG_PANEL_GAP } from './components/DebugPanel.jsx';
+import useThreeFingerHold from './utils/useThreeFingerHold.js';
 import BankingL0 from './pods/banking/L0.jsx';
 import PaymentsL0 from './pods/payments/L0_valentinoHome.jsx';
 import ActivityL0 from './pods/activity/L0.jsx';
@@ -178,17 +179,18 @@ const SCREEN_INSET_LEFT = 24; // rim+bezel thickness L/R (from PNG alpha)
 const SCREEN_INSET_TOP = 23; // rim+bezel thickness T/B
 const SCREEN_RADIUS = 50; // screen corner radius
 
-function PhoneFrame({ children, bare = false }) {
+function PhoneFrame({ children, bare = false, height = PHONE_HEIGHT }) {
   // bare = full-bleed device mode (mobile / installed PWA): no bezel, no inset or
-  // corner radius — this 402×874 screen IS the viewport (the wrapper scales it to
-  // COVER the device), and the real OS status bar + home indicator show over it.
+  // corner radius — this 402-wide screen IS the viewport (scaled to the device
+  // width, `height` = the device's height in screen units), and the real OS
+  // status bar + home indicator show over it.
   if (bare) {
     return (
       <div
         style={{
           position: 'relative',
           width: PHONE_WIDTH,
-          height: PHONE_HEIGHT,
+          height,
           overflow: 'hidden',
           background: 'var(--page-bg)',
           flexShrink: 0,
@@ -244,7 +246,7 @@ function PhoneFrame({ children, bare = false }) {
 // position:fixed inset:0. Phone scales DOWN to fit if browser is smaller; at
 // browser ≥ 440×952 the phone renders at native and the black stage extends
 // to all four edges around it.
-function useFitScale(targetWidth, targetHeight, padding = 8, cover = false, reserveX = 0) {
+function useFitScale(targetWidth, targetHeight, padding = 8, reserveX = 0) {
   const compute = () => {
     if (typeof window === 'undefined') return 1;
     // Prefer visualViewport (the truly-visible area on iOS, shrinks/grows with the
@@ -253,11 +255,9 @@ function useFitScale(targetWidth, targetHeight, padding = 8, cover = false, rese
     const vv = window.visualViewport;
     const w = Math.max(1, (vv?.width ?? window.innerWidth) - padding * 2 - reserveX);
     const h = Math.max(1, (vv?.height ?? window.innerHeight) - padding * 2);
-    // cover = FILL the viewport (full-bleed mobile, may exceed 1); contain = fit
-    // the phone inside the stage (desktop shell, capped at 1 so it never upscales).
-    const s = cover
-      ? Math.max(w / targetWidth, h / targetHeight)
-      : Math.min(1, w / targetWidth, h / targetHeight);
+    // contain = fit the phone inside the stage (desktop shell, capped at 1 so it
+    // never upscales). The full-bleed phone mode sizes itself (useDeviceScreen).
+    const s = Math.min(1, w / targetWidth, h / targetHeight);
     return s > 0.05 ? s : 1;
   };
   const [scale, setScale] = useState(compute);
@@ -279,7 +279,7 @@ function useFitScale(targetWidth, targetHeight, padding = 8, cover = false, rese
       window.removeEventListener('resize', update);
       if (ro) ro.disconnect();
     };
-  }, [targetWidth, targetHeight, padding, cover, reserveX]);
+  }, [targetWidth, targetHeight, padding, reserveX]);
   return scale;
 }
 
@@ -302,6 +302,33 @@ function useIsMobile() {
   }, []);
   return mobile;
 }
+
+// Full-bleed device mode geometry (cal:2026-10-06): the 402-wide screen is scaled
+// to the device WIDTH and gets the device's own HEIGHT (in screen units), so the
+// app fills the visible viewport exactly. The old cover-scale of a fixed 402×874
+// screen cropped the app bar AND the nav whenever the viewport was shorter than
+// 874 (Safari with its toolbars: 393×659 lost ~90px at each end).
+function useDeviceScreen() {
+  const read = () => {
+    if (typeof window === 'undefined') return { scale: 1, height: PHONE_HEIGHT };
+    const scale = window.innerWidth / PHONE_WIDTH;
+    return { scale, height: Math.round(window.innerHeight / scale) };
+  };
+  const [screen, setScreen] = useState(read);
+  useEffect(() => {
+    const on = () => setScreen(read());
+    window.addEventListener('resize', on);
+    return () => window.removeEventListener('resize', on);
+  }, []);
+  return screen;
+}
+
+// The top reserve on a device is the REAL inset (cal:2026-10-06, aibanker R39):
+// an installed web app runs an OPAQUE status bar (status-bar-style "default"),
+// so env() reads 0 and the app bar sits right under the OS bar, as native. Only
+// the Expo WebView (edge-to-edge, react-native-webview bridge present) keeps the
+// 44px floor, for when its injected env() under-resolves.
+const IN_RN_WEBVIEW = typeof window !== 'undefined' && !!window.ReactNativeWebView;
 
 const PAGES_META = PODS.map((pod) => ({ pod, variant: STATUS_VARIANT[pod] }));
 
@@ -359,13 +386,27 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
   // (light icons + white-alpha nav medallions) across all slots.
   const pagesMeta = theme === 'dark' ? PODS.map((p) => ({ pod: p, variant: 'dark' })) : PAGES_META;
   const panelSpace = debug && debugOpen ? DEBUG_PANEL_WIDTH + DEBUG_PANEL_GAP : 0;
-  const fitScale = useFitScale(PHONE_OUTER_WIDTH, PHONE_OUTER_HEIGHT, 8, false, panelSpace);
+  const fitScale = useFitScale(PHONE_OUTER_WIDTH, PHONE_OUTER_HEIGHT, 8, panelSpace);
   // Full-bleed device mode (phone viewport / installed PWA): scale the 402×874
   // SCREEN to COVER the viewport (no bezel, no white stage) so the proto runs
   // edge-to-edge with the real OS status bar + home indicator. Desktop keeps the
   // bezel + contain-fit. (cont-38)
   const isMobile = useIsMobile();
-  const coverScale = useFitScale(PHONE_WIDTH, PHONE_HEIGHT, 0, true);
+  const device = useDeviceScreen();
+  const stageRef = useRef(null);
+  // Phone: the debug panel is a bottom sheet behind a three-finger hold (never
+  // open on load — `initialDebugOpen` is the desktop column's).
+  const [sheetOpen, setSheetOpen] = useState(false);
+  useThreeFingerHold(() => setSheetOpen(true), { enabled: debug && isMobile });
+
+  // Phone: the OS status bar is painted from <meta name="theme-color">, so it
+  // follows the APP's surface — page bg, V-500 on Pay — not the phone's scheme.
+  useEffect(() => {
+    if (!isMobile || !stageRef.current) return;
+    const token = visuallyActive === 'pay' && !l1Open ? '--brand-bg' : '--page-bg';
+    const color = getComputedStyle(stageRef.current).getPropertyValue(token).trim();
+    if (color) document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', color));
+  }, [isMobile, theme, visuallyActive, l1Open]);
 
   const handlePageIndexChange = (idx) => {
     const newPod = PODS[idx];
@@ -415,8 +456,18 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
 
   return (
     <div
+      ref={stageRef}
       data-theme={theme}
+      data-rn-webview={IN_RN_WEBVIEW ? '' : undefined}
       style={{
+        // One status-bar reserve for every page, L0 and L1 (cal:2026-10-06):
+        // desktop = the bezel's 54px status bar; device = the real top inset
+        // (÷ scale: it sits inside the width-scaled screen).
+        '--status-reserve': !isMobile
+          ? '54px'
+          : IN_RN_WEBVIEW
+            ? `max(44px, calc(env(safe-area-inset-top, 0px) / ${device.scale}))`
+            : `calc(env(safe-area-inset-top, 0px) / ${device.scale})`,
         position: 'fixed',
         inset: 0,
         width: '100vw',
@@ -440,8 +491,8 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
       <div
         style={{
           width: isMobile ? PHONE_WIDTH : PHONE_OUTER_WIDTH,
-          height: isMobile ? PHONE_HEIGHT : PHONE_OUTER_HEIGHT,
-          transform: `scale(${isMobile ? coverScale : fitScale})`,
+          height: isMobile ? device.height : PHONE_OUTER_HEIGHT,
+          transform: `scale(${isMobile ? device.scale : fitScale})`,
           transformOrigin: 'center center',
           flexShrink: 0,
           // collapse the layout box to the SCALED phone so the panel sits a true
@@ -449,7 +500,7 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
           margin: isMobile ? 0 : `${(PHONE_OUTER_HEIGHT * (fitScale - 1)) / 2}px ${(PHONE_OUTER_WIDTH * (fitScale - 1)) / 2}px`,
         }}
       >
-        <PhoneFrame bare={isMobile}>
+        <PhoneFrame bare={isMobile} height={device.height}>
           {/* ThemeContext lets L1 screens (App Settings "Dark mode" switch) trigger
              the same theme-switch transition as the dev toggle. */}
           <ThemeContext.Provider value={{ theme, toggleTheme: handleThemeToggle }}>
@@ -503,18 +554,15 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
                     >
                       {/* Status-bar reserve — paints white on scroll for non-Pay
                          pods so cards scrolling under the AppBar don't bleed past it.
-                         Desktop/web: flat 54px to match the MotionStatusBar overlay.
-                         Mobile (real device / WebView / iOS standalone): the REAL top
-                         safe-area inset (env), floored at 44px for when env under-
-                         resolves. The earlier max(88, env+28) over-padded — the app
-                         bar sat too far below the status bar. env gives the exact
-                         status-bar / Dynamic-Island height when viewport-fit=cover is
-                         set (the Expo WebView injects it). */}
+                         Height = --status-reserve (set on the stage): desktop 54px to
+                         match the MotionStatusBar overlay; on a device the REAL top
+                         inset — 0 under an installed app's opaque bar, the notch under
+                         a translucent one, floored at 44px only in the Expo WebView
+                         (its injected env can under-resolve). The earlier max(88,
+                         env+28) and the plain 44px floor both over-padded. */}
                       <div
                         style={{
-                          height: isMobile
-                            ? 'max(44px, env(safe-area-inset-top, 0px))'
-                            : '54px',
+                          height: 'var(--status-reserve)',
                           flexShrink: 0,
                           background: reserveBg,
                           // Instant (no transition): must opacify with the AppBar so
@@ -652,8 +700,28 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
             personas={USER_STATE_PRESETS}
             activePersona={persona}
             onPersonaChange={setPersona}
-            phoneInfo={`${PHONE_WIDTH} × ${PHONE_HEIGHT} · scale ${(isMobile ? coverScale : fitScale).toFixed(2)}`}
+            phoneInfo={`${PHONE_WIDTH} × ${PHONE_HEIGHT} · scale ${fitScale.toFixed(2)}`}
             onClose={() => setDebugOpen(false)}
+          >
+            {debugContent}
+          </DebugPanel>
+        )}
+      </AnimatePresence>
+      {/* Phone: the same panel as a bottom sheet (three-finger hold). Fixed to the
+         viewport, OUTSIDE the scaled screen, so it is real device size. */}
+      <AnimatePresence>
+        {debug && isMobile && sheetOpen && (
+          <DebugPanel
+            sheet
+            pods={PODS}
+            active={active}
+            onJumpPod={handleNavChange}
+            theme={theme}
+            onToggleTheme={handleThemeToggle}
+            personas={USER_STATE_PRESETS}
+            activePersona={persona}
+            onPersonaChange={setPersona}
+            onClose={() => setSheetOpen(false)}
           >
             {debugContent}
           </DebugPanel>
