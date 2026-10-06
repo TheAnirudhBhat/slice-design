@@ -15,7 +15,7 @@ import DebugPanel, { DEBUG_PANEL_WIDTH, DEBUG_PANEL_GAP } from './components/Deb
 import useThreeFingerHold from './utils/useThreeFingerHold.js';
 import { BootContext, useBootReady } from './boot.js';
 import Splash from './components/Splash.jsx';
-import StatusTint, { StatusDimContext } from './components/StatusTint.jsx';
+import { StatusDimContext } from './components/StatusTint.jsx';
 import BankingL0 from './pods/banking/L0.jsx';
 import PaymentsL0 from './pods/payments/L0_valentinoHome.jsx';
 import ActivityL0 from './pods/activity/L0.jsx';
@@ -425,7 +425,6 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
   // Phone: the status bar is transparent (StatusTint.jsx). The page colour at the
   // top is the "surface": V-500 under the splash and on the Pay home, the page bg
   // everywhere else. It is used in three places:
-  //   • StatusTint tints the bar's band with it
   //   • theme-color carries it, which iOS uses to pick black or white status glyphs
   //   • the document root is painted with it, for any strip WebKit leaves outside the page
   const surface = !ready || (visuallyActive === 'pay' && !l1Open) ? '--brand-bg' : '--page-bg';
@@ -780,9 +779,12 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
         )}
       </AnimatePresence>
       </StatusDimContext.Provider>
-      {/* the band under the transparent status bar (StatusTint.jsx) — not in the
-         Expo WebView, whose native status bar is synced by the wrapper app */}
-      {isMobile && !IN_RN_WEBVIEW && <StatusTint surface={`var(${surface})`} overlays={Object.values(dims)} />}
+      {/* No <StatusTint/> band (cal:2026-10-07, user video IMG_3825: "make it transparent
+         so the page changes are seen edge to edge… not as the status bar is fading in or
+         changing colors"). Its fixed strip made WebKit fill the band with ONE flat colour,
+         re-read late, so a sliding page stopped short of the bar. Without it iOS 26 lays
+         its Liquid Glass over the live page — it moves with the content, overlays'
+         scrims included. */}
     </div>
   );
 }
