@@ -53,13 +53,45 @@ export const SHELL_IMAGES = [
   '/assets/icons/slice_eye_open.png',
 ];
 
-const loadImage = (src) =>
+// Preloaded images are held for the page's life: one nobody references can have its
+// decoded bitmap dropped (iOS does, under memory pressure), and the next mount paints
+// it blank until it decodes again.
+const KEEP = [];
+// A failed request is tried once more: over a phone's Wi-Fi a dropped one otherwise
+// stays missing for the session.
+const fetchImage = (src, cors, tries = 2) =>
   new Promise((done) => {
     const im = new Image();
-    im.onload = done;
-    im.onerror = done;
+    if (cors) im.crossOrigin = 'anonymous';
+    im.onload = () => {
+      KEEP.push(im);
+      im.decode?.().catch(() => {});
+      done();
+    };
+    im.onerror = () => (tries > 1 ? fetchImage(src, cors, tries - 1).then(done) : done());
     im.src = src;
   });
+// The same for every <img> on the page: one whose request failed is asked for once
+// more (a query string, so the failed entry in the browser's cache isn't reused).
+if (typeof document !== 'undefined') {
+  document.addEventListener(
+    'error',
+    (e) => {
+      const im = e.target;
+      if (im.tagName !== 'IMG' || im.dataset.retried || !im.src) return;
+      im.dataset.retried = '1';
+      im.src = `${im.src}${im.src.includes('?') ? '&' : '?'}retry=1`;
+    },
+    true, // load errors don't bubble
+  );
+}
+
+// Mask images load twice. The icons are CSS masks (Glyph, the pill icons), and a mask
+// fetches in CORS mode, which a plain <img> fetch can't serve: without the CORS copy
+// every mask icon was fetched again after the splash, and popped in late (or not at
+// all). Masks = every SVG, and the one PNG drawn as a mask (spark's empty slot ring).
+const MASK = /\.svg$|slot_empty_ring\.png$/;
+const loadImage = (src) => Promise.all([fetchImage(src, false), MASK.test(src) && fetchImage(src, true)]);
 
 // Fonts + the shell's images + a project's own list + every <img> already in the
 // DOM (all L0 pods mount on load). Resolves once, on mount. `progress` (0–1)
