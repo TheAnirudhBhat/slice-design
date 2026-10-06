@@ -35,17 +35,19 @@ export function useL1() {
 // canonical L1 push). Each registry entry can be either:
 //   • a Component (defaults to right-slide), or
 //   • an object { Component, slideFrom: 'right'|'bottom' }.
+// Transform strings, not x / y: framer hands them to WAAPI, so the slide runs on the
+// compositor and stays smooth while the L1 it carries is still mounting.
 const MOTION_VARIANTS = {
   right: {
-    initial: { x: '100%' },
-    animate: { x: 0 },
-    exit: { x: '100%' },
+    initial: { transform: 'translateX(100%)' },
+    animate: { transform: 'translateX(0%)' },
+    exit: { transform: 'translateX(100%)' },
     transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] },
   },
   bottom: {
-    initial: { y: '100%' },
-    animate: { y: 0 },
-    exit: { y: '100%' },
+    initial: { transform: 'translateY(100%)' },
+    animate: { transform: 'translateY(0%)' },
+    exit: { transform: 'translateY(100%)' },
     transition: { duration: 0.45, ease: [0.32, 0.72, 0, 1] },
   },
 };
