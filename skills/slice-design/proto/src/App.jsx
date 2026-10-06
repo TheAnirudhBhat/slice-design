@@ -14,7 +14,7 @@ import Pager from './components/Pager.jsx';
 import DebugPanel, { DEBUG_PANEL_WIDTH, DEBUG_PANEL_GAP } from './components/DebugPanel.jsx';
 import useThreeFingerHold from './utils/useThreeFingerHold.js';
 import { BootContext, useBootReady } from './boot.js';
-import BootShimmer from './components/BootShimmer.jsx';
+import Splash from './components/Splash.jsx';
 import BankingL0 from './pods/banking/L0.jsx';
 import PaymentsL0 from './pods/payments/L0_valentinoHome.jsx';
 import ActivityL0 from './pods/activity/L0.jsx';
@@ -346,10 +346,10 @@ const PAGES_META = PODS.map((pod) => ({ pod, variant: STATUS_VARIANT[pod] }));
 //   exploreExtraCards={[<InsuranceEntryCard/>]} initialPod="explore" />
 // NOTE: to OWN a whole pod (swap its L0), a project does that in ITS OWN wrapper by
 // materialising/unlinking the component — NOT via a prop on the upstream skill proto.
-//   • preload            — a project's own image URLs, held behind the boot shimmer too (boot.js)
+//   • preload            — a project's own image URLs, held behind the splash too (boot.js)
 export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod = 'pay', debug = false, debugContent = null, initialDebugOpen = false, preload = [] } = {}) {
-  // Boot: Rubik + images in before anything shows (boot.js); a shimmer meanwhile.
-  const ready = useBootReady(preload);
+  // Boot: Rubik + images in before anything shows (boot.js); the splash meanwhile.
+  const { ready, progress } = useBootReady(preload);
   const [active, setActive] = useState(initialPod);
   const [visuallyActive, setVisuallyActive] = useState(initialPod);
   const [theme, setTheme] = useState('light'); // light | dark — flips data-theme on the stage
@@ -683,7 +683,7 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
           </ThemeContext.Provider>
           </div>
           </BootContext.Provider>
-          <AnimatePresence>{!ready && <BootShimmer key="boot" immersive={initialPod === 'pay'} />}</AnimatePresence>
+          <AnimatePresence>{!ready && <Splash key="boot" progress={progress} />}</AnimatePresence>
         </PhoneFrame>
       </div>
       {/* Default app view stays CLEAN. The debug toggle only appears when debug is

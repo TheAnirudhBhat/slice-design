@@ -20,10 +20,22 @@
     <meta name="apple-mobile-web-app-title" content="slice" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <title>slice app proto</title>
+    <!-- Splash (Figma 11762:12087): a static twin of components/Splash.jsx that paints
+         before any JS runs. Phone / home-screen app only (the shell's useIsMobile
+         query), where the app is full-bleed and the React splash lands exactly on
+         top of it; Splash.jsx removes this node once it has mounted. -->
+    <link rel="preload" href="/assets/splash_logo.svg" as="image" />
+    <style>
+      #splash { display: none; }
+      @media (max-width: 600px), (display-mode: standalone) {
+        #splash { display: flex; position: fixed; inset: 0; z-index: 9999; align-items: center; justify-content: center; background: #D30AD7; }
+      }
+    </style>
     <!-- Rubik is self-hosted via @fontsource (imported in main.jsx). No Google
          Fonts CDN link — it falls back on slice's corporate network. (R24 cont-31) -->
   </head>
   <body>
+    <div id="splash"><img src="/assets/splash_logo.svg" alt="" width="140" height="56" /></div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

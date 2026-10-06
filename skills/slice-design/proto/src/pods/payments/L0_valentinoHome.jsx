@@ -15,8 +15,10 @@
 //        — Save | Transfer button row (Save replaced Request, matching the live app) (white-20 bg, 16/24 Medium, equal flex)
 //   6. Bottom nav (rendered by App.jsx)
 
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 import { useL1 } from '../../components/L1Stack.jsx';
+import { SPLASH_EXIT_MS, useBoot } from '../../boot.js';
 import Avatar from '../../components/Avatar.jsx';
 import formatINR from '../../utils/formatINR.js';
 
@@ -142,9 +144,13 @@ function PillGlyph({ src, width = 16 }) {
   );
 }
 
-function ActionPill({ label, style, children }) {
+function ActionPill({ label, style, intro, children }) {
   return (
-    <button
+    <motion.button
+      data-pill
+      initial={false}
+      animate={intro?.animate ?? { x: 0, opacity: 1 }}
+      transition={intro?.transition}
       type="button"
       aria-label={label}
       style={{
@@ -155,6 +161,8 @@ function ActionPill({ label, style, children }) {
         gap: 4,
         padding: '0 16px',
         background: WHITE_10,
+        backdropFilter: 'blur(5px)', // Figma 11762:11611 pills: backdrop-blur 5
+        WebkitBackdropFilter: 'blur(5px)',
         border: `1.5px solid ${WHITE_05}`,
         borderRadius: 100,
         cursor: 'pointer',
@@ -164,26 +172,70 @@ function ActionPill({ label, style, children }) {
       }}
     >
       {children}
-    </button>
+    </motion.button>
   );
 }
 
+// First-open entrance (Figma Valentino ✅ 11762:11598, cal:2026-10-07): three static
+// frames read as a sequence — the pills sit in a tight centred stack (hidden), fade
+// in as a looser overlapping stack, then fan out to their row. Once per app open,
+// once the splash has lifted. Stack steps are the frames' left-edge
+// deltas (~12, then ~55); the fan uses the row's ease-in-out curve.
+const INTRO_STEPS = [12, 56];
+const INTRO_FADE = { duration: 0.28, ease: [0.25, 0.1, 0.25, 1] };
+const INTRO_FAN = { duration: 0.5, ease: [0.65, 0, 0.35, 1] };
+let introPlayed = false;
+
+function usePillsIntro(rowRef) {
+  const { ready } = useBoot();
+  const [stage, setStage] = useState(introPlayed ? null : { i: 0, x: [] }); // null = at rest
+  useLayoutEffect(() => {
+    if (introPlayed || !ready || !rowRef.current) return undefined;
+    introPlayed = true;
+    // rest positions → each pill's x offset into a centred stack of step s
+    const pills = [...rowRef.current.querySelectorAll('[data-pill]')];
+    const W = rowRef.current.clientWidth;
+    const stack = (s) => {
+      const extent = Math.max(...pills.map((p, i) => i * s + p.offsetWidth));
+      const start = (W - extent) / 2;
+      return pills.map((p, i) => start + i * s - p.offsetLeft);
+    };
+    const [tight, loose] = INTRO_STEPS.map(stack);
+    setStage({ i: 0, x: tight });
+    const timers = [
+      setTimeout(() => setStage({ i: 1, x: loose }), SPLASH_EXIT_MS),
+      setTimeout(() => setStage(null), SPLASH_EXIT_MS + INTRO_FADE.duration * 1000),
+    ];
+    return () => timers.forEach(clearTimeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready]);
+  // per-pill props for ActionPill (index = DOM order in the row)
+  return (i) => {
+    if (!stage) return { animate: { x: 0, opacity: 1 }, transition: INTRO_FAN };
+    if (stage.i === 0) return { animate: { x: stage.x[i] ?? 0, opacity: 0 }, transition: { duration: 0 } };
+    return { animate: { x: stage.x[i] ?? 0, opacity: 1 }, transition: INTRO_FADE };
+  };
+}
+
 function ActionPills({ upiId }) {
+  const rowRef = useRef(null);
+  const intro = usePillsIntro(rowRef);
   return (
     <div
+      ref={rowRef}
       className="no-scrollbar"
       style={{ height: 64, flexShrink: 0, display: 'flex', alignItems: 'center', gap: 12, padding: '16px 24px 12px', overflowX: 'auto' }}
     >
-      <ActionPill label="8 fires left" style={{ padding: '0 14px 0 12px' }}>
+      <ActionPill label="8 fires left" style={{ padding: '0 14px 0 12px' }} intro={intro(0)}>
         <PillGlyph src="/assets/icons/pill_fire.svg" />
         <span style={PILL_TEXT}>8 fires left</span>
       </ActionPill>
       {/* 94 fixed = the compact "no monies yet" state; the value variant is wider */}
-      <ActionPill label="monies" style={{ width: 94 }}>
+      <ActionPill label="monies" style={{ width: 94 }} intro={intro(1)}>
         <PillGlyph src="/assets/icons/pill_monies.svg" />
         <span style={PILL_TEXT}>monies</span>
       </ActionPill>
-      <ActionPill label={`UPI ID ${upiId}`}>
+      <ActionPill label={`UPI ID ${upiId}`} intro={intro(2)}>
         <PillGlyph src="/assets/icons/pill_upi.svg" width={31} />
         {/* UPI ID in primary white (user, cal:2026-10-06) — it is the identity anchor */}
         <span style={{ ...PILL_TEXT, color: WHITE }}>{upiId}</span>
@@ -398,6 +450,9 @@ export default function L0ValentinoHome({ onScrollChange }) {
         width: '100%',
         height: '100%',
         background: BRAND_BG,
+        // backdrop root for the pills' blur: it samples this page only, never the
+        // black bezel past the screen edge (user screenshot: a dark smear at the right)
+        clipPath: 'inset(0)',
         display: 'flex',
         flexDirection: 'column',
         paddingBottom: 140, // floating bottom nav reserve
