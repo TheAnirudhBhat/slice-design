@@ -185,7 +185,8 @@ function ActionPills({ upiId }) {
       </ActionPill>
       <ActionPill label={`UPI ID ${upiId}`}>
         <PillGlyph src="/assets/icons/pill_upi.svg" width={31} />
-        <span style={PILL_TEXT}>{upiId}</span>
+        {/* UPI ID in primary white (user, cal:2026-10-06) — it is the identity anchor */}
+        <span style={{ ...PILL_TEXT, color: WHITE }}>{upiId}</span>
       </ActionPill>
     </div>
   );
