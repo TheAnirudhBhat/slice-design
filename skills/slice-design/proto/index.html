@@ -3,20 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
-    <!-- The OS status bar is painted from theme-color: App.jsx re-writes it to the
-         visible surface (page bg, V-500 on Pay) in device mode. This is the first
-         paint's value — the Pay landing pod. manifest.webmanifest must NOT declare a
-         theme_color: iOS installs the home-screen app from the manifest and a static
-         one pins the bar (a white bar over V-500 Pay; aibanker's has none). -->
+    <!-- theme-color = the surface at the top of the page (App.jsx keeps it in sync;
+         this is the first paint's value, the Pay landing pod). iOS picks the status
+         glyphs' black or white from it. manifest.webmanifest must NOT declare a
+         theme_color: iOS installs the home-screen app from the manifest, and a
+         static one pins the bar. -->
     <meta name="theme-color" content="#D30AD7" />
     <!-- PWA / iOS standalone: "Add to Home Screen" launches chrome-less (no Safari
          toolbars) → real OS status bar + home indicator only = true full-bleed.
          The app's mobile/device mode (App.jsx useIsMobile) renders bezel-less to match.
-         status-bar-style stays "default" (OPAQUE): since iOS 26.1 a black-translucent
-         bar gets a system band no CSS removes (aibanker R39, 2026-09-21). -->
+         status-bar-style is "black-translucent": the page draws under the status
+         bar, so the bar is transparent, and sheets and scrims cover it.
+         The old opaque bar ("default") was a separate strip that iOS repainted from
+         theme-color late, and nothing on the page could cover it (user, 2026-10-07).
+         iOS 26's blur over a translucent top edge is replaced by a colour fill: see
+         components/StatusTint.jsx.
+         iOS reads this tag once, when the icon is added. Delete the home-screen icon
+         and add it again to pick up a change. -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="slice" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <title>slice app proto</title>

@@ -17,6 +17,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { useStatusDim } from './StatusTint.jsx';
 // Shared dev-chrome control primitives (Group/Chip/palette) live in
 // ControlPanel.jsx — single source for the debug panel + playground.
 import { C, Group, Chip } from './ControlPanel.jsx';
@@ -53,6 +54,7 @@ export default function DebugPanel({
   onClose,
   children,
 }) {
+  useStatusDim(sheet ? 'rgba(0, 0, 0, 0.4)' : null); // dls-lint-ok: dev-chrome scrim, below — the status bar dims with it
   // sheet: the opening lift's stray click must not shut it (belt and braces —
   // useThreeFingerHold already preventDefaults that touchend)
   const armed = useRef(false);

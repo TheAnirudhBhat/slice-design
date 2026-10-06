@@ -5,7 +5,7 @@
 //   • Phone shell rock-solid centered via position:fixed + 50/50 + translate(-50%,-50%)
 //   • Banking + Explore page bg → slate-10 so 0.05 alpha card shadows actually show
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useMotionValue, motion, AnimatePresence } from 'framer-motion';
 import BottomNav from './components/BottomNav.jsx';
 import MotionStatusBar from './components/StatusBar.jsx';
@@ -15,6 +15,7 @@ import DebugPanel, { DEBUG_PANEL_WIDTH, DEBUG_PANEL_GAP } from './components/Deb
 import useThreeFingerHold from './utils/useThreeFingerHold.js';
 import { BootContext, useBootReady } from './boot.js';
 import Splash from './components/Splash.jsx';
+import StatusTint, { StatusDimContext } from './components/StatusTint.jsx';
 import BankingL0 from './pods/banking/L0.jsx';
 import PaymentsL0 from './pods/payments/L0_valentinoHome.jsx';
 import ActivityL0 from './pods/activity/L0.jsx';
@@ -310,12 +311,28 @@ function useIsMobile() {
 // app fills the visible viewport exactly. The old cover-scale of a fixed 402×874
 // screen cropped the app bar AND the nav whenever the viewport was shorter than
 // 874 (Safari with its toolbars: 393×659 lost ~90px at each end).
+// Installed (home screen) with the translucent bar, WebKit draws the page from the
+// very top of the screen but sizes the viewport as if it began below the bar: one
+// bar short at the bottom. The top inset goes back on, capped at the screen (an
+// install from before the switch still has the opaque bar, and an inset of 0).
+const STANDALONE =
+  typeof window !== 'undefined' && (window.navigator.standalone === true || !!window.matchMedia?.('(display-mode: standalone)').matches);
+function insetTop() {
+  const probe = document.createElement('div');
+  probe.style.cssText = 'position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top,0px)';
+  document.body.appendChild(probe);
+  const px = parseFloat(getComputedStyle(probe).paddingTop) || 0;
+  probe.remove();
+  return px;
+}
 function useDeviceScreen() {
   const read = () => {
     // a 0×0 viewport (a hidden/backgrounded tab, a cold start) would make it NaN
-    if (typeof window === 'undefined' || !window.innerWidth || !window.innerHeight) return { scale: 1, height: PHONE_HEIGHT };
+    if (typeof window === 'undefined' || !window.innerWidth || !window.innerHeight) return { scale: 1, height: PHONE_HEIGHT, px: null };
     const scale = window.innerWidth / PHONE_WIDTH;
-    return { scale, height: Math.round(window.innerHeight / scale) };
+    const portrait = window.innerWidth < window.innerHeight;
+    const px = STANDALONE && portrait ? Math.min(window.innerHeight + insetTop(), window.screen.height) : window.innerHeight;
+    return { scale, height: Math.round(px / scale), px: STANDALONE ? px : null };
   };
   const [screen, setScreen] = useState(read);
   useEffect(() => {
@@ -326,11 +343,11 @@ function useDeviceScreen() {
   return screen;
 }
 
-// The top reserve on a device is the REAL inset (cal:2026-10-06, aibanker R39):
-// an installed web app runs an OPAQUE status bar (status-bar-style "default"),
-// so env() reads 0 and the app bar sits right under the OS bar, as native. Only
-// the Expo WebView (edge-to-edge, react-native-webview bridge present) keeps the
-// 44px floor, for when its injected env() under-resolves.
+// The top reserve on a device is the REAL inset. The status bar is translucent
+// (index.html, StatusTint.jsx), so env(safe-area-inset-top) is the bar's height:
+// every page starts its app bar below it, and its own colour runs up under the bar.
+// Only the Expo WebView (edge-to-edge, react-native-webview bridge present) keeps
+// the 44px floor, for when its injected env() under-resolves.
 const IN_RN_WEBVIEW = typeof window !== 'undefined' && !!window.ReactNativeWebView;
 
 const PAGES_META = PODS.map((pod) => ({ pod, variant: STATUS_VARIANT[pod] }));
@@ -405,22 +422,34 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
   const [sheetOpen, setSheetOpen] = useState(false);
   useThreeFingerHold(() => setSheetOpen(true), { enabled: debug && isMobile });
 
-  // Phone: the OS status bar is painted from <meta name="theme-color">, so it
-  // follows the APP's surface — page bg, V-500 on Pay — not the phone's scheme.
-  // The document's own root colour follows too (user: "the Valentino should cover
-  // the whole screen… covered by some white on the top"): newer iOS can tint the
-  // bar area from the html/body background instead of theme-color, and that was
-  // hard-white (index.css) — so on Pay it read as a white band over V-500.
+  // Phone: the status bar is transparent (StatusTint.jsx). The page colour at the
+  // top is the "surface": V-500 under the splash and on the Pay home, the page bg
+  // everywhere else. It is used in three places:
+  //   • StatusTint tints the bar's band with it
+  //   • theme-color carries it, which iOS uses to pick black or white status glyphs
+  //   • the document root is painted with it, for any strip WebKit leaves outside the page
+  const surface = !ready || (visuallyActive === 'pay' && !l1Open) ? '--brand-bg' : '--page-bg';
   useEffect(() => {
     if (!isMobile || !stageRef.current) return;
-    const token = visuallyActive === 'pay' && !l1Open ? '--brand-bg' : '--page-bg';
-    const color = getComputedStyle(stageRef.current).getPropertyValue(token).trim();
+    const color = getComputedStyle(stageRef.current).getPropertyValue(surface).trim();
     if (!color) return;
     document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', color));
     [document.documentElement, document.body, document.getElementById('root')].forEach((el) => {
       if (el) el.style.backgroundColor = color;
     });
-  }, [isMobile, theme, visuallyActive, l1Open]);
+  }, [isMobile, theme, surface]);
+  // overlays covering the page (useStatusDim), by id → colour
+  const [dims, setDims] = useState({});
+  const statusDims = useMemo(
+    () => ({
+      set: (id, color) =>
+        setDims((d) => {
+          const { [id]: _, ...rest } = d;
+          return color ? { ...rest, [id]: color } : rest;
+        }),
+    }),
+    [],
+  );
 
   const handlePageIndexChange = (idx) => {
     const newPod = PODS[idx];
@@ -489,7 +518,8 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
         // height, so on a real iPhone the phone's bottom (nav + home indicator) got
         // pushed behind the Safari toolbar and looked cut off. dvh tracks what's
         // actually visible. (cont-38: iPhone bottom-safe-area cutoff fix.)
-        height: '100dvh',
+        // Installed: the measured full height (useDeviceScreen), not the short viewport.
+        height: isMobile && device.px ? device.px : '100dvh',
         // Desktop stage = white (phone floats on it). Full-bleed mobile = page bg,
         // so the cover-scaled screen blends edge-to-edge (no white sliver).
         background: isMobile ? 'var(--page-bg)' : '#FFFFFF', // dls-lint-ok: desktop stage bg, not an app surface
@@ -502,6 +532,7 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
         gap: DEBUG_PANEL_GAP,
       }}
     >
+      <StatusDimContext.Provider value={statusDims}>
       <div
         style={{
           width: isMobile ? PHONE_WIDTH : PHONE_OUTER_WIDTH,
@@ -748,6 +779,10 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
           </DebugPanel>
         )}
       </AnimatePresence>
+      </StatusDimContext.Provider>
+      {/* the band under the transparent status bar (StatusTint.jsx) — not in the
+         Expo WebView, whose native status bar is synced by the wrapper app */}
+      {isMobile && !IN_RN_WEBVIEW && <StatusTint surface={`var(${surface})`} overlays={Object.values(dims)} />}
     </div>
   );
 }

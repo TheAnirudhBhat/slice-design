@@ -1920,7 +1920,7 @@ Source: birthday-spark session 2026-10-06 (agentation pins + chat).
 The user's iPhone home-screen screenshots (IMG_3807/3808) showed an opaque white status bar over the V-500 Pay page and the nav cut off at the bottom edge ("top bar should be transparent… the menu bar should not stick to the bottom").
 
 1. **No cover-crop.** `useDeviceScreen`: the 402-wide screen scales to the device WIDTH and takes the device's HEIGHT. The cover-scale of a fixed 402×874 cropped ~90px off each end at 393×659 (Safari with toolbars) and ~31px at 402×812 (home-screen app under an opaque bar) — the app bar and the nav.
-2. **Status bar reads transparent.** OPAQUE bar (`default`, kept — black-translucent bands since iOS 26.1 and forces white text) painted from `theme-color`, synced to the visible surface (page bg / V-500 on Pay / dark). `index.html` first paint = the landing pod's colour.
+2. **[SUPERSEDED 2026-10-07: transparent bar + StatusTint, see that entry]** **Status bar reads transparent.** OPAQUE bar (`default`, kept — black-translucent bands since iOS 26.1 and forces white text) painted from `theme-color`, synced to the visible surface (page bg / V-500 on Pay / dark). `index.html` first paint = the landing pod's colour.
 3. **One top reserve.** `--status-reserve` on the stage, read by the L0 reserve and every L1 (`ProfileL1`, `AppSettingsL1`, `TxnDetailL1` were a flat 54): 54 desktop, the real inset on a device, 44 floor only in the Expo WebView.
 4. **Nav clears the home indicator.** `max(24px, env(safe-area-inset-bottom) − 4px)` → medallions end 38pt above the bottom, as prod; flat 24 in the Expo WebView.
 5. **Debug sheet on a phone.** Three-finger hold (aibanker `useThreeFingerHold`) opens `DebugPanel sheet`: theme + reload first, project controls, pod, persona; the hold's lift is preventDefault-ed so iOS's compatibility click can't shut it.
@@ -1939,3 +1939,26 @@ aibanker's fix, confirmed by its commits: the white strip on an iOS home-screen 
 ### 2026-10-06 (cont.) — boot shimmer, preload, image cache (user: "the images should be cached and preloaded… sometimes the page loads with a different font… run a full-page shimmer if it's loading")
 
 `boot.js` + `BootShimmer.jsx` + `public/sw.js`: the app stays hidden behind a full-page shimmer (in the landing pod's shape) until Rubik 400–700 and the shell's images (+ a project's `preload` list, + every DOM `<img>`) are in, 4s cap; `useBoot().ready` gates arrival moments; a production-only stale-while-revalidate service worker caches images. Verified in WebKit with every image delayed 900ms: shimmer up, app hidden, then revealed with Rubik loaded; the arrival moment started only after the reveal; the SW registered and filled `slice-proto-images-v1`. See root cause #20. (Also synced from the suite this round: a peer session's Pay-home app bar per Valentino ✅ 10028:8953 — "Check balance" + chevron, chat glyph, Save in place of Request — committed straight to the suite; the installed skill now matches it.)
+
+### 2026-10-07 — transparent status bar that overlays cover (user: "there is a delay in the color change of the status bar… should remain transparent… with the bottom sheet overlay or anything, it doesn't cover the top status bar. The status bar issue is major")
+
+IMG_3824 showed Credit under a V-500 status bar: the opaque bar's late `theme-color` repaint. Every scrim also stopped short of it.
+
+Read WebKit's source, `LocalFrameView::fixedContainerEdges` and `Page::updateFixedContainerEdges`:
+- **The blur:** a translucent bar's top edge gets iOS 26's Liquid Glass blur unless a `position:fixed`/sticky box ≥90% wide and >10px tall touches it. The hit-test is at the top edge's centre, 4px in, and ignores CSS pointer-events. WebKit then fills the band with that box's background colour instead.
+- **Stale colours:** viewport-sized and dimming boxes keep the previous colour.
+- **Re-sampling:** the colour is only re-read when fixed or sticky boxes are added or removed.
+- **The bug report:** aibanker R39's "black band" was this blur over an ambient scene with no fixed box at the edge.
+
+What changed:
+1. `status-bar-style` → `black-translucent`. The page draws under the bar, and the top reserve is the real inset.
+2. `components/StatusTint.jsx`:
+   - a fixed top strip, `max(12px, inset)` tall, painting at opacity 0.1 (the sampler's floor), re-keyed per colour
+   - its colour is the surface (V-500 under the splash and on the Pay home, the page bg elsewhere) blended with every `useStatusDim()` overlay over its fade (0.2s in, 0.24s out)
+   - registered so far: the spark sheet scrim, the drag scrim, the debug sheet (black a40)
+3. **Short viewport:** installed under a translucent bar, the viewport is one bar short, so `useDeviceScreen` uses innerHeight + inset-top, capped at `screen.height`. Old opaque installs report an inset of 0 and are unaffected. `index.css` also adds `html { min-height: calc(100% + inset-top) }` in standalone.
+4. `theme-color` and the root background still follow the surface (glyph contrast; any strip WebKit leaves outside the page).
+
+Verified in WebKit at 402×874: the band follows Pay (V-500) → Credit (white) → spark (white). On a sheet it fades to rgb(179,179,179) over 13 re-keys, then back to white.
+NOT verifiable here (no iOS Simulator on this Mac): the device band itself. Re-add the home-screen icon to test.
+

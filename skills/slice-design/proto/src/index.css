@@ -80,6 +80,12 @@
   }
   /* R23 fix-it-2-cont-9: ensure the proto stage truly fills the viewport. */
   #root { display: flex; align-items: stretch; justify-content: stretch; }
+  /* Installed with the translucent status bar (index.html), WebKit sizes the
+     viewport one bar short of the screen. The document covers the rest; the stage's
+     own height is measured in App.jsx useDeviceScreen. */
+  @media (display-mode: standalone) {
+    html { min-height: calc(100% + env(safe-area-inset-top, 0px)); }
+  }
   * {
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
