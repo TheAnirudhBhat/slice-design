@@ -3,16 +3,16 @@
 //
 // Canonical anatomy (top to bottom):
 //   1. Status bar (rendered globally by App.jsx as fixed overlay)
-//   2. App bar — 64px row:
-//        LEFT  : "Check balance" pill (transparent bg + white-20 border, 14/20 Regular)
-//        RIGHT : audio/voice icon (40×40 white-20 border circle) + photo avatar
+//   2. App bar — 64px row (Figma Valentino ✅ 10028:8953, cal:2026-10-06):
+//        LEFT  : "Check balance" + chevron (no border, 14/20 Regular)
+//        RIGHT : chat glyph + 40 photo avatar
 //   3. Action pills row — fire · monies · UPI ID (Figma Valentino ✅ 10028:9340
 //      "Pre-scan", cal:2026-10-06). The UPI ID moved UP here from under the amount.
 //   4. Top Section (centered, flex-1):
 //        — ₹0 Display Large (80/96 Regular, -0.8px letter-spacing)
 //   5. Bottom Section (anchored, 16px gap between rows):
 //        — Custom keypad (4 rows × 3 cols, 20/24 Medium digits, 72px gap between cols)
-//        — Request | Transfer button row (white-20 bg, 16/24 Medium, equal flex)
+//        — Save | Transfer button row (Save replaced Request, matching the live app) (white-20 bg, 16/24 Medium, equal flex)
 //   6. Bottom nav (rendered by App.jsx)
 
 import React, { useState } from 'react';
@@ -20,7 +20,7 @@ import { useL1 } from '../../components/L1Stack.jsx';
 import Avatar from '../../components/Avatar.jsx';
 import formatINR from '../../utils/formatINR.js';
 
-import { BRAND_BG, WHITE, WHITE_05, WHITE_10, WHITE_20, WHITE_30, WHITE_70 } from '../../tokens.js';
+import { BRAND_BG, WHITE, WHITE_05, WHITE_10, WHITE_20, WHITE_70 } from '../../tokens.js';
 
 const USER_AVATAR_URL = '/assets/avatar_only.png';
 const UPI_ID = 'rajan@sliceaxis';
@@ -42,50 +42,47 @@ function fontSizeForAmount(amountStr) {
 }
 
 function AppBar({ onAvatarTap }) {
-  // Canonical per Figma node 885:19901 — `pl-16 pr-20 py-8` row, total ~64px.
-  // LEFT: Check balance pill — 1px white-20 border, padding 8px/16px, 14/20 R.
-  // RIGHT (gap 8): 48px hit-area wrapping a 40×40 audio circle with 1px
-  // white-30 border, then 48px hit-area wrapping a 40×40 avatar with 1px
-  // white-30 border. R23 fix-it-2-cont-6 — exact canonical sizes restored
-  // (was 52h / 36×36 in earlier round).
+  // Figma Valentino ✅ 10028:8953 "App bar / Dropdown" (cal:2026-10-06): 24/12 padding,
+  // 40-tall row. LEFT: "Check balance" + 16 chevron, 5 gap, no pill border any more.
+  // RIGHT (gap 28): 18 chat glyph, avatar at the proto-wide 44 (48 hit), no ring — the Figma ring shrank the photo to 42.
   return (
     <div
       style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingLeft: 16,
-        paddingRight: 20,
-        paddingTop: 8,
-        paddingBottom: 8,
+        padding: '8px 24px', // 8 not Figma's 12: the 48 avatar hit-area keeps the bar at 64
       }}
     >
       <button
         style={{
+          height: 40,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 5,
           background: 'transparent',
-          border: `1px solid ${WHITE_20}`,
+          border: 'none',
+          padding: 0,
           color: WHITE,
-          padding: '8px 16px',
-          borderRadius: 100,
           fontFamily: 'Rubik, sans-serif',
           fontWeight: 400,
           fontSize: 14,
           lineHeight: '20px',
           letterSpacing: '0.28px',
+          filter: 'drop-shadow(0 0 4px rgba(0,0,0,0.08))',
           cursor: 'pointer',
           outline: 'none',
         }}
         aria-label="check balance"
       >
         Check balance
+        <img src="/assets/icons/appbar_chevron.svg" alt="" width={16} height={16} />
       </button>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        {/* Audio: 48 hit-area + 40 inner circle with white-30 border */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 26 /* 28 visual − 2 hit-area inset */ }}>
         <button
           style={{
-            width: 48,
-            height: 48,
+            height: 40,
             background: 'transparent',
             border: 'none',
             cursor: 'pointer',
@@ -93,27 +90,12 @@ function AppBar({ onAvatarTap }) {
             padding: 0,
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
           }}
-          aria-label="voice input"
+          aria-label="chat"
         >
-          <div
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: '50%',
-              border: `1px solid ${WHITE_30}`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <img src="/assets/valentino_audio_icon.svg" alt="" width={20} height={20} />
-          </div>
+          <img src="/assets/icons/appbar_chat.svg" alt="" width={18} height={18} />
         </button>
 
-        {/* Avatar: 48 hit-area + 44 inner photo, NO ring — shared Avatar at the
-           `plain` tone. Tap opens Profile L1. */}
         <Avatar size={44} photo={USER_AVATAR_URL} hit onTap={onAvatarTap} ariaLabel="profile" />
       </div>
     </div>
@@ -354,9 +336,9 @@ function RequestTransferRow() {
           cursor: 'pointer',
           outline: 'none',
         }}
-        aria-label="request money"
+        aria-label="save money"
       >
-        Request
+        Save
       </button>
       <button
         style={{
