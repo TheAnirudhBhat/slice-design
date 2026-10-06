@@ -180,7 +180,8 @@ function ActionPill({ label, style, intro, children }) {
 // First-open entrance (Figma Valentino ✅ 11762:11598, cal:2026-10-07): the three
 // frames only illustrate it — user: "a single, clean flow: center and open up…
 // ease in and out", no keyframe in the middle. Once per app open, once the splash
-// has lifted, the pills go from a tight centred stack (12px steps, frame 1) straight to
+// has lifted, the pills go from a tight stack — every pill CENTRED on the row's
+// centre, 12px apart (user: "all of them should be center-aligned") — straight to
 // their row in one ease-in-out move, fading in over its first part.
 const INTRO_STEP = 12;
 const INTRO_OPEN = { duration: 0.7, ease: [0.65, 0, 0.35, 1] };
@@ -193,12 +194,11 @@ function usePillsIntro(rowRef) {
   useLayoutEffect(() => {
     if (introPlayed || !ready || !rowRef.current) return undefined;
     introPlayed = true;
-    // rest positions → each pill's x offset into the centred stack
+    // rest positions → each pill's x offset to put its centre on the row's centre
     const pills = [...rowRef.current.querySelectorAll('[data-pill]')];
-    const W = rowRef.current.clientWidth;
-    const extent = Math.max(...pills.map((p, i) => i * INTRO_STEP + p.offsetWidth));
-    const start = (W - extent) / 2;
-    setStack(pills.map((p, i) => start + i * INTRO_STEP - p.offsetLeft));
+    const mid = rowRef.current.clientWidth / 2;
+    const n = pills.length;
+    setStack(pills.map((p, i) => mid + (i - (n - 1) / 2) * INTRO_STEP - (p.offsetLeft + p.offsetWidth / 2)));
     const t = setTimeout(() => setStack(null), SPLASH_EXIT_MS);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
