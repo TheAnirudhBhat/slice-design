@@ -474,10 +474,10 @@ Do instead: tickers run sequentially. Second ticker waits for first to complete 
 Source: cal:2026-05-28 R19 — Valentino `8772:12216` (action pills + tickers behavior spec) ✅
 
 #### ❌ Two emphasized marketing pills on the action pills row
-Looks like: both `New spark live` and `Win up to ₹100` rendered with highlighted fill (~22% white).
-Why slice doesn't: priority dilution. The whole point of the highlighted fill is "this one is more important right now." Two highlighted pills means neither is the priority — the user can't decide which to tap first.
-Do instead: max 1 marketing pill emphasized at a time. With 2 marketing pills, only highest-priority gets highlighted fill (~22%); others stay at default fill (~10–14%).
-Source: cal:2026-05-28 R19 — Valentino `8772:12216` ✅
+Looks like: both `New spark live` and `Win up to ₹100` rendered as emphasis pills (rim arc sweep / highlighted).
+Why slice doesn't: priority dilution. The whole point of emphasis is "this one is more important right now." Two emphasized pills means neither is the priority — the user can't decide which to tap first.
+Do instead: max 1 `EmphasisPill` at a time; the rest are plain action pills. Emphasis is the one-time rim arc sweep, NOT a brighter fill — the emphasized pill's fill and outline match the others (cal:2026-10-07, supersedes the ~22% fill).
+Source: cal:2026-05-28 R19 — Valentino `8772:12216` ✅; emphasis treatment cal:2026-10-07 (birthday-spark)
 
 #### ❌ Removing the UPI ID pill from the action pills row
 Looks like: the action pills row shows only product pills (monies, fires) — UPI ID pill missing.
@@ -488,7 +488,7 @@ Source: cal:2026-05-28 R19 — Valentino `8772:12216`, anchor rule confirmed in 
 #### ❌ Solid white or V-500 fill on action pills
 Looks like: an action pill rendered with a solid white background OR a Valentino-500 fill against the V-500 page bg.
 Why slice doesn't: solid fills on the V-500 brand-immersive surface compete with the keypad numerals (white) and the Request/Transfer Tertiary pills (transparent-white-outline). Solid V-500 fill is invisible against V-500 page bg.
-Do instead: translucent-white fill (~10–14% default, ~22% highlighted). Tints the brand colour instead of competing with it.
+Do instead: translucent-white fill (~10–14%, the same on an emphasized pill — emphasis is motion). Tints the brand colour instead of competing with it.
 Source: cal:2026-05-28 R19 — Valentino `8772:12216` ✅
 
 ### Reverification updates

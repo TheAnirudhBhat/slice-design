@@ -173,12 +173,13 @@ A distinct pill family used ONLY on the Payments L0 brand-immersive surface. Not
 | Width — compact | 94 × 36 (for `monies` empty state) |
 | Radius | Circle (18 / fully-pill) |
 | Fill — default | translucent-white ~10–14% on V-500 |
-| Fill — highlighted | translucent-white ~22% (one emphasized pill at a time) |
-| Stroke | none — relies on translucent fill against V-500 page bg |
+| Fill — emphasis | SAME as default — emphasis is motion, not fill: a one-time rim arc sweep (`EmphasisPill`, see rules) (cal:2026-10-07, supersedes ~22% fill) |
+| Stroke | 1.5px white-05 on every pill (cal:2026-10-06) |
+| Backdrop | 5px backdrop blur (Valentino `11762:11611`); the page is the backdrop root so it never samples the bezel |
 | Padding | 16px left, 16px right, 10px top/bottom |
 | Internal gap | 4px between logo/glyph and text |
 | Logo zone | 31×16 for UPI wordmark, 16×16 for icon glyphs |
-| Text | Rubik Medium 12pt, white default / white-secondary (~70%) on dimmed/scrim |
+| Text | Rubik 12/16, primary white on every pill (cal:2026-10-07); glyphs white-70 |
 
 ### Pill catalogue
 
@@ -192,7 +193,8 @@ A distinct pill family used ONLY on the Payments L0 brand-immersive surface. Not
 
 - **UPI ID pill is the identity anchor.** Survives dismiss. Product/marketing pills can dismiss; UPI cannot. When all secondary pills dismiss, UPI re-expands to full 195 width and centres in the row (DEFAULT state).
 - **Sequential tickers, never parallel.** When monies value increases significantly (thousands → 10,000), the monies pill expands slightly to fit new digit count. Two simultaneous tickers (fire + monies) run sequentially — second ticker waits for first to complete. WHY: parallel value changes are visually noisy; the eye gets pulled between competing motions.
-- **Marketing pill emphasis.** Max 1 marketing pill emphasized at a time (~22% white fill). With 2 marketing pills, only highest-priority gets highlighted; others stay at default fill. WHY: priority dilution — two highlighted pills means neither is the priority.
+- **Marketing pill emphasis = `EmphasisPill` (proto `src/components/EmphasisPill.jsx`).** Max 1 emphasized pill at a time. It is styled exactly like the others (same fill, outline, text); once it has landed, a soft white arc sweeps its rim once (2.6s ease-in-out, peak ~55% white) and fades, leaving a normal pill. Arrives with an ease-in-out slide from the left (no spring) — or, on the first open, moves in with the row's entrance and sweeps after it lands. Use it for every nudge (birthday gift, new spark live, offers) so they read the same as in the app. WHY: one pill "more important right now"; motion draws the eye once without permanently out-shouting the row. (cal:2026-10-07, from the birthday-spark gift pill)
+- **First-open entrance.** Once per app open, after the splash lifts: the row's pills start as a tight centred stack (12px steps) and open to their places in ONE ease-in-out move (0.7s, `[0.65,0,0.35,1]`), fading in over the first half. No middle keyframe. (Valentino `11762:11598` — the three frames illustrate it, cal:2026-10-07)
 - **On tap of campaign/marketing pill.** Page dims to scrim, bottom sheet rises with copy + "Got it" Primary CTA. Cashback / FYI rewards = bottom-sheet pattern. Fire / monies = redirect with page transition.
 
 ### What action pills don't do
