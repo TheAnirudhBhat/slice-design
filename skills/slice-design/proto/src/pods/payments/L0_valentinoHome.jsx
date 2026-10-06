@@ -162,8 +162,10 @@ function ActionPill({ label, style, intro, children }) {
         gap: 4,
         padding: '0 16px',
         background: WHITE_10,
-        backdropFilter: 'blur(5px)', // Figma 11762:11611 pills: backdrop-blur 5
-        WebkitBackdropFilter: 'blur(5px)',
+        // Figma background blur 50 (user, cal:2026-10-07) = CSS blur(25px): Figma's radius
+        // is twice the CSS value (its own export halves it — 10 came out as 5px before)
+        backdropFilter: 'blur(25px)',
+        WebkitBackdropFilter: 'blur(25px)',
         border: `1.5px solid ${WHITE_05}`,
         borderRadius: 100,
         cursor: 'pointer',
