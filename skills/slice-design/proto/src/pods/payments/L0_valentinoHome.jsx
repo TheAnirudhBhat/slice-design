@@ -182,10 +182,12 @@ function ActionPill({ label, style, intro, children }) {
 // ease in and out", no keyframe in the middle. Once per app open, once the splash
 // has lifted, the pills go from a tight stack — every pill CENTRED on the row's
 // centre, 12px apart (user: "all of them should be center-aligned") — straight to
-// their row in one ease-in-out move, fading in over its first part.
+// their row in one ease-in-out move. The stack fades in where it is first, and the
+// open starts as the fade lands — fading while moving meant the centred stack was
+// never actually seen (user: "they don't look centered at the start").
 const INTRO_STEP = 12;
-const INTRO_OPEN = { duration: 0.7, ease: [0.65, 0, 0.35, 1] };
-const INTRO_FADE = { duration: 0.35, ease: [0.25, 0.1, 0.25, 1] };
+const INTRO_FADE = { duration: 0.25, ease: [0.25, 0.1, 0.25, 1] };
+const INTRO_OPEN = { duration: 0.7, delay: 0.2, ease: [0.65, 0, 0.35, 1] };
 let introPlayed = false;
 
 function usePillsIntro(rowRef) {
