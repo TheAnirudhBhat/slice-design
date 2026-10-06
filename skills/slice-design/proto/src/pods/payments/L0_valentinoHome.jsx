@@ -176,45 +176,37 @@ function ActionPill({ label, style, intro, children }) {
   );
 }
 
-// First-open entrance (Figma Valentino ✅ 11762:11598, cal:2026-10-07): three static
-// frames read as a sequence — the pills sit in a tight centred stack (hidden), fade
-// in as a looser overlapping stack, then fan out to their row. Once per app open,
-// once the splash has lifted. Stack steps are the frames' left-edge
-// deltas (~12, then ~55); the fan uses the row's ease-in-out curve.
-const INTRO_STEPS = [12, 56];
-const INTRO_FADE = { duration: 0.28, ease: [0.25, 0.1, 0.25, 1] };
-const INTRO_FAN = { duration: 0.5, ease: [0.65, 0, 0.35, 1] };
+// First-open entrance (Figma Valentino ✅ 11762:11598, cal:2026-10-07): the three
+// frames only illustrate it — user: "a single, clean flow: center and open up…
+// ease in and out", no keyframe in the middle. Once per app open, once the splash
+// has lifted, the pills go from a tight centred stack (12px steps, frame 1) straight to
+// their row in one ease-in-out move, fading in over its first part.
+const INTRO_STEP = 12;
+const INTRO_OPEN = { duration: 0.7, ease: [0.65, 0, 0.35, 1] };
+const INTRO_FADE = { duration: 0.35, ease: [0.25, 0.1, 0.25, 1] };
 let introPlayed = false;
 
 function usePillsIntro(rowRef) {
   const { ready } = useBoot();
-  const [stage, setStage] = useState(introPlayed ? null : { i: 0, x: [] }); // null = at rest
+  const [stack, setStack] = useState(introPlayed ? null : []); // per-pill x while stacked; null = open
   useLayoutEffect(() => {
     if (introPlayed || !ready || !rowRef.current) return undefined;
     introPlayed = true;
-    // rest positions → each pill's x offset into a centred stack of step s
+    // rest positions → each pill's x offset into the centred stack
     const pills = [...rowRef.current.querySelectorAll('[data-pill]')];
     const W = rowRef.current.clientWidth;
-    const stack = (s) => {
-      const extent = Math.max(...pills.map((p, i) => i * s + p.offsetWidth));
-      const start = (W - extent) / 2;
-      return pills.map((p, i) => start + i * s - p.offsetLeft);
-    };
-    const [tight, loose] = INTRO_STEPS.map(stack);
-    setStage({ i: 0, x: tight });
-    const timers = [
-      setTimeout(() => setStage({ i: 1, x: loose }), SPLASH_EXIT_MS),
-      setTimeout(() => setStage(null), SPLASH_EXIT_MS + INTRO_FADE.duration * 1000),
-    ];
-    return () => timers.forEach(clearTimeout);
+    const extent = Math.max(...pills.map((p, i) => i * INTRO_STEP + p.offsetWidth));
+    const start = (W - extent) / 2;
+    setStack(pills.map((p, i) => start + i * INTRO_STEP - p.offsetLeft));
+    const t = setTimeout(() => setStack(null), SPLASH_EXIT_MS);
+    return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready]);
   // per-pill props for ActionPill (index = DOM order in the row)
-  return (i) => {
-    if (!stage) return { animate: { x: 0, opacity: 1 }, transition: INTRO_FAN };
-    if (stage.i === 0) return { animate: { x: stage.x[i] ?? 0, opacity: 0 }, transition: { duration: 0 } };
-    return { animate: { x: stage.x[i] ?? 0, opacity: 1 }, transition: INTRO_FADE };
-  };
+  return (i) =>
+    stack
+      ? { animate: { x: stack[i] ?? 0, opacity: 0 }, transition: { duration: 0 } }
+      : { animate: { x: 0, opacity: 1 }, transition: { x: INTRO_OPEN, opacity: INTRO_FADE } };
 }
 
 function ActionPills({ upiId }) {
