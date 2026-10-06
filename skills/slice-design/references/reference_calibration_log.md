@@ -1940,7 +1940,7 @@ aibanker's fix, confirmed by its commits: the white strip on an iOS home-screen 
 
 `boot.js` + `BootShimmer.jsx` + `public/sw.js`: the app stays hidden behind a full-page shimmer (in the landing pod's shape) until Rubik 400–700 and the shell's images (+ a project's `preload` list, + every DOM `<img>`) are in, 4s cap; `useBoot().ready` gates arrival moments; a production-only stale-while-revalidate service worker caches images. Verified in WebKit with every image delayed 900ms: shimmer up, app hidden, then revealed with Rubik loaded; the arrival moment started only after the reveal; the SW registered and filled `slice-proto-images-v1`. See root cause #20. (Also synced from the suite this round: a peer session's Pay-home app bar per Valentino ✅ 10028:8953 — "Check balance" + chevron, chat glyph, Save in place of Request — committed straight to the suite; the installed skill now matches it.)
 
-### 2026-10-07 — transparent status bar that overlays cover (user: "there is a delay in the color change of the status bar… should remain transparent… with the bottom sheet overlay or anything, it doesn't cover the top status bar. The status bar issue is major")
+### [SUPERSEDED later on 2026-10-07: glass mode is final, see the next entry] 2026-10-07 — transparent status bar that overlays cover (user: "there is a delay in the color change of the status bar… should remain transparent… with the bottom sheet overlay or anything, it doesn't cover the top status bar. The status bar issue is major")
 
 IMG_3824 showed Credit under a V-500 status bar: the opaque bar's late `theme-color` repaint. Every scrim also stopped short of it.
 
@@ -1961,4 +1961,17 @@ What changed:
 
 Verified in WebKit at 402×874: the band follows Pay (V-500) → Credit (white) → spark (white). On a sheet it fades to rgb(179,179,179) over 13 re-keys, then back to white.
 NOT verifiable here (no iOS Simulator on this Mac): the device band itself. Re-add the home-screen icon to test.
+
+### 2026-10-07 (cont.) — status bar: glass mode is final (user, via the "Check balance button update" session)
+
+The StatusTint band filled the top band with one flat colour. On a slide it flipped at the start while the page's edge was still sliding (IMG_3825). The user wanted it fully transparent, compared it against iOS's glass, and settled on glass.
+
+- `<StatusTint/>` is no longer mounted in either proto. iOS 26 lays its Liquid Glass over the real page at the top edge, and the glass moves with the content.
+- `components/StatusTint.jsx`, `StatusDimContext` and `useStatusDim()` are kept. The hook is a no-op, so overlays may keep calling it.
+- The `theme-color` sync, the root background and the standalone height fix stay.
+- Truly transparent is not possible on iOS 26.1+:
+  - with an obscured top inset, WebKit draws the soft pocket or an opaque colour-extension view above the content, with colours forced opaque
+  - the home-screen status bar is a reopened regression: WebKit bug 301994, "REGRESSION (iOS 26.1): Status bar remains visible in fullscreen mode in Home Screen Web apps" (still on 26.5.2 and 27 beta)
+  - true edge-to-edge is the native wrapper's job (`projects/slice-expo`)
+- Known caveat from WebKit's source, not seen on a device: in a Safari tab the viewport-sized stage keeps the first sampled top colour.
 
