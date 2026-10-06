@@ -78,7 +78,10 @@ export function useBootReady(preload = []) {
       }));
     const jobs = [
       ...FONTS.map((f) => document.fonts.load(f).catch(() => {})),
-      ...[...new Set([...SHELL_IMAGES, ...preload])].map(loadImage),
+      // the bezel is desktop chrome: a phone (the shell's useIsMobile query) never shows it
+      ...[...new Set([...SHELL_IMAGES, ...preload])]
+        .filter((src) => !(src.endsWith('_bezel.png') && window.matchMedia('(max-width: 600px), (display-mode: standalone)').matches))
+        .map(loadImage),
       ...pending,
     ].map((job) => job.then(() => live && setProgress(++loaded / jobs.length)));
     const all = Promise.all(jobs);

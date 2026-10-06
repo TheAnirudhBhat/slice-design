@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { Agentation } from 'agentation';
 // Self-hosted Rubik (bundled via @fontsource) — NEVER rely on the Google Fonts
 // CDN. On slice's corporate network fonts.gstatic.com is throttled/blocked, so
 // the CDN <link> silently fell back to system fonts on Medium (500) weight
@@ -23,6 +22,8 @@ import './index.css';
 // design-review tool and shouldn't show on a real phone. Same query as App's
 // useIsMobile (phone viewport OR installed PWA). Still mounted on desktop, so the
 // skill's "agentation wired in every proto" rule holds for the review surface.
+// Lazy, so a phone never downloads or parses it (~400 KB).
+const Agentation = React.lazy(() => import('agentation').then((m) => ({ default: m.Agentation })));
 function MaybeAgentation() {
   const query = '(max-width: 600px), (display-mode: standalone)';
   const [mobile, setMobile] = React.useState(
@@ -40,10 +41,12 @@ function MaybeAgentation() {
   }, []);
   if (mobile) return null;
   return (
-    <Agentation
-      onAnnotationAdd={(a) => console.log('[agentation] add', a)}
-      onSubmit={(payload) => console.log('[agentation] submit', payload)}
-    />
+    <React.Suspense fallback={null}>
+      <Agentation
+        onAnnotationAdd={(a) => console.log('[agentation] add', a)}
+        onSubmit={(payload) => console.log('[agentation] submit', payload)}
+      />
+    </React.Suspense>
   );
 }
 
@@ -78,9 +81,11 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
 }
 
+// No StrictMode: in dev it renders every component twice and runs every effect
+// twice, and the phone views the proto through the dev server.
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  <>
     {root}
     <MaybeAgentation />
-  </React.StrictMode>,
+  </>,
 );

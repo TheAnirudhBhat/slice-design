@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "phone": "vite build && vite preview --host --port 8807"
   },
   "dependencies": {
     "@fontsource/rubik": "^5.2.8",

@@ -16,7 +16,7 @@
 // curve). Slide-out reverses. (cal:2026-05-30 cont-32: the old 280ms +
 // easeOutExpo [0.16,1,0.3,1] read too fast/snappy — "pace to iOS natural speed".)
 
-import React, { createContext, useCallback, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const L1Context = createContext({
@@ -68,7 +68,8 @@ export default function L1Stack({ registry, children, onOpenChange }) {
     if (onOpenChange) onOpenChange(stack.length > 0);
   }, [stack.length, onOpenChange]);
 
-  const ctx = { push, pop, popAll, depth: stack.length };
+  // memoised: every L0 reads useL1(), so a fresh object re-rendered them all
+  const ctx = useMemo(() => ({ push, pop, popAll, depth: stack.length }), [push, pop, popAll, stack.length]);
 
   return (
     <L1Context.Provider value={ctx}>

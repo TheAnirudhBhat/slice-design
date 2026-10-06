@@ -5,7 +5,7 @@
 //   • Phone shell rock-solid centered via position:fixed + 50/50 + translate(-50%,-50%)
 //   • Banking + Explore page bg → slate-10 so 0.05 alpha card shadows actually show
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useMotionValue, motion, AnimatePresence } from 'framer-motion';
 import BottomNav from './components/BottomNav.jsx';
 import MotionStatusBar from './components/StatusBar.jsx';
@@ -350,6 +350,32 @@ function useDeviceScreen() {
 // the 44px floor, for when its injected env() under-resolves.
 const IN_RN_WEBVIEW = typeof window !== 'undefined' && !!window.ReactNativeWebView;
 
+// One pager page: status reserve + the pod's L0. Memoised with stable props, so
+// an App re-render (a nav tap, a swipe crossing a page, a scroll flag, an L1
+// opening) no longer re-renders all five L0s.
+const NO_CARDS = [];
+const NO_L1 = {};
+const PodSlot = memo(function PodSlot({ pod, scrolled, onScroll, extraCards }) {
+  const PodPage = PAGES_BY_POD[pod];
+  const onScrollChange = useCallback((s) => onScroll(pod, s), [pod, onScroll]);
+  // Pay (V-500 immersive) keeps a transparent reserve so the V-500 page bg shows
+  // through — no white-on-scroll there.
+  const reserveBg = pod !== 'pay' && scrolled ? 'var(--page-bg)' : 'transparent';
+  return (
+    <div style={{ width: '100%', height: '100%', background: PAGE_BG[pod], display: 'flex', flexDirection: 'column' }}>
+      {/* Status-bar reserve — paints white on scroll for non-Pay pods so cards
+         scrolling under the AppBar don't bleed past it. Height = --status-reserve
+         (set on the stage): desktop 54px to match the MotionStatusBar overlay; on a
+         device the REAL top inset, floored at 44px only in the Expo WebView. Instant
+         (no transition): it must opacify with the AppBar. (cont-38) */}
+      <div style={{ height: 'var(--status-reserve)', flexShrink: 0, background: reserveBg }} />
+      <div style={{ flex: 1, minHeight: 0, position: 'relative' }}>
+        <PodPage onScrollChange={onScrollChange} {...(pod === 'explore' ? { extraCards } : {})} />
+      </div>
+    </div>
+  );
+});
+
 const PAGES_META = PODS.map((pod) => ({ pod, variant: STATUS_VARIANT[pod] }));
 
 // EXTENSION SEAM (R24 cont-35): a derived project wraps this App and injects its
@@ -364,7 +390,7 @@ const PAGES_META = PODS.map((pod) => ({ pod, variant: STATUS_VARIANT[pod] }));
 // NOTE: to OWN a whole pod (swap its L0), a project does that in ITS OWN wrapper by
 // materialising/unlinking the component — NOT via a prop on the upstream skill proto.
 //   • preload            — a project's own image URLs, held behind the splash too (boot.js)
-export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod = 'pay', debug = false, debugContent = null, initialDebugOpen = false, preload = [] } = {}) {
+export default function App({ extraL1 = NO_L1, exploreExtraCards = NO_CARDS, initialPod = 'pay', debug = false, debugContent = null, initialDebugOpen = false, preload = [] } = {}) {
   // Boot: Rubik + images in before anything shows (boot.js); the splash meanwhile.
   const { ready, progress } = useBootReady(preload);
   const [active, setActive] = useState(initialPod);
@@ -394,11 +420,9 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
   // bled into the transparent status reserve above it (drop shadows showed
   // through). Now reserve + AppBar both transition to white together.
   const [scrolledByPod, setScrolledByPod] = useState({});
-  const handlePodScroll = (pod, isScrolled) => {
-    setScrolledByPod((prev) =>
-      prev[pod] === isScrolled ? prev : { ...prev, [pod]: isScrolled }
-    );
-  };
+  const handlePodScroll = useCallback((pod, isScrolled) => {
+    setScrolledByPod((prev) => (prev[pod] === isScrolled ? prev : { ...prev, [pod]: isScrolled }));
+  }, []);
 
   // Shared motion value for the page pager's x-translation. Drives:
   // (1) the Pager itself; (2) the StatusBar overlay's per-element color.
@@ -474,6 +498,10 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
     // exit slide reveals the already-flipped new theme.
     window.setTimeout(() => setTheme(goingDark ? 'dark' : 'light'), 1700);
   };
+  // stable context values: a new object each render re-rendered every consumer
+  const themeCtx = useMemo(() => ({ theme, toggleTheme: handleThemeToggle }), [theme, themeAnim]); // eslint-disable-line react-hooks/exhaustive-deps
+  const bootCtx = useMemo(() => ({ ready }), [ready]);
+  const registry = useMemo(() => ({ ...L1_REGISTRY, ...extraL1 }), [extraL1]);
 
   // `d` toggles the debug panel — only when debug is enabled (project build).
   // Ignore while typing in a field.
@@ -547,15 +575,15 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
         <PhoneFrame bare={isMobile} height={device.height}>
           {/* Boot: the app mounts (and loads) underneath but stays HIDDEN until
              boot.js is ready — no fallback-font frame, no late images. */}
-          <BootContext.Provider value={{ ready }}>
+          <BootContext.Provider value={bootCtx}>
           <div style={{ position: 'absolute', inset: 0, visibility: ready ? 'visible' : 'hidden' }}>
           {/* ThemeContext lets L1 screens (App Settings "Dark mode" switch) trigger
              the same theme-switch transition as the dev toggle. */}
-          <ThemeContext.Provider value={{ theme, toggleTheme: handleThemeToggle }}>
+          <ThemeContext.Provider value={themeCtx}>
           <UserStateContext.Provider value={userState}>
           {/* L1Stack provides useL1() to all descendants. L1 overlays render
              above the L0 pager via AnimatePresence + slide-in motion. */}
-          <L1Stack registry={{ ...L1_REGISTRY, ...extraL1 }} onOpenChange={setL1Open}>
+          <L1Stack registry={registry} onOpenChange={setL1Open}>
             {/* Horizontal page pager — each page renders FULL HEIGHT (no per-page
                status bar). The slide edge appears top-to-bottom because pages
                span the full phone screen. */}
@@ -578,54 +606,9 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
                 onIndexChange={handlePageIndexChange}
                 onCommit={handlePageCommit}
               >
-                {PODS.map((pod) => {
-                  const PodPage = PAGES_BY_POD[pod];
-                  const podScrolled = !!scrolledByPod[pod];
-                  // Pay (V-500 immersive) keeps a transparent reserve so the
-                  // V-500 page bg shows through — no white-on-scroll there.
-                  const reserveBg =
-                    pod === 'pay'
-                      ? 'transparent'
-                      : podScrolled
-                      ? 'var(--page-bg)'
-                      : 'transparent';
-                  return (
-                    <div
-                      key={pod}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        background: PAGE_BG[pod],
-                        display: 'flex',
-                        flexDirection: 'column',
-                      }}
-                    >
-                      {/* Status-bar reserve — paints white on scroll for non-Pay
-                         pods so cards scrolling under the AppBar don't bleed past it.
-                         Height = --status-reserve (set on the stage): desktop 54px to
-                         match the MotionStatusBar overlay; on a device the REAL top
-                         inset — 0 under an installed app's opaque bar, the notch under
-                         a translucent one, floored at 44px only in the Expo WebView
-                         (its injected env can under-resolve). The earlier max(88,
-                         env+28) and the plain 44px floor both over-padded. */}
-                      <div
-                        style={{
-                          height: 'var(--status-reserve)',
-                          flexShrink: 0,
-                          background: reserveBg,
-                          // Instant (no transition): must opacify with the AppBar so
-                          // cards never bleed through the reserve mid-scroll. (cont-38)
-                        }}
-                      />
-                      <div style={{ flex: 1, minHeight: 0, position: 'relative' }}>
-                        <PodPage
-                          onScrollChange={(s) => handlePodScroll(pod, s)}
-                          {...(pod === 'explore' ? { extraCards: exploreExtraCards } : {})}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
+                {PODS.map((pod) => (
+                  <PodSlot key={pod} pod={pod} scrolled={!!scrolledByPod[pod]} onScroll={handlePodScroll} extraCards={exploreExtraCards} />
+                ))}
               </Pager>
             </div>
 
