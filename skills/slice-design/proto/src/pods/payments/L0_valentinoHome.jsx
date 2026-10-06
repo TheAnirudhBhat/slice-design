@@ -130,7 +130,8 @@ function AppBar({ onAvatarTap }) {
 // Colours by variable name: label + glyphs = Text&Icons/On color/Secondary → WHITE_70.
 // The fill is a raw #D828DC in Figma = white ~12% over V-500 → the DLS translucent-white
 // rule → WHITE_10, which also holds on the dark (#090B0C) Pay page. Stroke 1.5px
-// Alpha/White/a05 (the fire pill has none).
+// Alpha/White/a05 on EVERY pill — Figma's fire pill has none; user: "this one
+// doesn't have an outline".
 const PILL_TEXT = {
   fontFamily: 'Rubik, sans-serif',
   fontWeight: 400,
@@ -191,7 +192,7 @@ function ActionPills({ upiId }) {
       className="no-scrollbar"
       style={{ height: 64, flexShrink: 0, display: 'flex', alignItems: 'center', gap: 12, padding: '16px 24px 12px', overflowX: 'auto' }}
     >
-      <ActionPill label="8 fires left" style={{ padding: '0 14px 0 12px', border: 'none' }}>
+      <ActionPill label="8 fires left" style={{ padding: '0 14px 0 12px' }}>
         <PillGlyph src="/assets/icons/pill_fire.svg" />
         <span style={PILL_TEXT}>8 fires left</span>
       </ActionPill>
