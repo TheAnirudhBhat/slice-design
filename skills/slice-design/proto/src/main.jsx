@@ -72,6 +72,12 @@ if (params.has('playground') && !(playgroundParam || '').startsWith('screen:')) 
   root = <App debug={debugEnabled} initialDebugOpen={debugEnabled} />;
 }
 
+// Image cache (public/sw.js) — production only, so the dev server never serves a
+// stale asset out of it.
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     {root}

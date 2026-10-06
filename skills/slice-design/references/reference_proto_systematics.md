@@ -260,6 +260,17 @@ Mnemonic: **touch-action = which axes the browser may pan (set both); overscroll
 
 ---
 
+## Root cause #20: the page painted before its font and images (cal:2026-10-06)
+
+**Symptom**: on a phone the proto opened in a fallback font that then swapped to Rubik ("the fonts are different from the last moment"), and images popped in late.
+
+**Why**: `@fontsource` faces are `font-display: swap`, so the first frame draws in the system font; and nothing waited for the images.
+
+**PERMANENT RULE**:
+> The shell boots behind a full-page shimmer (`components/BootShimmer.jsx`, drawn in the landing pod's shape — Pay home or a white L0) and keeps the app mounted but `visibility: hidden` until `boot.js` resolves: Rubik 400/500/600/700 via `document.fonts.load`, every static image the shell references (`SHELL_IMAGES` — keep it current when you add one, including CSS-mask urls), a project's own `preload` list (`<App preload={[…]}/>`), and every `<img>` already in the DOM; capped at 4s so a slow network never holds the app. Anything that plays on arrival waits for `useBoot().ready`. `public/sw.js` (registered in production only) is a stale-while-revalidate image cache, so a repeat visit paints images at once.
+
+---
+
 ## RULE: for scroll / gesture / positioning bugs, VERIFY IN A REAL BROWSER — don't reason from the CSS
 
 **Why**: across the explore-base scroll saga I shipped 3 reasoned-but-wrong fixes in a row. The behaviour only became clear once I drove the running proto with Playwright — measured `scrollTop` before/after a real `mouse.wheel`, walked the ancestor chain with `elementFromPoint`, and ran a real `mouse.down → move → up` drag to see which element actually moved. Each measured test took one round and was unambiguous; each prior guess took a round and was wrong.
