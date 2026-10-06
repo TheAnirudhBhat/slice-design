@@ -11,7 +11,7 @@ import BottomNav from './components/BottomNav.jsx';
 import MotionStatusBar from './components/StatusBar.jsx';
 import { MoonIcon, BulbIcon } from './icons/ThemeIcons.jsx';
 import Pager from './components/Pager.jsx';
-import DebugPanel from './components/DebugPanel.jsx';
+import DebugPanel, { DEBUG_PANEL_WIDTH, DEBUG_PANEL_GAP } from './components/DebugPanel.jsx';
 import BankingL0 from './pods/banking/L0.jsx';
 import PaymentsL0 from './pods/payments/L0_valentinoHome.jsx';
 import ActivityL0 from './pods/activity/L0.jsx';
@@ -244,13 +244,14 @@ function PhoneFrame({ children, bare = false }) {
 // position:fixed inset:0. Phone scales DOWN to fit if browser is smaller; at
 // browser ≥ 440×952 the phone renders at native and the black stage extends
 // to all four edges around it.
-function useFitScale(targetWidth, targetHeight, padding = 8, cover = false) {
+function useFitScale(targetWidth, targetHeight, padding = 8, cover = false, reserveX = 0) {
   const compute = () => {
     if (typeof window === 'undefined') return 1;
     // Prefer visualViewport (the truly-visible area on iOS, shrinks/grows with the
     // Safari toolbar) so the phone always fits without the bottom being clipped.
+    // reserveX = width kept for the debug column beside the phone (cal:2026-10-06).
     const vv = window.visualViewport;
-    const w = Math.max(1, (vv?.width ?? window.innerWidth) - padding * 2);
+    const w = Math.max(1, (vv?.width ?? window.innerWidth) - padding * 2 - reserveX);
     const h = Math.max(1, (vv?.height ?? window.innerHeight) - padding * 2);
     // cover = FILL the viewport (full-bleed mobile, may exceed 1); contain = fit
     // the phone inside the stage (desktop shell, capped at 1 so it never upscales).
@@ -278,7 +279,7 @@ function useFitScale(targetWidth, targetHeight, padding = 8, cover = false) {
       window.removeEventListener('resize', update);
       if (ro) ro.disconnect();
     };
-  }, [targetWidth, targetHeight, padding, cover]);
+  }, [targetWidth, targetHeight, padding, cover, reserveX]);
   return scale;
 }
 
@@ -329,7 +330,7 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
   // "to light" slides down. `dir` drives the gradient, icon, caption + direction.
   const [themeAnim, setThemeAnim] = useState(null);
   const [l1Open, setL1Open] = useState(false);
-  // Debug panel = the proto's optional SECOND view (right-docked, desktop-only).
+  // Debug panel = the proto's optional SECOND view (a column beside the phone, desktop-only).
   // It is OPT-IN: only available when `debug` is set — i.e. when a project builds
   // on this shell (`<App debug debugContent={...}/>`) or, for standalone testing,
   // the `?debug` URL param. The default skill proto renders the clean app view
@@ -357,7 +358,8 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
   // In dark theme every pod surface is dark → force the "dark" status/nav variant
   // (light icons + white-alpha nav medallions) across all slots.
   const pagesMeta = theme === 'dark' ? PODS.map((p) => ({ pod: p, variant: 'dark' })) : PAGES_META;
-  const fitScale = useFitScale(PHONE_OUTER_WIDTH, PHONE_OUTER_HEIGHT);
+  const panelSpace = debug && debugOpen ? DEBUG_PANEL_WIDTH + DEBUG_PANEL_GAP : 0;
+  const fitScale = useFitScale(PHONE_OUTER_WIDTH, PHONE_OUTER_HEIGHT, 8, false, panelSpace);
   // Full-bleed device mode (phone viewport / installed PWA): scale the 402×874
   // SCREEN to COVER the viewport (no bezel, no white stage) so the proto runs
   // edge-to-edge with the real OS status bar + home indicator. Desktop keeps the
@@ -430,12 +432,9 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        // When the debug panel docks on the right, shrink the centering box so the
-        // phone shifts left out from under it (border-box makes paddingRight reduce
-        // the content area rather than overflow). Desktop only.
-        boxSizing: 'border-box',
-        paddingRight: !isMobile && debugOpen ? 360 : 0,
-        transition: 'padding-right 240ms ease',
+        // The debug panel is a column BESIDE the phone (AI Banker's layout), so the
+        // phone + panel centre together as one row (cal:2026-10-06).
+        gap: DEBUG_PANEL_GAP,
       }}
     >
       <div
@@ -445,6 +444,9 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
           transform: `scale(${isMobile ? coverScale : fitScale})`,
           transformOrigin: 'center center',
           flexShrink: 0,
+          // collapse the layout box to the SCALED phone so the panel sits a true
+          // gap away (a transform doesn't shrink the box it scales)
+          margin: isMobile ? 0 : `${(PHONE_OUTER_HEIGHT * (fitScale - 1)) / 2}px ${(PHONE_OUTER_WIDTH * (fitScale - 1)) / 2}px`,
         }}
       >
         <PhoneFrame bare={isMobile}>
@@ -641,6 +643,7 @@ export default function App({ extraL1 = {}, exploreExtraCards = [], initialPod =
       <AnimatePresence>
         {debug && !isMobile && debugOpen && (
           <DebugPanel
+            height={PHONE_OUTER_HEIGHT * fitScale}
             pods={PODS}
             active={active}
             onJumpPod={handleNavChange}

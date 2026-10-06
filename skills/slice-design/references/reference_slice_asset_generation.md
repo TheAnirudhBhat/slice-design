@@ -24,7 +24,7 @@ type: reference
 | Engine | Status | Notes |
 |---|---|---|
 | **Icons (SVG few-shot)** | ⛔ RETIRED — do NOT use | Superseded by the official-only/dummy icon rule (later same-day user directive). The harness scored 10/12 in a rating game and the slice-icon DNA notes below are useful for *understanding* official icons, but icons are no longer generated for builds. Missing icon → official `582:257` or a dummy placeholder. |
-| **Illustrations (Gemini/Nano-Banana)** | ⏸ PARKED — blocked on setup | Spec is written + correct, but generation can't run until: (1) user sets a free `NANOBANANA_API_KEY` from https://aistudio.google.com/apikey, and (2) the nanobanana extension is re-enabled (the `!/Users/anirudhbhat/*` override in `~/.gemini/extensions/extension-enablement.json` disables it; run `gemini extensions enable nanobanana`). Until both are done, fall back to dummy + flag. **Action: when the user provides the key, re-enable + re-run the gem test from an empty dir, then mark LIVE.** |
+| **Illustrations (Gemini/Nano-Banana)** | ⏸ PARKED — blocked on setup | Spec is written + correct, but generation can't run until: (1) user sets a free `NANOBANANA_API_KEY` from https://aistudio.google.com/apikey, and (2) the nanobanana extension is re-enabled (the `!/Users/anirudhbhatt/*` override in `~/.gemini/extensions/extension-enablement.json` disables it; run `gemini extensions enable nanobanana`). Until both are done, fall back to dummy + flag. **Action: when the user provides the key, re-enable + re-run the gem test from an empty dir, then mark LIVE.** |
 
 (The icon stress-test harness that informed these notes was removed 2026-06-28; icons are no longer generated — use the official `582:257` icon or a dummy placeholder.)
 

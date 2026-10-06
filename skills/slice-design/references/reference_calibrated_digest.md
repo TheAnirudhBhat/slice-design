@@ -284,7 +284,8 @@ This digest is the canonical "what we know is slice" quick-scan INDEX. When buil
 - Phone is responsive AND always centred: `useFitScale` (`Math.min(1,…)` — scale down only) + flex/grid centring; outer stage fills the viewport
 - Status bar = real component (system font for the time, not Rubik); per-element colour from the page under each element's CENTRE x (hard cut at the page boundary); icons centred on the Dynamic Island (y≈32)
 - 54px status reserve lives in App.jsx (above each pod), not in the L0; L0s report scroll state up via `onScrollChange`
-- BottomFade overlay (height 200, colour MUST match page bg) above the dock on scrollable white pages; not on the V-500 immersive page
+- BottomFade overlay (height 146: 22px fade, then solid page bg from 750pt — prod-matched cal:2026-10-06; colour MUST match page bg) above the dock on EVERY white L0 incl. Credit; not on the V-500 immersive page
+- Debug panel (project builds only) = a 300px column 40px to the RIGHT of the phone, same height, centred together as one row; fit-scale reserves its width (cal:2026-10-06)
 - App bg / outer stage fills 100vw×100vh; pages reserve 54px transparent at top so page bg fills under the status bar during swipes
 - Bottom nav: flex+gap layout (GAP 24), never uniform SLOT_WIDTH; per-slot variant computed from `navX + pagerX + page meta`, clamped to the visible viewport; `useLayoutEffect` for synchronous variant updates; single SPRING animate on state change (page snaps instantly via Pager `x.set`)
 - Nav inactive on white = white circle + 40%-black glyph; on Valentino = white-30% circle + V-500 glyph; active non-pay = white circle + V-500 (or 40%-black per latest) glyph + shadow; Pay-active = 72px white ring + scanner glyph

@@ -82,7 +82,7 @@ Together this is a **fast design-exploration surface**: switch variants/presets 
 **Invocation is opt-in / project-gated.** The debug panel is the proto's *optional second view* — both the clean app view and the debug view exist, but the debug view is **only invoked when building on a project**, never in the standalone skill proto's default view (so the proto always reads as a real app). The skill proto ships the framework as `proto/src/components/DebugPanel.jsx` + an `App({ debug, debugContent })` prop:
 - **Standalone skill proto** → `<App />` (debug off) = clean app view only. The skill author can peek it with the `?debug` URL param.
 - **A derived project** → its wrapper passes `<App debug debugContent={<ProjectExplorationControls/>} />`. The `debugContent` slot is where the project injects its section-variant / preset pickers. The panel's built-in controls (theme · pod-jump · device) come for free.
-- Desktop: right-docked panel; the phone shifts left → two side-by-side views. Opened via a `d` key / corner toggle, both gated behind `debug`.
+- Desktop: a column BESIDE the phone (AI Banker's layout, cal:2026-10-06) — `DEBUG_PANEL_WIDTH` 300, `DEBUG_PANEL_GAP` 40, the phone's on-screen height; phone + panel centre together as one row and `useFitScale` reserves the panel's width (was: right-docked to the page edge with the phone pushed left). Opened via a `d` key / corner toggle, both gated behind `debug`.
 
 ---
 

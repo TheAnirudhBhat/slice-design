@@ -702,7 +702,7 @@ Direct extraction from DLS 2.0 working copy `PNUz3Dr9KSlFJSnsXsC0nL` L0 page (no
 - Updated: `OPEN_ITEMS.md` (A1 marked done).
 - Updated: this file (R23 entry).
 
-Total: 7 file touches. Proto source `/Users/anirudhbhat/claude/slice/projects/slice-app-proto/` is the live canonical reference; this skill documents the patterns and contracts.
+Total: 7 file touches. Proto source `/Users/anirudhbhatt/claude/slice/projects/slice-app-proto/` is the live canonical reference; this skill documents the patterns and contracts.
 
 Source: R23 calibration session 2026-05-29. Proto build from scratch. 117+ tasks captured in proto TaskList.
 
@@ -788,7 +788,7 @@ After the retraction pass, the user surfaced five more polish issues. Code + ski
 - `pods/payments/L0_valentinoHome.jsx` — `Keypad` rows now `padding: 0 24px` + `justify-content: space-between` so the row spans the full screen width minus the canonical gutter, matching the Request|Transfer button row.
 - `components/BottomNav.jsx` — `isImmersive = active === 'pay'` (was `visuallyActive === 'pay'`). Variant snaps on commit, not mid-drag.
 - `components/BottomNav.css` — immersive `--inactive-bg` `0.18 → 0.22`, `--inactive-fg` `0.7 → 0.85`. Matches the ₹3K pill visual weight in canonical Figma.
-- `pods/explore/L0.jsx` — `T.h3` (20/24M) for card titles (was H4 16/20M); `T.metadata` `11/14` (was canonical 10/12); ~~`BillAvatar` 48×48 (was 40); bill icons 24×24 (was 20)~~. Proto-calibrated deviation from strict canonical because the iPhone 16 Pro Max scale at our browser viewport made H4 feel small. **SUPERSEDED (cont-32): the bill avatar/icon bump to 48/24 read TOO BIG — reverted to canonical 40/20. The card-title/metadata bumps stand; the bill-tile bump did not. Lesson: bumping for "felt small" is risky — bill tiles were fine at canonical.**
+- `pods/explore/L0.jsx` — `T.h3` (20/24M) for card titles (was H4 16/20M); `T.metadata` `11/14` (was canonical 10/12); ~~`BillAvatar` 48×48 (was 40); bill icons 24×24 (was 20)~~. Proto-calibrated deviation from strict canonical because the iPhone 16 Pro Max scale at our browser viewport made H4 feel small. **SUPERSEDED by cont-32 → the bill avatar/icon bump to 48/24 read TOO BIG — reverted to canonical 40/20. The card-title/metadata bumps stand; the bill-tile bump did not. Lesson: bumping for "felt small" is risky — bill tiles were fine at canonical.**
 - `package.json` — added `agentation@^3.0.2`.
 - `src/main.jsx` — wired `<Agentation ... />` sibling of `<App />` with console-logging callbacks.
 
@@ -1089,7 +1089,7 @@ User via agentation: "the BG white fade should be higher, should not be able to 
 - `pods/banking/L0.jsx` — fade color `SLATE_10 → #FFFFFF` (stale from the reverted slate-10 page bg rule — page bg is white per FX10). Height also 200.
 - `pods/explore/L0.jsx` — same as Banking.
 
-**Rule promoted**: `<BottomFade>` height = 200 (not 140). The bottom nav with gesture bar takes ~110-120px of vertical space; the fade needs ~70-80px more above that to obscure transactions/cards that are scrolling up behind. 200 is the minimum.
+**Rule promoted** (SUPERSEDED by 2026-10-06 — 146px, 22px fade then solid; see `reference_proto_patterns.md`): `<BottomFade>` height = 200 (not 140). The bottom nav with gesture bar takes ~110-120px of vertical space; the fade needs ~70-80px more above that to obscure transactions/cards that are scrolling up behind. 200 is the minimum.
 
 **Rule also**: BottomFade color MUST match the underlying page bg. After FX10 reverted page bgs to pure white, Banking/Explore were still passing `SLATE_10` to BottomFade — leftover stale reference. Anytime PAGE_BG changes in App.jsx, sweep all `<BottomFade color={...}>` calls to ensure they match.
 
@@ -1297,7 +1297,7 @@ Source: R23 fix-it-2 continuation 23, 2026-05-29.
 User: "but ideally this app proto should be included in slice design skill".
 
 **Move executed**:
-- `/Users/anirudhbhat/claude/slice/projects/slice-app-proto/` → `/Users/anirudhbhat/.claude/skills/slice-design/proto/`
+- `/Users/anirudhbhatt/claude/slice/projects/slice-app-proto/` → `/Users/anirudhbhatt/.claude/skills/slice-design/proto/`
 - Single `mv` (same filesystem) — instant. All `node_modules`, `dist`, `package.json`, `src/`, `public/`, `ARCHITECTURE.md` preserved.
 
 **Skill structure now**:
@@ -1791,7 +1791,7 @@ Closed the feedback loop on the icon engine via a built stress-test harness (`ic
 
 2. **Filled-vs-outline is context-driven** (user direction): find in the set first; if missing, generate; choose filled (slice default) vs outline by usage (inactive↔outline / active↔filled, hero-heavy↔outline); colour rules always apply (currentColor, slate 0.5 / strong 0.9 / V-500 active, inline SVG never PNG). Written into the reference as the canonical resolution rule.
 
-3. **Illustration engine PARKED — blocked on setup, not capability.** Two prerequisites the bare OAuth login does NOT satisfy: a free `NANOBANANA_API_KEY` (AI Studio), and re-enabling the nanobanana extension (disabled by a `!/Users/anirudhbhat/*` override → `gemini extensions list` empty → `/generate` not parsed as a command, CLI spirals as a free-form agent). Corrected an earlier WRONG note in the reference that claimed OAuth/no-key works. Action item recorded in the reference's Status table: re-enable + re-test when the user supplies the key.
+3. **Illustration engine PARKED — blocked on setup, not capability.** Two prerequisites the bare OAuth login does NOT satisfy: a free `NANOBANANA_API_KEY` (AI Studio), and re-enabling the nanobanana extension (disabled by a `!/Users/anirudhbhatt/*` override → `gemini extensions list` empty → `/generate` not parsed as a command, CLI spirals as a free-form agent). Corrected an earlier WRONG note in the reference that claimed OAuth/no-key works. Action item recorded in the reference's Status table: re-enable + re-test when the user supplies the key.
 
 Lesson: validate generated assets through the rating harness, not by self-assertion — the two craft rules came straight from one-line user comments and now generalize. And verify an external tool's auth/enablement state empirically before claiming it "just works" (the OAuth assumption was wrong).
 
@@ -1853,7 +1853,7 @@ User: "clean up any mess… any project we don't need anymore, anything redundan
 
 **Code-review of the proto (subagent) — fixed 5, deferred 2:**
 - FIXED: (a) `BottomNav` local `PHONE_WIDTH=393` had drifted from `App.jsx`'s 402 (iPhone-17 bezel) → off-by-9 nav centering + per-slot variant lookup; corrected to 402 with a "keep in lockstep" comment. (b) `TxnRow` had a duplicated inline tap-guard → migrated to the shared `useTapGuard` hook (which was originally extracted from it). (c) `BottomFade.colorWithAlpha` only parsed `#RRGGBB` and silently fell back to white-transparent for `var(--page-bg)` → broke the fade in dark mode; replaced with a `transparent` start-stop (works for hex AND tokens, light AND dark) and deleted the helper. (d) Deleted dead `pods/profile/V3.jsx` (unimported, hardcoded tokens). (e) Removed dead `DynamicIsland` export from `StatusBar.jsx` + fixed the stale L1Stack z-index comment (the iPhone-17 bezel PNG bakes the island in).
-- DEFERRED: Credit L0 missing a `BottomFade` (real inconsistency — needs a position:relative wrapper + visual verify); Activity L0's `COLORS` re-key map (cosmetic, high-churn — skipped to avoid risk on the canonical proto).
+- DEFERRED: Credit L0 missing a `BottomFade` (real inconsistency — needs a position:relative wrapper + visual verify — DONE 2026-10-06); Activity L0's `COLORS` re-key map (cosmetic, high-churn — skipped to avoid risk on the canonical proto).
 
 Lesson: a code review on the canonical proto is high-leverage — every derived project inherits these files, so a drifted constant or a dark-mode-broken util multiplies across projects. Fix the provably-safe findings (dead code, contained bugs); defer structural/cosmetic ones that need visual verification rather than risk the upstream.
 
@@ -1899,3 +1899,18 @@ User-directed maintenance ("add all of it"): the slice-design skill inherited th
 SKILL.md bumped 2.2.0 → 2.3.0 (new `lint` + `cascade` sub-command rows, judge/audit lint-first wiring, status drift+refs wiring, quick-reference rows).
 
 Source: aibanker-design repo review (its `design-lint` + `cascade` skills, ControlPanel/userStatePresets pattern), session 2026-06-10.
+
+---
+
+## 2026-10-06 — birthday-spark review (user-directed proto + rule changes)
+
+Four changes from the birthday-spark project review, each explicitly asked to land "in the original slice proto as well":
+
+1. **BottomFade matched to prod** (user, IMG_3802–3805: "a subtle BG… so the cards and the bottom thing don't interact… consistent on all pages except the home and Valentino payment page"). Measured on the HEICs: content visible to 728pt, fades over 22pt, solid page bg from 750pt. `BottomFade` → `height 146, fade 22`, `transparent 0 → color 22px`. Credit L0 got its missing wrapper + fade (the 2026-05-30 DEFERRED item). Banking/Explore pass `var(--page-bg)`. Supersedes the 2026-05-29 "height 200" rule. → `reference_proto_patterns.md`, `reference_anti_patterns.md`, digest.
+2. **Debug panel = a column beside the phone** (user: "like AI Banker, on the right of the phone screen, rather than on the right side of the page"). `DebugPanel` exports `DEBUG_PANEL_WIDTH 300` / `DEBUG_PANEL_GAP 40`, takes the phone's on-screen `height`, fades/slides in; `App.jsx` centres phone + panel as one row (the scaled phone's layout box collapsed with negative margins) and `useFitScale(…, reserveX)` keeps the panel's width. → `reference_project_workflow.md` §5, digest.
+3. **Explore "₹0 FEE" pill → V-500** (user: "Tag should be Valentino color and not this blue"). DLS Tag Bold · Brand: V-500 bg, white text. Supersedes the R18/2026-05-17 Blue-500 rule. → `reference_pod_explore.md`, `reference_dls_chips.md`, `reference_dls_screen_layouts.md`, `reference_entry_points.md`, `reference_pod_bills.md`, `reference_slice_product_model.md`.
+4. **Token mapping by NAME** (user: "map them one-to-one to the slice DLS tokens… understand what you were doing wrong and fix it so that it should not happen in the future"). Root cause #19 + the procedure in `reference_theming.md` §2: Figma variable path → DLS token; resolve missing ones from the published library in both modes; never copy `var(--core/…, #hex)` fallbacks or guess dark values.
+
+Flagged, not changed: the kit's `--outline-bold` (0.1 light / 0.16 dark) differs from DLS Outline/Default/Bold (Alpha/Black/a20 light / Alpha/White/a10 dark), resolved from `ncGqxiE6wUOqgOURwHx6Hp` 2026-10-06. Also: the proto's `node_modules/vite/bin/vite.js` is missing (install broken before this session); it was verified by building with a project's vite 6.4 + `--configLoader runner`.
+
+Source: birthday-spark session 2026-10-06 (agentation pins + chat).

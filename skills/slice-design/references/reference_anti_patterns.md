@@ -538,7 +538,7 @@ Failure modes from a live user-review of `slice/projects/slice-app-proto`. Each 
 
 ### ❌ Sticky-fade-in-non-flex hack
 **Activity L0 first pass:** placed bottom fade INSIDE the scroll container with `position:sticky; bottom:0; marginTop:-120; order:999`. Parent wasn't flex, so `order` was a no-op. The fade rendered between search row and txn list instead of at the bottom of the viewport.
-**Rule:** bottom fades are `position:absolute; left:0; right:0; bottom:0; height:140; pointer-events:none; zIndex:5` SIBLINGS of the scroll container, INSIDE a `position:relative` page wrapper. NEVER inside the scroll. See `reference_proto_patterns.md` "BottomFade overlay".
+**Rule:** bottom fades are `position:absolute; left:0; right:0; bottom:0; height:146 (22px fade, then solid — cal:2026-10-06); pointer-events:none; zIndex:5` SIBLINGS of the scroll container, INSIDE a `position:relative` page wrapper. NEVER inside the scroll. See `reference_proto_patterns.md` "BottomFade overlay".
 
 ### ❌ Asset-extracted-but-not-verified
 **Banking L0 first pass:** curl'd `monies_glyph.png` from Figma node, shipped it at 21×36 as the inline brand mark. The PNG was 1.6KB — empty/transparent. Rendered invisible against white card. User: "monies logo missing."

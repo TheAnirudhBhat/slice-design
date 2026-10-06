@@ -203,7 +203,7 @@ Hide entirely. Don't show a disabled "0 bills" state — noise.
 Close sheet → full-screen loader → instant list refresh. In-place reshuffle while sheet visible is the anti-pattern.
 
 ### ❌ "₹0 FEE" pill on Recharge L1
-The Blue-500 solid `₹0 FEE` pill belongs ONLY on the Explore L0 entry card. Recharge L1 is already inside the flow; pill would be redundant.
+The V-500 solid `₹0 FEE` pill belongs ONLY on the Explore L0 entry card. Recharge L1 is already inside the flow; pill would be redundant.
 
 ### ❌ "History" CTA on Bills surfaces
 Bill payments are forward action. History pulls users sideways into Activity, which has its own surface. Tapping the bill row shows past payment when relevant.
@@ -235,7 +235,7 @@ Source: cal:2026-05-28 R21 + existing R11 `explore-base a6808af` ✅
 ## Calibrated history
 
 - cal:2026-05-17 R11 — Explore L0 Recharge & bills card recipe (4-up grid + dashed divider + reward row) → entry point to Bills sub-pod
-- cal:2026-05-17 R11 — Solid Blue "₹0 FEE" pill rule → applies on L0 entry card only, NOT L1
+- cal:2026-05-17 R11 — Solid "₹0 FEE" pill rule → applies on L0 entry card only, NOT L1 (colour Blue → V-500 by cal:2026-10-06)
 - cal:2026-05-17 R11 — No "History" CTA on Bills → still holds
 - cal:2026-05-28 R21 — Add-bills-via-SMS auto-fetch chain, My bills L2 segmented tabs, Bill row anatomy with brand-coloured logos, orange-only `due in N days`, slate-10 Pay pill, Manage sheet, transient New bills found header, 3-weight loader hierarchy, reward callout carousel on L1 (override to static-row L0 pattern) ✅
 

@@ -84,6 +84,31 @@ Bottom-nav dark colours are their own thing (active chip @60% + #090B0C glyph;
 inactive chip @20% + WHITE glyph) — see `reference_dls_bottom_nav.md`. Don't
 duplicate them here.
 
+### Token mapping: Figma variable → DLS token, BY NAME (HARD, cal:2026-10-06)
+
+`get_design_context` code reads `bg-[var(--core\/background\/primary,white)]`,
+`text-[color:var(--core\/text\&icons\/secondary,rgba(0,0,0,0.7))]` … The part that
+matters is the **variable path**; the hex after the comma is only that FILE's
+resolved value in its current mode. Procedure, every colour, every build:
+
+1. Read the variable path (`Core/Background/Primary`, `Core/Text&Icons/Secondary`,
+   `Core/Main/Primary`, `Core/Outline/OutlineSubtle` …).
+2. Map it by name to the DLS token — the kit's own first (`--page-bg`, `--surface`,
+   `--text-primary/secondary/tertiary`, `--outline-subtle`, `--brand-bg`, tokens.js).
+3. If the kit lacks it, RESOLVE it from the published library `ncGqxiE6wUOqgOURwHx6Hp`
+   (`use_figma`: `getLocalVariablesAsync` → the Theme collection, follow the alias to
+   the primitive, BOTH Light and Dark modes) and add it to a project tokens file
+   with the variable path in a comment. Missing dark value? Resolve it — never guess.
+4. NEVER copy the fallback hex, never keep a private palette of "Figma colours", never
+   mark a value "(~)" and ship it.
+
+Why: the birthday-spark build (2026-10-06) copied fallbacks into a private palette
+and invented dark values; the Credit-card-2026 file's `Core/Main/Primary` resolves
+`#9E2BCF`, but the DLS (and prod, sampled `#D307D6`) is Valentino/500 `#D30AD7` —
+"the bottom sheet and card colours don't seem as per the DLS". Mapping by name
+would have produced the DLS values first time. Brand/content colours (a merchant's
+offer colour, a logo) are content, not tokens — say so in a comment where they live.
+
 ---
 
 ## 3. Figma references (shared — any slice teammate can open)

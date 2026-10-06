@@ -1,4 +1,4 @@
-// Debug panel — the proto's "second view": a right-docked design-review surface
+// Debug panel — the proto's "second view": a design-review column beside the phone
 // that is HIDDEN by default so the app view stays clean. Opened via the corner
 // toggle (or the `d` key) on desktop only — it's a review tool, not part of the
 // shipped app (same spirit as agentation being desktop-only).
@@ -26,8 +26,15 @@ const POD_LABELS = {
   activity: 'Activity',
 };
 
+// cal:2026-10-06 (user): the panel sits as a COLUMN beside the phone — AI Banker's
+// control column — not docked to the page's right edge. App.jsx lays the phone
+// and this panel out in one centred row and passes the phone's on-screen height.
+export const DEBUG_PANEL_WIDTH = 300;
+export const DEBUG_PANEL_GAP = 40;
+
 export default function DebugPanel({
-  width = 360,
+  width = DEBUG_PANEL_WIDTH,
+  height,
   pods = [],
   active,
   onJumpPod,
@@ -42,14 +49,14 @@ export default function DebugPanel({
 }) {
   return (
     <motion.aside
-      initial={{ x: width }}
-      animate={{ x: 0 }}
-      exit={{ x: width }}
-      transition={{ type: 'spring', stiffness: 360, damping: 36, mass: 0.8 }}
+      initial={{ opacity: 0, x: -12 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -12 }}
+      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
       style={{
-        position: 'fixed', top: 0, right: 0, bottom: 0, width, zIndex: 1000,
-        background: C.bg, borderLeft: `1px solid ${C.border}`,
-        boxShadow: '-8px 0 24px rgba(0,0,0,0.06)',
+        position: 'relative', width, height, flexShrink: 0, zIndex: 1000,
+        background: C.bg, border: `1px solid ${C.border}`, borderRadius: 16,
+        boxShadow: '0 8px 24px rgba(0,0,0,0.06)', overflow: 'hidden',
         fontFamily: 'Rubik, system-ui, sans-serif', color: C.text,
         display: 'flex', flexDirection: 'column',
       }}

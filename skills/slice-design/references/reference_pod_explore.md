@@ -14,7 +14,7 @@ Visual signature: card-grid heavy, mixed-content tiles, pink + V-500 brand accen
 
 ## In scope
 - Explore L0 anatomy (App bar L0 + Recharge & bills card + 2×2 mixed-content grid)
-- Recharge & bills card (header + Blue-500 ₹0 FEE pill + 4-up icon grid + dashed divider + reward row)
+- Recharge & bills card (header + V-500 ₹0 FEE pill + 4-up icon grid + dashed divider + reward row)
 - 2×2 small-card grid (PLAY & WIN / MAY SPENDS / INVITE / CREDIT SCORE / AUTOPAY mix)
 - Rewards leaderboard pink → coral gradient + Empty Rewards recipe
 - Spark hero reveal motion choreography
@@ -38,7 +38,7 @@ Visual signature: card-grid heavy, mixed-content tiles, pink + V-500 brand accen
 App bar L0 — "Explore" left + photo Avatar trailing
 │
 ├── White card — Recharge & bills (page padding 24, card padding 20)
-│     ├── Header: H4 "Recharge & bills" + solid Blue-500 "₹0 FEE" pill UPPERCASE
+│     ├── Header: H4 "Recharge & bills" + solid V-500 "₹0 FEE" pill UPPERCASE
 │     ├── 4-up icon grid (Card / Electricity / Prepaid / More)
 │     ├── Dashed full-bleed divider
 │     └── Reward row — Avatar slate-100 + "Get assured ₹10" H4 + caption + chevron ›
@@ -91,7 +91,7 @@ The signature Explore surface. White card on white page (shadow elevation), page
 
 ```
 ┌────────────────────────────────────────────────┐
-│  Recharge & bills            [₹0 FEE]          │  ← H4 left + solid Blue-500 pill trailing
+│  Recharge & bills            [₹0 FEE]          │  ← H4 left + solid V-500 pill trailing
 │                                                │
 │   ⊙       ⊙        ⊙        ⊙                  │  ← 4-up icon grid
 │  Card  Electricity Prepaid  More               │     subtle-outline circles + SLATE glyphs
@@ -108,8 +108,9 @@ The signature Explore surface. White card on white page (shadow elevation), page
 - **NO hairline/divider below** the title (card border already separates)
 - H4 title (16px Medium, 0.32px tracking)
 
-### Solid-fill pill rule — ₹0 FEE blue
-The trailing "₹0 FEE" pill on the Recharge card header is a **solid Blue-500 fill pill UPPERCASE** (Metadata weight, ~10pt). NOT a Blue-50 subtle-bg pill. NOT V-500. The blue solid fill signals "system / utility / zero-cost" — a different brand register than V-500 (which is reserved for hot/winning/brand-moment surfaces, see slice fire below).
+### Solid-fill pill rule — ₹0 FEE Valentino
+The trailing "₹0 FEE" pill on the Recharge card header is a **solid V-500 fill pill UPPERCASE, white text** (DLS Tag Bold · Brand; Metadata weight, ~10pt). NOT Blue-500, NOT a subtle-bg pill. V-500 is the same in light and dark.
+Source: cal:2026-10-06 (user, birthday-spark review: "Tag should be Valentino color and not this blue") — supersedes the R18 Blue-500 rule read off `885:19759`.
 
 ### 4-up icon grid (Card / Electricity / Prepaid / More)
 Critical anatomy — easy to get wrong:

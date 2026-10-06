@@ -305,7 +305,7 @@ These recipes consolidate the per-screen patterns confirmed during R11 review wi
 
 ### Explore card — Recharge & bills
 1. White card on slate-10 page bg (page padding 24, card padding 20)
-2. Card header row: H4 title left + **solid blue "₹0 FEE" pill UPPERCASE** trailing
+2. Card header row: H4 title left + **solid V-500 "₹0 FEE" pill UPPERCASE** trailing (cal:2026-10-06, was blue)
 3. 4-up icon grid: subtle-outline circles + **slate glyph inside** (not V-500), labels Caption secondary
 4. Dashed divider full-bleed within card
 5. Reward-row trailing chevron `›` (whole row is the tap target): Avatar (slate-100 bg + line icon) leading + title H4 + caption secondary
@@ -486,7 +486,7 @@ The DLS 2.0 working copy file (`PNUz3Dr9KSlFJSnsXsC0nL`) carries the canonical L
 ### Explore L0
 1. **App bar L0** — pod title "Explore" left + photo Avatar trailing only (no eye icon, no utility icon)
 2. **White card — Recharge & bills** (page padding 24, card padding 20, shadow elevation):
-   - Card header: H4 title `Recharge & bills` left + **solid Blue-500 "₹0 FEE" pill UPPERCASE** trailing (Metadata weight)
+   - Card header: H4 title `Recharge & bills` left + **solid V-500 "₹0 FEE" pill UPPERCASE** trailing (Metadata weight; cal:2026-10-06, was Blue-500)
    - 4-up icon grid: subtle-outline white circles + **slate glyph inside** (NOT V-500), labels Caption secondary one-line. Tiles: `Card / Electricity / Prepaid / More`
    - **Dashed full-bleed divider** within card
    - Reward row trailing chevron `›` (whole row is tap target): Avatar slate-100 leading (line-icon, ~40px) + title H4 `Get assured ₹10` + caption secondary `Reward on 1st bill payment`

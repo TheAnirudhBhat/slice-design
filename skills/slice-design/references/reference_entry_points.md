@@ -187,7 +187,7 @@ Each feature entry has:
 
 ### Recharge & pay bills
 - **Native home**: Explore L0 → Recharge & bills L0 Large white card (top of Explore L0)
-- **Recipe treatment**: card with H4 title + Blue-500 "₹0 FEE" pill + 4-up icon grid + dashed divider + reward row carousel
+- **Recipe treatment**: card with H4 title + V-500 "₹0 FEE" pill + 4-up icon grid + dashed divider + reward row carousel
 - **Secondary triggers**:
   - **Bills L1 "All bills" pill** (Bills sub-pod) — once user has bills, the pill provides a shortcut from Recharge L1
   - **Action centre nudge** for due bills

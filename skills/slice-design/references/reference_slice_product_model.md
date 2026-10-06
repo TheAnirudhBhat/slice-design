@@ -145,7 +145,7 @@ Each pod has ONE core job. Sub-products and surfaces flow from that job. When de
 **Decisions / plausible reasons**:
 - Explore L0 has no big hero card. Why: Explore is discovery — users come to browse, not to answer a single question. The grid invites scanning, not single-decision.
 - Recharge & bills is the FIRST card. Why: bills are the highest-frequency in-app action that *isn't* UPI. Putting them at the top of Explore means one-tap access without burying them in a sub-menu.
-- "₹0 FEE" is a solid-blue Metadata pill (not subtle). Why: this is a feature highlight, not a filter or metadata. Solid fill says "we want you to notice this." Subtle would understate it.
+- "₹0 FEE" is a solid V-500 Metadata pill (not subtle; blue until cal:2026-10-06). Why: this is a feature highlight, not a filter or metadata. Solid fill says "we want you to notice this." Subtle would understate it.
 
 ### Profile (overlay-style — technically cross-pod, accessed via trailing Avatar)
 

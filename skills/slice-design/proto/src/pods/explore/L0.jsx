@@ -22,7 +22,7 @@ import React, { useEffect, useRef } from 'react';
 import { AppBar, usePageScroll } from '../../components/AppBar.jsx';
 import BottomFade from '../../components/BottomFade.jsx';
 import { useL1 } from '../../components/L1Stack.jsx';
-import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, OUTLINE_SUBTLE, BLUE_500, SLATE_10, SURFACE, WHITE } from '../../tokens.js';
+import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, OUTLINE_SUBTLE, V_500, SLATE_10, SURFACE, WHITE } from '../../tokens.js';
 import { CreditCardIcon, ElectricityIcon, MobileIcon, MoreIcon } from '../../icons/BillIcons.jsx';
 
 // ---- Tokens ----
@@ -59,15 +59,15 @@ function Chevron({ color = 'rgba(0,0,0,0.3)' }) {
   );
 }
 
-// ---- Tag (info intent — white text on Blue-500, 10/12 Regular UPPERCASE) ----
-// Canonical: tag is solid Blue-500 bg with white text per Figma node 885:19759.
-function TagInfo({ children }) {
+// ---- Tag (Bold Brand — white text on V-500, 10/12 Regular UPPERCASE) ----
+// cal:2026-10-06 (user): Valentino, not the Blue-500 of Figma node 885:19759.
+function TagBrand({ children }) {
   return (
     <span
       style={{
         ...T.tagPill,
         color: WHITE,
-        background: BLUE_500,
+        background: V_500,
         padding: '4px 8px',
         borderRadius: 100,
         whiteSpace: 'nowrap',
@@ -121,10 +121,10 @@ function BillsCompositeCard() {
         padding: CARD_PAD,
       }}
     >
-      {/* header — H3 left + Blue-500 "₹0 fee" pill right (proto-calibrated) */}
+      {/* header — H3 left + V-500 "₹0 fee" pill right (proto-calibrated) */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={T.h3}>Recharge & bills</span>
-        <TagInfo>₹0 fee</TagInfo>
+        <TagBrand>₹0 fee</TagBrand>
       </div>
 
       {/* 4-up bill grid */}
@@ -400,7 +400,7 @@ export default function ExploreL0({ onScrollChange, extraCards = [] }) {
           </div>
         </div>
       </div>
-      <BottomFade color="var(--page-bg)" height={200} bottom={0} />
+      <BottomFade color="var(--page-bg)" />
     </div>
   );
 }

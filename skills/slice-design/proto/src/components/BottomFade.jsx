@@ -11,10 +11,13 @@
 
 import React from 'react';
 
-// R23 fix-it-2-cont-14: default height bumped 140 → 200 per user — fade must
-// fully obscure scrolling content behind the floating nav (transactions in
-// Activity were peeking through the gap above the dock).
-export default function BottomFade({ color = 'var(--page-bg)', height = 200, bottom = 0 }) {
+// cal:2026-10-06 (user, prod screenshots IMG_3802–3805): matched to the live app —
+// cards stay fully visible to 728pt, fade out over 22pt, and the page bg is SOLID
+// from 750pt to the bottom, so nothing reaches the nav medallions (772–836pt here,
+// same as prod). The old 200px band faded over 120px and only turned solid at
+// 794pt, so cards ghosted behind the dock ("cards and the bottom bar interact").
+// (Was: R23 fix-it-2-cont-14 140 → 200.)
+export default function BottomFade({ color = 'var(--page-bg)', height = 146, fade = 22, bottom = 0 }) {
   return (
     <div
       style={{
@@ -30,7 +33,7 @@ export default function BottomFade({ color = 'var(--page-bg)', height = 200, bot
         // premultiplied space — no grey midpoint). The old colorWithAlpha() only
         // parsed #RRGGBB and silently fell back to white-transparent, which broke
         // the fade on var(--page-bg) / dark bg (cal:2026-05-30 cont-37 code review).
-        background: `linear-gradient(to bottom, transparent 0%, ${color} 60%)`,
+        background: `linear-gradient(to bottom, transparent 0px, ${color} ${fade}px)`,
         pointerEvents: 'none',
         zIndex: 5,
       }}

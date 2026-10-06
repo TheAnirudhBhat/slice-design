@@ -18,6 +18,7 @@
 import React, { useEffect, useRef } from 'react';
 import { AppBar, usePageScroll } from '../../components/AppBar.jsx';
 import { useL1 } from '../../components/L1Stack.jsx';
+import BottomFade from '../../components/BottomFade.jsx';
 import { SLATE_10, TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, PAGE_BG, SURFACE, OUTLINE_SUBTLE } from '../../tokens.js';
 
 const CARD_BG = SURFACE;
@@ -266,40 +267,45 @@ export default function CreditL0({ onScrollChange }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { onScrollChange?.(scrolled); }, [scrolled]); // dep [scrolled] only — R24 cont-24 audit
 
+  // cal:2026-10-06: the only white L0 without a BottomFade — its cards ran under
+  // the dock. Same three-layer wrapper as Banking/Explore/Activity.
   return (
-    <div
-      ref={scrollRef}
-      style={{
-        width: '100%',
-        height: '100%',
-        background: PAGE_BG,
-        fontFamily: 'Rubik, sans-serif',
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        overscrollBehaviorY: 'none', // no vertical rubber-band (user, 2026-06-02)
-        touchAction: 'pan-y', // horizontal swipe → Pager on touch (see cont-38)
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <AppBar
-        scroll={scrolled}
-        variant="l0"
-        title="Credit"
-        avatar={<PhotoAvatar />}
-        onAvatarTap={() => push('profile')}
-      />
+    <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
       <div
+        ref={scrollRef}
         style={{
-          padding: `8px ${PAGE_PAD}px ${NAV_INSET}px`,
+          width: '100%',
+          height: '100%',
+          background: PAGE_BG,
+          fontFamily: 'Rubik, sans-serif',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          overscrollBehaviorY: 'none', // no vertical rubber-band (user, 2026-06-02)
+          touchAction: 'pan-y', // horizontal swipe → Pager on touch (see cont-38)
           display: 'flex',
           flexDirection: 'column',
-          gap: CARD_GAP,
         }}
       >
-        <SpendsCard />
-        <SuperCardPromo />
+        <AppBar
+          scroll={scrolled}
+          variant="l0"
+          title="Credit"
+          avatar={<PhotoAvatar />}
+          onAvatarTap={() => push('profile')}
+        />
+        <div
+          style={{
+            padding: `8px ${PAGE_PAD}px ${NAV_INSET}px`,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: CARD_GAP,
+          }}
+        >
+          <SpendsCard />
+          <SuperCardPromo />
+        </div>
       </div>
+      <BottomFade color="var(--page-bg)" />
     </div>
   );
 }

@@ -27,7 +27,7 @@ Figma source: `HBoBlZN1CrmVwO3rXeZjY0`, node `1861:38329`
 ## Solid-fill pill (calibrated 2026-05-17)
 For attention-grabbing tags **inside cards** (e.g. "₹0 FEE" on Explore Recharge & bills card), slice uses a **solid-fill pill** rather than the default subtle chip:
 
-- Background: `#2B6ACF` (Info/Blue 500) — solid fill, not -50 subtle
+- Background: `#D30AD7` (Brand/Valentino 500) — solid fill, not -50 subtle (cal:2026-10-06 user: was Info/Blue 500 `#2B6ACF`)
 - Text: `#FFFFFF`, **UPPERCASE**, Caption (12/16/0.24) medium tracking
 - Padding: `4px 12px` | Radius: 64px (pill)
 - No border, no icon
@@ -39,7 +39,7 @@ Variant suggestions for the same pattern:
 - Negative (e.g. "LIMITED") → Red 500 solid
 - Brand (e.g. "NEW") → Valentino 500 solid
 
-Source: cal:2026-05-17 — review-1104 reference ("₹0 FEE" blue solid pill on Explore card) ✅
+Source: cal:2026-05-17 — review-1104 reference ("₹0 FEE" solid pill on Explore card) ✅; colour → Valentino 500 by cal:2026-10-06 (user: "Tag should be Valentino color and not this blue")
 
 ## Calibrated default config (tune lock 2026-05-21)
 

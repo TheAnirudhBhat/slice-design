@@ -247,6 +247,17 @@ Mnemonic: **touch-action = which axes the browser may pan (set both); overscroll
 
 ---
 
+## Root cause #19: Figma hex fallbacks copied as colours (cal:2026-10-06)
+
+**Symptom**: a feature build looked "close" but the sheet and cards were off-DLS; dark values were guesses marked "(~)".
+
+**Why it happened**: the colours were lifted from `get_design_context`'s `var(--core/…, #hex)` fallbacks into a private palette. The fallback is the source file's own resolved value (Credit-card-2026's `Core/Main/Primary` = `#9E2BCF`, not DLS V-500 `#D30AD7`), and it has no dark mode at all.
+
+**PERMANENT RULE**:
+> Map every Figma colour variable BY NAME to the DLS token (kit token first; else resolve it from the published library's Theme collection, both modes, into a tokens file with the variable path in a comment). Never copy the fallback hex, never invent a dark value. Procedure: `reference_theming.md` §2 "Token mapping".
+
+---
+
 ## RULE: for scroll / gesture / positioning bugs, VERIFY IN A REAL BROWSER — don't reason from the CSS
 
 **Why**: across the explore-base scroll saga I shipped 3 reasoned-but-wrong fixes in a row. The behaviour only became clear once I drove the running proto with Playwright — measured `scrollTop` before/after a real `mouse.wheel`, walked the ancestor chain with `elementFromPoint`, and ran a real `mouse.down → move → up` drag to see which element actually moved. Each measured test took one round and was unambiguous; each prior guess took a round and was wrong.
@@ -665,7 +676,7 @@ Boots to the working R23 state: all 5 pods (Banking, Explore, Pay/Valentino, Cre
 
 ## Asset reuse — copy first; generate a flagged placeholder only when truly missing
 
-- **Before generating any icon/image/illustration**, check `/Users/anirudhbhat/claude/slice/projects/explore-base/public/assets/` (87 canonical assets: spark / fire / monies / invite-magnet / bill tiles / brand logos / category icons / 3D illustrations / rewards cards). Copy directly (`cp explore-base/public/assets/<file> <proto>/public/assets/`). Never inline-SVG-generate a glyph if a real one exists locally.
+- **Before generating any icon/image/illustration**, check `/Users/anirudhbhatt/claude/slice/projects/explore-base/public/assets/` (87 canonical assets: spark / fire / monies / invite-magnet / bill tiles / brand logos / category icons / 3D illustrations / rewards cards). Copy directly (`cp explore-base/public/assets/<file> <proto>/public/assets/`). Never inline-SVG-generate a glyph if a real one exists locally.
 - **ICONS — official ONLY; missing → DUMMY placeholder. NEVER hand-draw / trace / generate an icon.** Official library = Figma DLS 2.0 Copy node `582:257`; most are already in the proto `public/assets/` + `public/assets/icons/`. Theme a monochrome official icon by inlining its EXACT Figma path + `fill:currentColor` (same geometry = still official). (HARD rule — see SKILL.md "Absolute bans".)
 - **ILLUSTRATIONS genuinely missing everywhere** → auto-generate a high-fidelity, slice-accurate, FLAGGED placeholder per `reference_slice_asset_generation.md` (Gemini/Nano-Banana). Flag (`gen_` prefix + `GENERATED_ASSETS.md` entry) mandatory; project-owned, never the linked kit. Generation is for illustrations, NOT icons.
 - Canonical L0 pages reference: file `PNUz3Dr9KSlFJSnsXsC0nL` node `885:19528` (Banking, Explore, Credit, Activity, Profile L0s in one frame).

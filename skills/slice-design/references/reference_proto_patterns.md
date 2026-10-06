@@ -326,18 +326,16 @@ The first R23 build had several pieces that "looked right" but failed user revie
 
 Every L0 that scrolls content behind the floating bottom nav needs a transparent→page-bg gradient at the bottom so content fades cleanly instead of butting against the dock. This is a CANONICAL chrome element, not optional polish.
 
-**Component** (`src/components/BottomFade.jsx`):
+**Component** (`src/components/BottomFade.jsx`) — profile matched to the live app (cal:2026-10-06, prod IMG_3802–3805): cards fully visible to 728pt, fade out over 22pt, page bg SOLID from 750pt to the bottom, so nothing reaches the nav medallions (772–836pt):
 
 ```jsx
-export default function BottomFade({ color = '#FFFFFF', height = 140 }) {
-  const transparent = colorWithAlpha(color, 0);
+export default function BottomFade({ color = 'var(--page-bg)', height = 146, fade = 22, bottom = 0 }) {
   return (
     <div
       style={{
-        position: 'absolute',
-        left: 0, right: 0, bottom: 0,
+        position: 'absolute', left: 0, right: 0, bottom,
         height,
-        background: `linear-gradient(to bottom, ${transparent} 0%, ${color} 60%)`,
+        background: `linear-gradient(to bottom, transparent 0px, ${color} ${fade}px)`,
         pointerEvents: 'none',
         zIndex: 5,
       }}
@@ -345,8 +343,9 @@ export default function BottomFade({ color = '#FFFFFF', height = 140 }) {
     />
   );
 }
-function colorWithAlpha(hex, alpha) { /* parses #RRGGBB → rgba() */ }
 ```
+
+(Superseded: the 140 → 200px band that faded over 60% of its height — it only turned solid at 794pt, so cards ghosted behind the dock: "cards and the bottom bar interact".)
 
 **Where it goes**: SIBLING of the scroll container, INSIDE a `position:relative` page wrapper. NEVER inside the scroll container.
 
@@ -357,12 +356,12 @@ return (
       <AppBar ... />
       {/* page content scrolls here */}
     </div>
-    <BottomFade color={pageBg} height={140} />
+    <BottomFade color="var(--page-bg)" />
   </div>
 );
 ```
 
-**Apply to:** Banking, Explore, Credit (slate-10 bg), Activity (white bg). NOT Pay (V-500 immersive, no fade — content slides into nothing).
+**Apply to:** every white L0 — Banking, Explore, Credit, Activity (Credit was missing it until cal:2026-10-06). NOT Pay (V-500 immersive, no fade — content slides into nothing). User: "consistent on all pages except the home and Valentino payment page".
 
 **ANTI-PATTERN (R23 fix-it):** placing the fade INSIDE the scroll container with `position:sticky; bottom:0; marginTop:-120; order:999` on a non-flex parent. `order` is a no-op outside flex; `position:sticky bottom:0` sticks only when the element scrolls into the bottom-of-viewport boundary. The gradient ended up appearing mid-list. See `reference_anti_patterns.md` "Sticky-fade-in-non-flex hack".
 

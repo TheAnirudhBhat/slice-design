@@ -6,12 +6,13 @@ type: reference
 
 Slice doesn't use Tabs as a UI pattern. For filtered views, switch between modes, or "show me X vs Y" choices, slice uses **pills** (segmented control).
 
-## Anatomy
-- Container: slate-10 (`#F6F9FC`) bg, 1px outline-subtle border, Radius Circle (100px), 4px internal padding
-- Active option: white bg, 1px subtle shadow (`0 1px 2px rgba(0,0,0,0.06)`), V-500 text, Rubik Medium
-- Inactive options: transparent bg, secondary text colour
-- Heights: 38px (regular), 32px (small)
-- Internal padding per option: 8px vertical, 16–20px horizontal (depending on content width)
+## Anatomy (canonical — DLS "Tab group", file `HBoBlZN1CrmVwO3rXeZjY0` node `486:2793`, verified 2026-06-26)
+- Container: **transparent — NO track fill, NO border, NO shadow.** Padding `8px 24px` (the 24px is the page gutter). Options are **hug-content and left-aligned**, NOT stretched into equal full-width halves.
+- Selected option: bg **`#F6F9FC`** (Background/Secondary subtle fill), text **`rgba(0,0,0,0.9)`** (Text&Icons/Default/Primary), Rubik Medium.
+- Unselected option: **transparent** bg, text **`rgba(0,0,0,0.5)`** (tertiary).
+- Each option: height 32px, padding `8px 16px`, radius 100px (Circle), Rubik Medium 14/20, 0.28px tracking.
+
+> ⚠️ Correction (2026-06-26): the prior anatomy here — "slate-10 **track** + 1px border + **white thumb** + `0 1px 2px` shadow + **V-500** active text, 38px" — was WRONG; it described an iOS-style segmented control, not the slice DLS component. Caught by a slice designer on the flights proto and corrected against the canonical Figma node `486:2793` (get_design_context + screenshot). `reference_dls_tabs.md` already carried the correct values (selected `#F6F9FC` + primary text, unselected transparent + tertiary). There is **no** white-thumb / V-500 / track variant in canonical DLS.
 
 ## When to use
 - Filter a list (All / Sent / Received)
