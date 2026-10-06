@@ -2,7 +2,7 @@
 // hand-rolled implementations (AppBar trailing photo, Activity list monogram,
 // Valentino home photo, Profile photo).
 //
-// Sizes in use: 40 (Activity list), 44 (AppBar + Valentino home), 128 (Profile).
+// Sizes in use: 40 (Activity list + every L0 app bar, 48 hit), 128 (Profile).
 //
 // `tone` drives the ring and (for monograms) the letter colour:
 //   • plain    — no ring. Photo avatars in chrome (AppBar, Valentino home).

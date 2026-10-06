@@ -129,7 +129,7 @@ export function AppBar({
           ))}
 
           {avatar && (
-            <Avatar size={44} hit onTap={onAvatarTap}>
+            <Avatar size={40} hit onTap={onAvatarTap}>
               {avatar}
             </Avatar>
           )}

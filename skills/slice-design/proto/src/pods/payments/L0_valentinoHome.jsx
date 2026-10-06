@@ -44,7 +44,7 @@ function fontSizeForAmount(amountStr) {
 function AppBar({ onAvatarTap }) {
   // Figma Valentino ✅ 10028:8953 "App bar / Dropdown" (cal:2026-10-06): 24/12 padding,
   // 40-tall row. LEFT: "Check balance" + 16 chevron, 5 gap, no pill border any more.
-  // RIGHT (gap 28): 18 chat glyph, avatar at the proto-wide 44 (48 hit), no ring — the Figma ring shrank the photo to 42.
+  // RIGHT (gap 28): 18 chat glyph, 40 avatar (48 hit) like every L0, no ring.
   return (
     <div
       style={{
@@ -79,7 +79,7 @@ function AppBar({ onAvatarTap }) {
         <img src="/assets/icons/appbar_chevron.svg" alt="" width={16} height={16} />
       </button>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 26 /* 28 visual − 2 hit-area inset */ }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 24 /* 28 visual − 4 hit-area inset */ }}>
         <button
           style={{
             height: 40,
@@ -96,7 +96,7 @@ function AppBar({ onAvatarTap }) {
           <img src="/assets/icons/appbar_chat.svg" alt="" width={18} height={18} />
         </button>
 
-        <Avatar size={44} photo={USER_AVATAR_URL} hit onTap={onAvatarTap} ariaLabel="profile" />
+        <Avatar size={40} photo={USER_AVATAR_URL} hit onTap={onAvatarTap} ariaLabel="profile" />
       </div>
     </div>
   );
