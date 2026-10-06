@@ -312,7 +312,8 @@ function useIsMobile() {
 // 874 (Safari with its toolbars: 393×659 lost ~90px at each end).
 function useDeviceScreen() {
   const read = () => {
-    if (typeof window === 'undefined') return { scale: 1, height: PHONE_HEIGHT };
+    // a 0×0 viewport (a hidden/backgrounded tab, a cold start) would make it NaN
+    if (typeof window === 'undefined' || !window.innerWidth || !window.innerHeight) return { scale: 1, height: PHONE_HEIGHT };
     const scale = window.innerWidth / PHONE_WIDTH;
     return { scale, height: Math.round(window.innerHeight / scale) };
   };
