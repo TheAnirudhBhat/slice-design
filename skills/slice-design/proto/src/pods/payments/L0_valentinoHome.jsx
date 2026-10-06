@@ -111,7 +111,8 @@ function AppBar({ onAvatarTap }) {
 // rightmost pill, the identity anchor that never dismisses (reference_pod_payments).
 // Row: 64 band, 16 above / 12 below, 24 sides, 12 between pills; it scrolls, no mask.
 // Pill: 36 tall, Circle, 10/16 padding (fire 10/14/10/12), 16 glyph box + 4 + label.
-// Colours by variable name: label + glyphs = Text&Icons/On color/Secondary → WHITE_70.
+// Colours by variable name: labels = Text&Icons/On color/Primary → WHITE (user, cal:2026-10-07:
+// "all action pill text should be primary white"); glyphs = On color/Secondary → WHITE_70.
 // The fill is a raw #D828DC in Figma = white ~12% over V-500 → the DLS translucent-white
 // rule → WHITE_10, which also holds on the dark (#090B0C) Pay page. Stroke 1.5px
 // Alpha/White/a05 on EVERY pill — Figma's fire pill has none; user: "this one
@@ -122,7 +123,7 @@ const PILL_TEXT = {
   fontSize: 12,
   lineHeight: '16px',
   letterSpacing: '0.24px',
-  color: WHITE_70,
+  color: WHITE,
   whiteSpace: 'nowrap',
 };
 
@@ -229,8 +230,7 @@ function ActionPills({ upiId }) {
       </ActionPill>
       <ActionPill label={`UPI ID ${upiId}`} intro={intro(2)}>
         <PillGlyph src="/assets/icons/pill_upi.svg" width={31} />
-        {/* UPI ID in primary white (user, cal:2026-10-06) — it is the identity anchor */}
-        <span style={{ ...PILL_TEXT, color: WHITE }}>{upiId}</span>
+        <span style={PILL_TEXT}>{upiId}</span>
       </ActionPill>
     </div>
   );
