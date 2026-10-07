@@ -162,10 +162,12 @@ function ActionPill({ label, style, intro, children }) {
         gap: 4,
         padding: '0 16px',
         background: WHITE_10,
-        // Figma background blur 50 (user, cal:2026-10-07) = CSS blur(25px): Figma's radius
-        // is twice the CSS value (its own export halves it — 10 came out as 5px before)
-        backdropFilter: 'blur(25px)',
-        WebkitBackdropFilter: 'blur(25px)',
+        // Figma background blur 300 (user, cal:2026-10-07: "300, or whatever amount where
+        // they stop changing") = CSS blur(150px) — Figma's radius is twice the CSS value
+        // (its export halves it). At 150px the kernel (~3×) spans more than the 402px
+        // screen, so higher values barely change anything.
+        backdropFilter: 'blur(150px)',
+        WebkitBackdropFilter: 'blur(150px)',
         border: `1.5px solid ${WHITE_05}`,
         borderRadius: 100,
         cursor: 'pointer',

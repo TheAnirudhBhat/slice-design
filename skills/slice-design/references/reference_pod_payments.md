@@ -175,7 +175,7 @@ A distinct pill family used ONLY on the Payments L0 brand-immersive surface. Not
 | Fill — default | translucent-white ~10–14% on V-500 |
 | Fill — emphasis | SAME as default — emphasis is motion, not fill: a one-time rim arc sweep (`EmphasisPill`, see rules) (cal:2026-10-07, supersedes ~22% fill) |
 | Stroke | 1.5px white-05 on every pill (cal:2026-10-06) |
-| Backdrop | Figma background blur 50 = CSS `backdrop-filter: blur(25px)` (Figma's radius is 2× CSS; cal:2026-10-07); the page is the backdrop root so it never samples the bezel |
+| Backdrop | Figma background blur 300 = CSS `backdrop-filter: blur(150px)`, past which it stops changing (Figma's radius is 2× CSS; cal:2026-10-07); the page is the backdrop root so it never samples the bezel |
 | Padding | 16px left, 16px right, 10px top/bottom |
 | Internal gap | 4px between logo/glyph and text |
 | Logo zone | 31×16 for UPI wordmark, 16×16 for icon glyphs |
