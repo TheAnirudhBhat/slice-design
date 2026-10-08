@@ -1975,3 +1975,28 @@ The StatusTint band filled the top band with one flat colour. On a slide it flip
   - true edge-to-edge is the native wrapper's job (`projects/slice-expo`)
 - Known caveat from WebKit's source, not seen on a device: in a Safari tab the viewport-sized stage keeps the first sampled top colour.
 
+
+### 2026-10-08 — extract: birthday-spark's learnings promoted (user: "update the slice design skill with all the updates")
+
+Swept projects/birthday-spark (105 commits, 2026-10-06…07) for what's general. The proto-level changes it shared earlier (glass status bar, the pill entrance, EmphasisPill, perf, the WAAPI page slide, mask-icon preloads, the pills' backdrop blur) were already in. New:
+- `reference_performance.md` §iOS WebKit: the phone-only render rules. Each comes from a phone recording:
+  - filters: IMG_3813/3817/3818
+  - press-scale: IMG_3827
+  - first-frame stalls: IMG_3828
+  - SVG filters and `<image>`: IMG_3829
+  - large-image decoding (`decoding="sync"`; WebKit `decodingModeForImageDraw`, over 500KB decoded): IMG_3830/3831
+  - plus compositor tracks for physics paths, and WebGL for full-screen light effects
+- `reference_motion.md` → birthday-spark choreographies: the lid toss (prod IMG_3800), the grow-into-a-pulse landing with a velocity-matched ripple, ease at every turn, separate beats, the sheen, emphasis after the big moment, effects that come in first, matching a reference video.
+- `reference_pod_explore.md` → Birthday spark: the gift card, where it waits (the slot by default), the openings and their defaults, the Spotlight, the Pay home moments.
+- `reference_pod_payments.md` → EmphasisPill: `emphasize` holds the sweep. The skill proto's `EmphasisPill.jsx` takes the prop; it defaults to true, so nothing else changes.
+- `reference_proto_systematics.md` root causes:
+  - #21: iOS-only render failures
+  - #22: stale closures in once-registered handlers (a pick that "reverts")
+  - #23: verification that can't see the bug
+- `reference_project_workflow.md`: agentation lines read from the served module; syncing a peer's skill commit safely; keeping the review server up; how debug picks persist.
+- `reference_theming.md`: a light tint used as light is the themed `--v-50`.
+- Digest bullets for all of the above (Motion, Proto / phone shell, Theming, Screen layouts); SKILL.md quick-reference row; skill version 2.4.0.
+Not promoted:
+- the Lasers moment: in progress, not yet accepted
+- project-only tuning numbers and assets
+- the off-DLS balloon inks: the user's call for that moment, recorded only as such

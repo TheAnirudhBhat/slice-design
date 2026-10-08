@@ -198,6 +198,41 @@ Source: mem:feedback_spark_reveal_choreography ✅ + see `reference_motion.md` f
 
 ---
 
+## Birthday spark (project birthday-spark, cal:2026-10-07)
+
+A birthday gift on the spark card: the spark page shows a wrapped gift, and opening it leaves a birthday offer card live in the slot. Built on the prod spark page (slot + carousel + drag to activate). Proto: `projects/birthday-spark`. Motion specs: `reference_motion.md` → birthday-spark choreographies.
+
+**The gift card**
+- The only two-hue card: slice's sanctioned brand gradient (V-500 → Blue-500), with a tone-on-tone spark-bolt pattern (5%), a white satin ribbon cross and a bow (a generated placeholder; swap for an illustrator's)
+- Opened, it's a normal big spark card on the same paper ("Happy birthday" / "Get ₹250 cashback")
+- The opened card never scales behind the box as it opens
+- No press-scale on the gift (iOS artifacts, `reference_performance.md` §iOS WebKit)
+
+**Where it waits:** live in the slot, tap to open (the default; "the gift should already be in the center… since it's the main thing"). The first version stays as a debug option: the gift in the carousel, dragged up into the slot. While dragging, the card in flight leaves a blank in the carousel, and the drop well breathes slowly (1.8s, inner square first) while a card is on its way. On the drop, the gift grows into the slot in one motion and auto-opens a beat later.
+
+**Opening:** the lid toss plus an effect, picked in the debug panel:
+- **Confetti (small)**, the default: a burst from the box
+- Cannons · Pop & ribbons · Ribbon untie (the bow is yanked off and the ribbons slip away, then the toss) · Halo (a modern sunburst)
+- **Spotlight · confetti**:
+  - an iris stage in the page's own colour opens from the gift
+  - the gift travels in one transform to the optical centre: the box and a two-line wish, centred at 45% of the height, at 1.1×
+  - the wish ("Happy birthday," / the user's name) materialises word by word
+  - a pool of light sits behind it: `--v-50`, so V-50 in light and V-950 in dark (V-50 on the dark stage was a loud white glow)
+  - one squash, then the lid toss; the card holds in the light, then glides into the slot as the iris closes
+  - it ends live in the slot ("once they come on the center, they should remain activated and not go back"), with no circular pulse at the settle
+- **Balloons · confetti** and **Balloons · spotlight**: the Pay home's 3D balloons rise first. With the Spotlight, the near balloons pass over the wish and the card ("some balloons should also go over the text and the main card")
+
+**The birthday moment on the Pay home:** the "Happy birthday" EmphasisPill heads the action-pills row (`reference_pod_payments.md`). A moment can play when the Pay home opens, picked in the debug panel:
+- **Pill only**, the default
+- **Balloons**: real 3D, glossy latex, growing as they rise toward you, far ones behind the page and near ones over it. Their inks are off-DLS by the user's call: the colours furthest from the Valentino (sunflower yellow, aqua, spring green, tangerine, electric blue, white). The **Realistic** look is the default (a side key light plus a rim light, crisp window highlights, a saturated shaded side, a darker neck, lit curling ribbons); the **Earlier** look is kept
+- Confetti
+- Emoji bomb: an exploration; emoji are banned in shipped UI
+- Lasers: an exploration in progress; rainbow is banned in shipped UI
+
+The pill's sweep waits until a full-screen moment has left the screen.
+
+---
+
 ## Invite & earn
 
 ### Surface treatment

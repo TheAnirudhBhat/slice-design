@@ -1,7 +1,7 @@
 ---
 name: slice-design
-description: Use whenever the user is creating, designing, judging, building, iterating, or critiquing any slice screen, flow, component, or visual asset — Figma builds, web protos, motion design, anti-pattern checks, DLS 2.0 component usage, brand voice review, and any fintech/UPI/banking/credit/payments UI work that targets slice. Trigger this skill even when the user doesn't explicitly say "slice" — Figma URLs in conversation, mentions of DLS, UPI flows, Atom, Spark, Monies, Fire, payment screens, balance screens, credit cards, super card, brand-immersive Valentino purple surfaces, "design audit", "is this on-brand", or any visual judgment task on consumer fintech mobile UI all warrant invoking this skill. Also fires for build / iterate / judge / audit / recipe / proto / motion / explore / extract / status / calibrate / sweep sub-commands. (Renamed from slice-dls 2026-05-17.)
-version: 2.3.0
+description: Use whenever the user is creating, designing, judging, building, iterating, or critiquing any slice screen, flow, component, or visual asset — Figma builds, web protos, motion design, anti-pattern checks, DLS 2.0 component usage, brand voice review, and any fintech/UPI/banking/credit/payments UI work that targets slice. Trigger this skill even when the user doesn't explicitly say "slice" — Figma URLs in conversation, mentions of DLS, UPI flows, Atom, Spark, Monies, Fire, gift / celebration moments (confetti, balloons, spotlight), payment screens, balance screens, credit cards, super card, brand-immersive Valentino purple surfaces, "design audit", "is this on-brand", or any visual judgment task on consumer fintech mobile UI all warrant invoking this skill. Also fires for build / iterate / judge / audit / recipe / proto / motion / explore / extract / status / calibrate / sweep sub-commands. (Renamed from slice-dls 2026-05-17.)
+version: 2.4.0
 user-invocable: true
 ---
 
@@ -90,6 +90,7 @@ Don't load all references at once. Read on demand. **Per-pod aggregator files ar
 |---|---|
 | **Building a proto / cross-cutting chrome** | `references/reference_proto_systematics.md` (READ FIRST — root causes, inherit model, checklists) + `reference_proto_patterns.md` (shell, fit-scale, pager) + `reference_web_proto.md` (scaffold) |
 | **Running a multi-round project engagement** (seam project, agentation feedback loop, deploy) | `references/reference_project_workflow.md` (extension-seam model, deploy-by-vendoring, the feedback→build→push loop, working discipline, the reusable debug-view / exploration-screen framework) |
+| **Animating on a real iPhone** (shadows, SVG, big images, first-frame stalls, full-screen effects) | `references/reference_performance.md` §iOS WebKit + `reference_proto_systematics.md` root causes #21–#23 |
 | **Viewing a proto on a real phone** (Expo / Expo Go, edge-to-edge) | `references/reference_expo_on_device.md` (Path A WebView-wrapper template + every solved gotcha: SDK-must-match-Expo-Go, LAN servers, status-bar colour sync, edge-to-edge, safe-area top reserve, bottom-nav shadow, overscroll) |
 | **Building in Figma** (any `use_figma` call) | `references/reference_figma_build.md` (component registry, scripts, hard rules, token cheatsheet) + the Gallery note below |
 | Need an icon | `references/reference_dls_iconography.md` (taxonomy). Order: copy local (`public/assets/` + `public/assets/icons/`) → pull DLS Figma (`582:257`; inline path + `fill:currentColor` to theme) → **if truly missing, a clear DUMMY placeholder + tell the user where to drop the real file.** Icons are **NEVER generated/traced/hand-drawn** (see bans). Generation (`reference_slice_asset_generation.md`) is **illustrations only**. |
@@ -104,7 +105,7 @@ Don't load all references at once. Read on demand. **Per-pod aggregator files ar
 | Specific component spec | `references/reference_dls_<component>.md` (~40 files: appbar, avatar, amount_display, buttons, button_group, cards, chips, accordion, badge, bottom_nav, bottomsheet, carousel, controls, corner_radius, colors, dates_time, dialer, dividers, dot_indicator, elevation, error_states, file_upload, footer_header, iconography, input_field, list_items, phone_shell, pills, pin_field, progress, search, section_header, slider, snackbar, spacing, tabs, tags, tooltip, top_header, user_action_banners) |
 | Motion vocabulary | `references/reference_motion.md` |
 | Performance / accessibility / craft / exploration / project-memory | the same-named `references/reference_<topic>.md` (`_performance`, `_accessibility`, `_craft_principles`, `_exploration_patterns`, `_project_memory`) |
-| Calibrated digest (single-page rule index — current to 2026-06-02) | `references/reference_calibrated_digest.md` — quick-scan index of all calibrated rules; the topical refs remain the source of truth. Regenerate via /update-slice-design when it drifts |
+| Calibrated digest (single-page rule index — current to 2026-10-08) | `references/reference_calibrated_digest.md` — quick-scan index of all calibrated rules; the topical refs remain the source of truth. Regenerate via /update-slice-design when it drifts |
 | A specific calibrated rule's history | `references/reference_calibration_log.md` (append-only audit) |
 | `figma-use` Plugin API call | `figma:figma-use` SKILL.md ONLY. **Do not load figma-use's references/** |
 

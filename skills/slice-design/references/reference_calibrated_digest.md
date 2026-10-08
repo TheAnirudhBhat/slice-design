@@ -2,7 +2,7 @@
 name: Calibrated rules digest (rounds 1–24 + R19 web)
 description: Quick-scan index of every calibrated slice-design rule. Use as a build checklist when assembling slice screens. The per-topic reference_*.md files are the source of truth; this is the index.
 type: reference
-calibrated_through: 2026-06-02
+calibrated_through: 2026-10-08
 total_promoted_rules: 175+
 ---
 
@@ -224,6 +224,7 @@ This digest is the canonical "what we know is slice" quick-scan INDEX. When buil
 - Dark cards = no shadow (outline optional)
 - Asset theme-safety: icons = single-colour SVG with `currentColor` (never PNG); illustrations = transparent bg, slice ships distinct light/dark variants
 - A sprite-crop can hide a baked white sliver that breaks dark — prefer the clean standalone official asset
+- A light tint used as light (a glow) is the themed `--v-50` (V-950 in dark); a fixed V-50 glow is loud on a dark stage (cal:2026-10-07)
 - Theme-switch reveal = a 300%-tall blue-violet→target gradient overlay sliding top→bottom with a mid pause (~3.2s); flip `data-theme` during the pause; destination icon (moon→dark / sun→light) + typewriter caption; never magenta/pink, no blur
 
 ## Brand / colour / voice
@@ -248,6 +249,7 @@ This digest is the canonical "what we know is slice" quick-scan INDEX. When buil
 - CTA anchoring = three valid patterns: bottom-anchored full-width / centred Small / mid-screen full-width (mid-screen now validates only Atom returning-user L1)
 - Onboarding illustration = centred layout
 - Core PDP (centred, gradient heading, dot indicator, FAB) for core bank products; Feature PDP (left-aligned, green eyebrow, 3 tick rows, FAB) for features/sub-products
+- Birthday spark: the gift waits live in the slot (tap to open); lid toss + Confetti (small) by default; the Spotlight opening ends live in the slot; the birthday moment on the Pay home defaults to Pill only (`reference_pod_explore.md` → Birthday spark)
 - Profile = V3 overlay: QR-as-identity hero card + photo Avatar centre + lifetime metric strip + 2-up action tile grid (Primary substitute) + slimmed 5-row settings (bare line icons) + bell badge top-right + brand-temple footer; NO bottom nav, Primary mid-screen (not bottom-anchored)
 
 ## Misc patterns
@@ -277,6 +279,9 @@ This digest is the canonical "what we know is slice" quick-scan INDEX. When buil
 - ❌ `scale(0)` ban (animate from a small non-zero or fade); ❌ `transition: all` ban; ❌ no animation on keyboard-triggered actions
 - Spark hero reveal: bling → title push-up → rotate-out into brand pills (validated anchor→reveal pattern)
 - Campaign-pill reveal (9-step) and payment-status transition envelope (3-stage rewarded/un-rewarded) are run-once / per-frame-calibrated choreographies
+- Gift lid toss (prod IMG_3800): 0.27s soft-launch rise, gravity fall, tilt settles near +4°, swell = 2.5% of the viewport's short side (cap 1.1×), depth comes with the pop, the bow only squashes (`reference_motion.md` → birthday-spark)
+- One motion, not two: grow straight into a pulse, and a ripple leaves the edge at the box's own speed; ease in-out at every turn of a keyframe track; but a big follow-up (the lid pop) is its own beat after ~350–500ms still
+- A sheen is a broad soft bell (140px) clipped to the exact outline (`clip-path: path()`), under decorations; an emphasis sweep waits until a full-screen moment has left the screen
 
 ## Proto / phone shell
 - Default device = **iPhone 16 Pro (393×852 logical)**; the iPhone 17 Pro Silver bezel PNG (transparent screen cut-out ~402×874) layers OVER content, `pointer-events:none`, with a `drop-shadow` float
@@ -294,6 +299,8 @@ This digest is the canonical "what we know is slice" quick-scan INDEX. When buil
 - Agentation is MANDATORY in every slice proto — install + wire as a direct sibling of `<App />` (no wrapper) + verify
 - Self-host fonts via `@fontsource/rubik` — NEVER the Google Fonts CDN (corporate network silently drops Medium-500)
 - Shared kit by reference: design-system layer (`components/icons/utils/tokens.js/index.css`) is symlinked (propagates); pods + App + assets are project-owned via the **extension seam** (`AppBase.jsx` symlink + thin local `App.jsx` with injection props). Scaffold new projects with `new-proto.sh`
+- iOS WebKit, phone-only (`reference_performance.md` §iOS WebKit): no CSS or SVG filters on moving layers (box-shadow, or shadows baked into the image); each `<svg>` its own `<defs>`; `decoding="sync"` on large images (>500KB decoded) that mount in motion; promote layers from mount and hold the first pose until painted; mount heavy effects a few frames late; no press-scale on cards that swap; full-screen light effects as one WebGL shader (cal:2026-10-07)
+- Once-registered handlers read state through a ref; time checks use frames stamped by the page clock; screenshots and a hidden preview can't show decode or rAF bugs (root causes #21–#23)
 - **HARD: skill proto is READ-ONLY during project work.** Projects inherit by default and build on top; diverge a single component only via `link-kit.sh materialize`; the skill proto changes only via deliberate skill maintenance with a calibration-log entry
 
 ## Spacing rhythm

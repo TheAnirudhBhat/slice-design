@@ -8,7 +8,9 @@
 //
 //   glide     its own arrival (slides in from the left); false when something else
 //             moves it in (the Pay home's first-open pill entrance)
-//   arcDelay  seconds until the sweep — after it has landed
+//   arcDelay  seconds until the sweep — after it has landed, or after it is let go
+//   emphasize false holds the sweep while something bigger is on screen (the birthday
+//             balloons); it runs arcDelay s after this turns true
 //   children  the pill's content: a 16px glyph + label, as ActionPill
 //
 // The arc lives IN the background (a conic wedge whose angle --arc and brightness
@@ -19,7 +21,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 
 const EASE = [0.65, 0, 0.35, 1];
 
-export default function EmphasisPill({ label, onTap, glide = true, arcDelay = 0.55, children, ...rest }) {
+export default function EmphasisPill({ label, onTap, glide = true, arcDelay = 0.55, emphasize = true, children, ...rest }) {
   const reduce = useReducedMotion();
   const slide = glide && !reduce;
   return (
@@ -31,7 +33,7 @@ export default function EmphasisPill({ label, onTap, glide = true, arcDelay = 0.
       // a smooth ease-in-out glide, no spring (user: "smooth ease in ease out, and not
       // a bouncy effect")
       initial={reduce ? false : { ...(slide && { opacity: 0, x: -32, scale: 0.94 }), '--arc': '0deg', '--arc-a': 0 }}
-      animate={reduce ? { opacity: 1, x: 0, scale: 1 } : { opacity: 1, x: 0, scale: 1, '--arc': '360deg', '--arc-a': [0, 0.55, 0.55, 0] }}
+      animate={reduce ? { opacity: 1, x: 0, scale: 1 } : { opacity: 1, x: 0, scale: 1, ...(emphasize && { '--arc': '360deg', '--arc-a': [0, 0.55, 0.55, 0] }) }}
       transition={{
         duration: 0.55,
         ease: EASE,

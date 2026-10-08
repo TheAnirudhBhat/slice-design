@@ -116,3 +116,21 @@ Don't apply `will-change` to large numbers of elements or to elements that stay 
   /* No will-change — buttons animate briefly, not worth a permanent layer */
 }
 ```
+
+## iOS WebKit (iPhone) — measured on a phone, not assumed (cal:2026-10-07, birthday-spark)
+
+Every rule here came from a phone screen recording, stepped frame by frame. Desktop browsers and headless WebKit don't show any of them: WebKit screenshots even force synchronous image decoding. Verify motion work on a phone.
+
+| Don't | Do | What it did on the phone |
+|---|---|---|
+| CSS `filter` (`drop-shadow`, `blur`) on anything that moves, lifts or hides | `box-shadow` on the element's own radius, or the shadow baked into the image | iOS kept painting the filter layer's rectangle: a rectangular fade round a lifted card (IMG_3813/3817/3818) |
+| SVG filters (`feDropShadow`) or SVG `<image>` in animated content | one `<img>` with its soft shadow baked in (the gift's bow: `gen_bow_shadow.png`, the source padded 40px for its shadow) | drawn late or not at all: the bow missing through a drag and a landing, popping in after (IMG_3829) |
+| a fill or clip `url(#id)` pointing into ANOTHER `<svg>`'s `<defs>` | every `<svg>` carries its own `<defs>` (ids unique per instance, `useId`) | now and then it didn't resolve, and the face drew nothing |
+| a large image in an `<img>` that mounts during motion (decoded `w × h × 4` over 500KB) | `decoding="sync"` on it | WebKit decodes it off-thread on that element's first paint and draws nothing until it lands (`RenderBoxModelObject::decodingModeForImageDraw`, `BitmapImageSource::isLargeForDecoding`): the bow vanished for 2 frames at a tap (IMG_3831), or for the whole toss (IMG_3830) |
+| promoting a layer at an animation's first frame | `will-change: transform` from mount on everything that will move, and hold the first pose until the page has painted twice (`useAfterPaint(2)`, a double rAF) before starting | the phone stalled that frame to draw the new layers, then jumped to catch up (IMG_3828: per-frame steps −3, −14, −41px) |
+| mounting dozens of animations on a tap's frame (a confetti burst with the lid toss) | mount the effect a few frames later (`useAfterFrames(5)`), after the main motion's start frame | the main motion's first frames were starved |
+| `:active` press-scale on a card whose content swaps or whose shadow matters | no press-scale on that card | iOS made a layer mid-press that clipped the shadow to a rectangle, and the swapped-in card painted hard-cornered for a frame (IMG_3827) |
+| independent `x` / `y` / `rotate` tracks for physics paths (confetti, emoji, cannons) | ONE transform-string keyframe track per piece, sampled at 30fps (framer hands it to WAAPI, the compositor) | smooth while the page was busy |
+| a full-screen light effect built from many glowing DOM nodes | one WebGL fragment shader on one canvas (the GPU draws it; JS only ticks the clock); three.js loaded lazily on first use; a fresh canvas per run (a context that was let go can't be had back); `compileAsync` before starting | — |
+
+**Verifying off the phone:** run Playwright WebKit (outside the sandbox) and freeze the motion, stepping it through WAAPI `currentTime`; stamp captured frames with the page's own clock (screenshot latency drifts later frames late); the desktop app's browser pane pauses `requestAnimationFrame` while hidden. What only a phone shows (decoding, compositing), say so and get a screen recording. See `reference_proto_systematics.md` root causes #21–#23.

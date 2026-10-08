@@ -287,6 +287,39 @@ Mnemonic: **touch-action = which axes the browser may pan (set both); overscroll
 
 ---
 
+## Root cause #21: iOS-only render failures that no desktop check shows (cal:2026-10-07)
+
+**Symptom**: on the phone, a rectangular fade round a lifted card; a bow missing for a whole toss, or vanishing for two frames at a tap; a lid that jumped at takeoff; a card that flashed hard-cornered after a press. Desktop Chrome, WebKit and headless screenshots all looked right.
+
+**Why**: iOS WebKit composites differently. CSS filters paint their layer's rectangle; SVG filters and SVG `<image>` draw late; large images decode off-thread on a new element's first paint (and screenshots force a synchronous decode, hiding it); a layer promoted at an animation's first frame stalls that frame.
+
+**PERMANENT RULE**:
+> For anything that moves on a phone, follow `reference_performance.md` §iOS WebKit: no CSS or SVG filters on moving layers (box-shadow, or shadows baked into the image); each SVG its own `<defs>`; `decoding="sync"` on large images that mount during motion; promote from mount and hold the first pose until painted; mount heavy effects a few frames late; no press-scale on cards that swap. Verify on a phone screen recording, stepped frame by frame.
+
+---
+
+## Root cause #22: once-registered handlers read state from a stale closure (cal:2026-10-07)
+
+**Symptom**: a debug-panel pick (the gift opening) played once, then every tap went back to the old one ("it only changes it for one go and then reverts"). A reload fixed it.
+
+**Why**: the page's pointer handlers are registered once at mount (so a drag never re-binds mid-gesture), and the tap path read the pick from that first render's closure. The pick's own replay ran from a fresh render, so it looked right once.
+
+**PERMANENT RULE**:
+> Handlers registered once read live state through a ref assigned every render (`live.current = { … }`), for every value they use. When a gesture path starts reading a new piece of state, add it to the ref.
+
+---
+
+## Root cause #23: verification that can't see the bug (cal:2026-10-07)
+
+**Symptom**: "verified" timings and frames that didn't match the phone: screenshots landing later than the moments they were meant to catch, a preview that never played an animation, a decode bug invisible in every capture.
+
+**Why**: screenshot latency accumulates (each takes 50–300ms); the desktop app's browser pane pauses `requestAnimationFrame` while hidden; WebKit screenshots force synchronous image decoding.
+
+**PERMANENT RULE**:
+> Time-critical checks run in Playwright WebKit with frames stamped by the page's own clock, or with the animation frozen and stepped through WAAPI `currentTime`. The hidden preview pane is for static checks only. For what only a phone can show (decoding, compositing), say so and ask for a screen recording.
+
+---
+
 ## RULE: for scroll / gesture / positioning bugs, VERIFY IN A REAL BROWSER — don't reason from the CSS
 
 **Why**: across the explore-base scroll saga I shipped 3 reasoned-but-wrong fixes in a row. The behaviour only became clear once I drove the running proto with Playwright — measured `scrollTop` before/after a real `mouse.wheel`, walked the ancestor chain with `elementFromPoint`, and ran a real `mouse.down → move → up` drag to see which element actually moved. Each measured test took one round and was unambiguous; each prior guess took a round and was wrong.

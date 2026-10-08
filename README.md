@@ -14,6 +14,14 @@ slice's design system (DLS 2.0), wired into Claude so you can design and build s
 - **A working example app** (we call it "the proto"): the five main tabs (Banking, Explore, Pay, Credit, Activity) running as a real, tappable iPhone app. It's the source of truth for "what does a slice screen actually look like?" Open it on your desktop or your phone.
 - **A way to keep its taste sharp.** A quick "which one feels more slice?" loop you can run anytime. Your picks quietly become rules Claude follows next time.
 
+## What's new (October 2026)
+
+- **Smooth on a real iPhone.** Building the birthday spark turned up glitches that only show on an iPhone, never on a computer: shadows that paint as rectangles, images that blink while they load, a stutter on the first frame of a motion. The skill now knows each one and how to avoid it.
+- **Gift and celebration motion.** Tuned choreographies for opening a gift: the lid toss, a landing that grows straight into a pulse, a soft sheen, and balloon and spotlight moments.
+- **Pay screen pills.** The action pills fan out from a centred stack when the app opens, and one pill can be highlighted with a single soft sweep round its edge.
+- **Glass status bar** on the home-screen app, the way iOS draws it.
+- **The review panel on your phone.** Open the app with `?debug` and hold three fingers on the screen.
+
 ## How to use it: just talk to Claude
 
 You don't need to learn any commands or jargon. Describe the work in plain language:

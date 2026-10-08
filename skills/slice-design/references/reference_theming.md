@@ -245,6 +245,7 @@ curtain — it is one continuous downward slide that holds in the middle.
   both ends 0 opacity, NO blur. Match the live `App.jsx` REVEAL_SLIDE.
 
 ## 12. More dark-mode component gotchas (this session)
+- **A light tint used as light** (a glow, a pool of light) must be the themed token: the kit's `--v-50` (V-50 light, V-950 dark), never the fixed `--dls-valentino-50`. On a dark stage a V-50 glow read as a loud white glow (the gift Spotlight, user: "too loud, it should be very subtle"; cal:2026-10-07).
 - **Card-corner illustrations** (Banking FD rocket, monies cluster): the Figma node
   bakes a **"Card Background"** rect behind the art → exporting the whole node =
   opaque white box in dark. Use the ILLUSTRATION layer ONLY (transparent): the

@@ -434,3 +434,40 @@ Each page renders inside a column that starts with a 54px transparent "reserve" 
 The 54px matches the global `MotionStatusBar` overlay height (also 54). If you change one, change the other.
 
 Source: cal:2026-05-29 R23 — proto build at `slice/projects/slice-app-proto/`. Components: `App.jsx`, `Pager.jsx`, `BottomNav.jsx`, `StatusBar.jsx`. All motion shares a single `pagerX = useMotionValue(...)` owned by App.jsx and threaded into Pager (drives drag), StatusBar (drives per-element color), and indirectly BottomNav (via visuallyActive state).
+
+## birthday-spark choreographies (calibrated 2026-10-07)
+
+The gift spark (project birthday-spark): each one user-calibrated and checked in WebKit. Flow and defaults: `reference_pod_explore.md` → Birthday spark.
+
+### Lid toss (measured off prod's IMG_3800; W = the lid's width)
+- **Rise**, 0.27s on `cubic-bezier(0.1, 0.05, 0.4, 1)`: up 0.40W and left 0.175W, tilting to −9.6°. It's a soft launch: a steep curve put the first frame 14% of the way up ("on tap, it just instantly is a little bigger and tilted")
+- **Fall** under gravity 12.4 W/s², drifting back right; the tilt eases back through level to settle near +4° (no tumbling)
+- **Swell**: 2.5% of the viewport's short side, capped at 1.1×, about +10pt on a phone. The video's 1.1× read as "the lid getting bigger" on a phone, where the lid is ~60% of the screen
+- **Depth** (the side band under the face) deepens WITH the pop, to 0.05W within 110ms, then holds ("it should be with the pop")
+- **Bow** stays on the face. A damped spring (ω 16, ζ 0.45) on the lid's vertical acceleration squashes it at takeoff (to ~0.88, readable for ~150ms), and a small tilt follows the lid. No stretch, no drift: a bow lifting off the face read as odd
+- The toss waits until it has been painted, then runs one transform track per layer (`reference_performance.md` §iOS WebKit)
+
+### Grow into a pulse, as one motion (the gift landing in the slot)
+User: "combine the grow and pulse into one motion".
+- The box grows from the dragged card's size straight into a swell (1.04), then settles to 1: 0.30s up, 0.18s back, around its centre
+- A ring in the gift's gradient leaves the box's edge **as the box reaches the slot's size, at the box's own speed** (0.8 × slot/s), and drifts out to 1.1 as it fades (0.52s). Started from the slot's edge on its own clock, it read as a second beat
+- No squash-and-stretch: it read as "a stretch" before the pulse
+- The page's scrim lifts during the fit, in the same beat
+
+### Ease in and out at every turn
+In a keyframe track every extremum is a turning point, so ease in-out at each (per-segment easing: `ease: [a, b, …]`). A track that starts from rest starts eased in: an eased-out first segment jumped a third of the growth in one frame.
+
+### Separate beats
+After a landing, hold still for ~350–500ms before the next big beat, the lid pop ("the lid pop can be separate and not immediate").
+
+### Sheen
+A broad, soft bell of light, 140px wide (Alpha/White a10 → a20 → a30 → a20 → a10) and skewed −18°. It crosses mid-face at the motion's peak, clipped to the shape's exact outline and under any decoration (the bow). CSS `clip-path: path()` takes no transform, so scale the path's own coordinates. Clipped to a plain rounded square, it "wasn't fitting perfectly"; a thin band read as "too slim".
+
+### Emphasis after the big moment
+An emphasis sweep (EmphasisPill) holds while a full-screen moment plays (balloons, lasers), and runs a beat after it has left the screen ("the emphasis should start after the balloons have left the screen").
+
+### Effects that come in first
+In the "balloons first" openings, the gift waits wrapped while the balloons rise. The box opens 0.9s after they lift off; with the Spotlight, it opens as the last ones leave the top (3.3s into a 3.6s flight: "the balloons should be almost gone… when the gift starts opening"). Time it from the effect's real start (a three.js load and shader compile vary), with a cap if it never starts.
+
+### Matching a reference video
+Measure, don't eyeball. Step the recording frame by frame and sample its pixels over time (dim level, hue rate, timings). Then capture yours at the same moments, stamped with the page's own clock, and compare them side by side.
