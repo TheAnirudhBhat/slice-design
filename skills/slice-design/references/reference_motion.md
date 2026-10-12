@@ -464,7 +464,7 @@ After a landing, hold still for ~350–500ms before the next big beat, the lid p
 A broad, soft bell of light, 140px wide (Alpha/White a10 → a20 → a30 → a20 → a10) and skewed −18°. It crosses mid-face at the motion's peak, clipped to the shape's exact outline and under any decoration (the bow). CSS `clip-path: path()` takes no transform, so scale the path's own coordinates. Clipped to a plain rounded square, it "wasn't fitting perfectly"; a thin band read as "too slim".
 
 ### Emphasis after the big moment
-An emphasis sweep (EmphasisPill) holds while a full-screen moment plays (balloons, lasers), and runs a beat after it has left the screen ("the emphasis should start after the balloons have left the screen").
+An emphasis sweep (EmphasisPill) holds while a full-screen moment plays (the balloons), and runs a beat after it has left the screen ("the emphasis should start after the balloons have left the screen").
 
 ### Effects that come in first
 In the "balloons first" openings, the gift waits wrapped while the balloons rise. The box opens 0.9s after they lift off; with the Spotlight, it opens as the last ones leave the top (3.3s into a 3.6s flight: "the balloons should be almost gone… when the gift starts opening"). Time it from the effect's real start (a three.js load and shader compile vary), with a cap if it never starts.

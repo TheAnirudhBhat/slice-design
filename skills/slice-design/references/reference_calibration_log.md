@@ -2000,3 +2000,9 @@ Not promoted:
 - the Lasers moment: in progress, not yet accepted
 - project-only tuning numbers and assets
 - the off-DLS balloon inks: the user's call for that moment, recorded only as such
+
+### 2026-10-12 — birthday-spark: debug options dropped (user, agentation on the review panel: "remove emoji bomb and lasers", "auto opens is default, remove the rest", "remove pop and ribbons, and wrap gift again")
+- Pay home moments: Pill only (default), Balloons, Confetti. Emoji bomb and Lasers are gone with their code, so the Lasers above stay unpromoted for good.
+- Gift openings: Pop & ribbons is gone; its satin ribbons live on in the Spotlight.
+- A gift dropped in the slot always opens itself; the "stays wrapped" pick is gone.
+- `reference_pod_explore.md` → Birthday spark and `reference_motion.md` (the emphasis hold) updated to match.

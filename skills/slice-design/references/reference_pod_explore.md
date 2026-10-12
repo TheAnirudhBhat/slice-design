@@ -212,7 +212,7 @@ A birthday gift on the spark card: the spark page shows a wrapped gift, and open
 
 **Opening:** the lid toss plus an effect, picked in the debug panel:
 - **Confetti (small)**, the default: a burst from the box
-- Cannons · Pop & ribbons · Ribbon untie (the bow is yanked off and the ribbons slip away, then the toss) · Halo (a modern sunburst)
+- Cannons · Ribbon untie (the bow is yanked off and the ribbons slip away, then the toss) · Halo (a modern sunburst)
 - **Spotlight · confetti**:
   - an iris stage in the page's own colour opens from the gift
   - the gift travels in one transform to the optical centre: the box and a two-line wish, centred at 45% of the height, at 1.1×
@@ -226,8 +226,6 @@ A birthday gift on the spark card: the spark page shows a wrapped gift, and open
 - **Pill only**, the default
 - **Balloons**: real 3D, glossy latex, growing as they rise toward you, far ones behind the page and near ones over it. Their inks are off-DLS by the user's call: the colours furthest from the Valentino (sunflower yellow, aqua, spring green, tangerine, electric blue, white). The **Realistic** look is the default (a side key light plus a rim light, crisp window highlights, a saturated shaded side, a darker neck, lit curling ribbons); the **Earlier** look is kept
 - Confetti
-- Emoji bomb: an exploration; emoji are banned in shipped UI
-- Lasers: an exploration in progress; rainbow is banned in shipped UI
 
 The pill's sweep waits until a full-screen moment has left the screen.
 
